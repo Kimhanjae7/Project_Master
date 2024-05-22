@@ -37,8 +37,11 @@ app.get('/', (req, res) => {
 })
 
 app.get('/profile', (req, res) => {
-  //res.send('Hello test!!!!!')
-  res.render('profile')
+  if(req.session.member == null){
+    res.send("<script> alert('로그인하고 접근해주세요'); location.href='/';</script>")
+  }else{
+    res.render('profile')
+  }
 })
 
 app.post('/profileProc', (req, res) => {
