@@ -3,6 +3,7 @@ const ejs = require('ejs') //js 코드를 html템플릿에 삽입하여 동적�
 const app = express()
 const port = 3000
 var bodyParser = require('body-parser')
+var session = require('express-session')
 
 require('dotenv').config()
 
@@ -15,6 +16,19 @@ app.set('view engine', 'ejs')
 app.set('views', './views') //views라는 폴더안에 있는걸 가져온다
 
 app.use(bodyParser.urlencoded({ extended: false }))
+
+// Use the session middleware
+app.use(session({ secret: 'yesung', cookie: { maxAge: 60000 }, resave:true, saveUninitialized:true,}))
+
+app.use((req, res, next) => {
+
+  res.locals.user_id = "";
+  
+  if(req.session.member){
+    res.locals.user_id = req.session.member.user_id;
+  }
+  next()
+})
 
 //localhost:3000/ 를 입력하면 나온다
 app.get('/', (req, res) => {
@@ -79,9 +93,19 @@ app.post('/loginProc', (req, res) => {
     if(result.length==0){
       res.send("<script> alert('존재하지 않는 아이디입니다.'); location.href='/login';</script>")
     } else{
-      res.send("로그인 성공한 후 페이지는 아직 안 만들었음");
+
+      req.session.member = result[0];
+      res.send("<script> alert('로그인 되었습니다'); location.href='/';</script>")
+
+      //res.send("로그인 성공한 후 페이지는 아직 안 만들었음");
     }
   })
+})
+
+app.get('/logout', (req, res) => {
+  req.session.member = null;
+  res.send("<script> alert('로그아웃 되었습니다'); location.href='/';</script>")
+
 })
 
 app.listen(port, () => {
