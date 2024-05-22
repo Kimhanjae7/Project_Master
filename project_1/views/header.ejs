@@ -12,6 +12,12 @@
         <nav>
             <a href="/">홈</a>  |
             <a href="/profile">프로필</a>   |
-            <a href="/login">로그인</a>   |
+            
+            <% if(user_id){ %>
+                <%=user_id%>님 환영합니다
+                <a href="/logout">로그아웃</a>
+            <% } else{ %>
+                <a href="/login">로그인</a>   |
+            <% } %>
         </nav>
     </header>
