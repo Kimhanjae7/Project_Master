@@ -103,6 +103,42 @@ app.get('/logout', (req, res) => {
 
 })
 
+app.get('/join', (req, res) => {
+  res.render('join')
+})
+
+app.post('/joinProc', (req, res) => {
+  const { user_id, user_pw, user_name, user_phone, nickname } = req.body;
+
+  // 먼저 user_id 중복 확인
+  var checkSql = 'SELECT * FROM member WHERE user_id = ?';
+  connection.query(checkSql, [user_id], function(err, result) {
+    if (err) throw err;
+
+    if (result.length > 0) {
+      res.render('join', {
+        user_id: user_id,
+        user_pw: user_pw,
+        user_name: user_name,
+        user_phone: user_phone,
+        nickname: nickname,
+        error: '이미 존재하는 아이디입니다.'
+      });
+    } else {
+      var insertSql = `INSERT INTO member (user_id, user_pw, user_name, user_phone, nickname) VALUES (?, ?, ?, ?, ?)`;
+      var values = [user_id, user_pw, user_name, user_phone, nickname];
+
+      connection.query(insertSql, values, function(err, result) {
+        if (err) throw err;
+
+        res.send("<script> alert('회원가입 성공하였습니다'); location.href='/';</script>");
+      });
+    }
+  })
+})
+
+
+
 app.listen(port, () => {
   console.log(`서버 실행 성공하였습니다. 접속주소 : http://localhost:${port}`)
 })
