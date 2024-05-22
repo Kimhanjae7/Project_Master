@@ -28,13 +28,35 @@ app.get('/profile', (req, res) => {
 })
 
 app.post('/profileProc', (req, res) => {
-  const name = req.body.name;
-  const phone = req.body.phone;
-  const email = req.body.email;
+  const user_id = req.body.user_id;
+  const user_pw = req.body.user_pw;
+  const user_name = req.body.user_name;
+  const user_phone = req.body.user_phone;
+  const nickname = req.body.nickname;
+  const job = req.body.job;
+  const affiliation = req.body.affiliation;
+  const career = req.body.career;
+  const introduce = req.body.introduce;
+  const interest_stack = req.body.interest_stack;
 
-  var sql = `insert into mypage(name,phone,email)
-  values('${name}', '${phone}', '${email}')`
-  connection.query(sql, function(err, result){
+  var sql = `
+    UPDATE member 
+    SET 
+      user_pw = ?, 
+      user_name = ?, 
+      user_phone = ?, 
+      nickname = ?, 
+      job = ?, 
+      affiliation = ?, 
+      career = ?, 
+      introduce = ?, 
+      interest_stack = ? 
+    WHERE 
+      user_id = ?
+  `;
+  var values = [user_pw, user_name, user_phone, nickname, job, affiliation, career, introduce, interest_stack, user_id];
+
+  connection.query(sql, values, function(err, result){
     if(err) throw err;
     console.log('자료 1개를 삽입하였습니다');
     res.send("<script> alert('저장되었습니다'); location.href='/';</script>")
@@ -57,7 +79,7 @@ app.post('/loginProc', (req, res) => {
     if(result.length==0){
       res.send("<script> alert('존재하지 않는 아이디입니다.'); location.href='/login';</script>")
     } else{
-      res.send(result);
+      res.send("로그인 성공한 후 페이지는 아직 안 만들었음");
     }
   })
 })
