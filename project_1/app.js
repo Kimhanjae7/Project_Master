@@ -43,10 +43,6 @@ app.get('/profile', (req, res) => {
 
 app.post('/profileProc', (req, res) => {
   const user_id = req.body.user_id;
-  const user_pw = req.body.user_pw;
-  const user_name = req.body.user_name;
-  const user_phone = req.body.user_phone;
-  const nickname = req.body.nickname;
   const job = req.body.job;
   const affiliation = req.body.affiliation;
   const career = req.body.career;
@@ -56,10 +52,6 @@ app.post('/profileProc', (req, res) => {
   var sql = `
     UPDATE member 
     SET 
-      user_pw = ?, 
-      user_name = ?, 
-      user_phone = ?, 
-      nickname = ?, 
       job = ?, 
       affiliation = ?, 
       career = ?, 
@@ -68,7 +60,7 @@ app.post('/profileProc', (req, res) => {
     WHERE 
       user_id = ?
   `;
-  var values = [user_pw, user_name, user_phone, nickname, job, affiliation, career, introduce, interest_stack, user_id];
+  var values = [job, affiliation, career, introduce, interest_stack, user_id];
 
   connection.query(sql, values, function(err, result){
     if(err) throw err;
