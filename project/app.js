@@ -1,6 +1,7 @@
 const express = require('express')
 const ejs = require('ejs') //js 코드를 html템플릿에 삽입하여 동적으로 웹페이지 생성
 const app = express()
+const path = require('path');
 const port = 3000
 var bodyParser = require('body-parser')
 var session = require('express-session')
@@ -11,6 +12,8 @@ const mysql = require('mysql2')
 const connection = mysql.createConnection(process.env.DATABASE_URL)
 console.log("connected db")
 
+// 정적 파일 서빙 설정
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.set('view engine', 'ejs')
 app.set('views', './views') //views라는 폴더안에 있는걸 가져온다
