@@ -1,7 +1,7 @@
 use project1;
 drop table if exists member;
 CREATE TABLE `member` (
-  `user_id` varchar(45) NOT NULL,
+  `user_id` varchar(45) NOT NULL unique,
   `user_pw` varchar(45) NOT NULL,
   `user_name` varchar(45) NOT NULL,
   `user_phone` varchar(45) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE `member` (
   `career` text,
   `introduce` text,
   `interest_stack` text,
-  PRIMARY KEY (`user_id`)
+  PRIMARY KEY (`nickname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 INSERT INTO `member` (`user_id`, `user_pw`, `user_name`, `user_phone`, `nickname`, `job`, `affiliation`, `career`, `introduce`, `interest_stack`) VALUES
 ('user01', 'pass01', 'John Doe', '010-1234-5678', 'johnny', '백엔드', 'Company A', '5 years at Company A', 'Hello, I am John.', 'Java, Spring, MySQL'),
