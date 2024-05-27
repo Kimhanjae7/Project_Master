@@ -1,0 +1,18 @@
+<%- include('header') %>
+    <h1>게시글 등록</h1>
+    <form action="/registrationProc" method="post">
+        <ul>
+            <li> category : <input type="text" name="category"></li>
+            <li> mem_number : <input type="text" name="mem_number"></li>
+            <li> way : <input type="text" name="way"></li>
+            <li> period : <input type="text" name="period"></li>
+            <li> teck_stack : <input type="text" name="teck_stack"></li>
+            <li> deadline : <input type="text" name="deadline"></li>
+            <li> position : <input type="text" name="position"></li>
+            <li> contact : <input type="text" name="contact"></li>
+            <li> introduce_title : <input type="text" name="introduce_title"></li>
+            <li> introduce_detail : <input type="text" name="introduce_detail"></li>
+            <button type="submit">저장하기</button>
+        </ul>
+    </form>
+<%- include('footer') %>
