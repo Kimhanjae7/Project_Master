@@ -122,7 +122,7 @@ app.post('/loginProc', (req, res) => {
       res.send("<script> alert('존재하지 않는 아이디입니다.'); location.href='/login';</script>")
     } else{
       req.session.member = result[0];
-      //res.send("로그인 성공한 후 페이지는 아직 안 만들었음");
+      res.send("<script> location.href='/';</script>")
     }
   })
 })
