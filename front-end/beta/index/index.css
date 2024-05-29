@@ -65,7 +65,8 @@ h1{
 	height:900px;
 }
 .header{
-	display:flex;
+	display: flex;
+	justify-content: end;
 	width:1500px;
 	margin:auto;
 	height:75px;
@@ -77,8 +78,7 @@ h1{
 	height:40px;
 	background:#F2F2F2;
 	border-radius:5px;
-	margin-top:18px;
-	margin-left:100px;
+	margin-left:530px;
 }
 .search_area > form > input{
 	border: none; /*input영역 테두리 정리*/
@@ -97,7 +97,8 @@ h1{
 
 .nav{
 	display: flex; /*가로정렬*/
-	justify-content:flex-end;
+	justify-content: end;
+	margin-right: 120px;
 	line-height:75px;
 	width:calc(100% - 500px);
 }
