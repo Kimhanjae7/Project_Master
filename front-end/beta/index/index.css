@@ -23,7 +23,10 @@
   font-weight: 400;
   font-style: normal;
 }
-body{background-color: #f2f2f2;}
+body{
+	background-color: #f2f2f2;
+	position: relative fixed;
+}
 
 .logo{
 	text-align:center;
@@ -63,7 +66,7 @@ h1{
 }
 .header{
 	display:flex;
-	width:90%;
+	width:1500px;
 	margin:auto;
 	height:75px;
 	background-color:rgba(0,0,0,0.8);
@@ -177,7 +180,7 @@ h1{
 }
 
 .main_text1{
-	width:90%;
+	width:1500px;
 	margin:-150px auto auto auto;
 	height:2000px;
 	background: rgba(0,0,0,0.8);
@@ -324,7 +327,7 @@ h1{
 	margin:auto;
 }
 .main_text2{
-	width:100%;
+	width:1644px;
 	height:300px;
 	margin:200px auto auto auto;
 	background-color: #fff;
@@ -403,6 +406,7 @@ border-radius: 8px;}
 .paging li.last a {background-image: url(page_last.png);}
 .paging li.prev a {margin-right:23px;}
 .paging li.next a {margin-left:23px;}
+
 
 
 
