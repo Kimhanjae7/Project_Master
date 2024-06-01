@@ -1,421 +1,286 @@
-@charset "EUC-KR";
-*{
-	list-style: none;
-	text-decoration: none;
-	border-collapse: collapse;
-	margin:0px;
-	padding:0px;
-	color:#000;
-}
-.noto-sans-kr{
-  font-family: "Noto Sans KR", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: weight;
-  font-style: normal;
-}
-.nanum-pen-script-regular {
-  font-family: "Nanum Pen Script", cursive;
-  font-weight: 400;
-  font-style: normal;
-}
-.song-myung-regular {
-  font-family: "Song Myung", serif;
-  font-weight: 400;
-  font-style: normal;
-}
-body{
-	background-color: #f2f2f2;
-	position: relative fixed;
-}
-
-.logo{
-	text-align:center;
-}
-.logo > img{
-	margin-top:10px;
-	width:100px;
-	height:100px;
-	cursor:pointer;
-}
-.logo > span{
-	font-size:40px;
-	font-weight:bold;
-	font-family: "Nanum Pen Script", cursive;
-}
-
-h1{
-	font-size:48px;
-	font-weight:100;
-}
-.hompage_top_contents2{
-	font-size:24px;
-}
-.hompage_top_contents3{
-	font-size:14px;
-	font-weight: 100;
-}
-.hompage_top_contents1_bold{
-	font-size:18px;
-	font-weight:bold;
-}
-.homepage_top{
-	background:#f2f2f2;
-	width:100%;
-	height:900px;
-	position: relative;
-}
-.header{
-	display: flex;
-	justify-content: end;
-	width:1500px;
-	margin:auto;
-	height:75px;
-	background-color:#2E2E2E;
-	border-radius:10px;
-}
-.search_area{
-	width:300px;
-	height:40px;
-	background:#F2F2F2;
-	border-radius:5px;
-	margin-left:530px;
-}
-.search_area > form > input{
-	border: none; /*input영역 테두리 정리*/
-	width:250px;
-	height:40px;
-	background: rgba(0,0,0,0.0);
-	color:#000;
-	padding-left:10px;
-}
-.search_area > form > span{
-	width:50px;
-	color:#000;
-	font-weight:bold;
-	cursor:pointer;
-}
-
-.nav{
-	display: flex; /*가로정렬*/
-	justify-content: end;
-	margin-right: 120px;
-	line-height:75px;
-	width:calc(100% - 500px);
-}
-.nav > li{
-	margin-left:60px;
-}
-.nav > li > a{
-	color:#F2F2F2;
-	font-weight:bold;
-	font-size: 20px;
-}
-.nav > li > a:hover{color:#ff5a20}
-
-.hompage_top_text{
-	width:100%;
-	height:250px;
-	margin:90px auto 231px auto; /*상 우 하 좌 마진값*/
-	text-align:center;
-	/*background: #f2f2f2;*/
-	/*box-shadow: 0px 0px 10px rgba(0,0,0,0.3);*/
-}
-.hompage_top_text > h2,
-.hompage_top_text> h4{
-	color:#000;
-	height:80px;
-	text-align: left;
-	margin: -20px auto auto 260px;
-}
-.hompage_top_text > h4{
-	font-family: "Noto Sans KR", sans-serif;
-	font-weight:lighter;
-	font-size: 40px;
-	margin-bottom:5px;
-}
-.hompage_top_text > h2{
-	font-size: 50px;
-	font-family: "Song Myung", serif;
-	font-weight:bold;
-	letter-spacing: 1px;
-}
-
-.hompage_top_text img{
-	width: 500px;
-	height: 500px;
-	margin:-190px auto auto 600px;
-	position:relative;
-}
-
-.click_menu{
-	position: relative;
-	top:-100px; /*실제 위치는 밑에까지임 그냥 보이기에만 위로 올라간것처럼*/
-	display: flex;
-	width:1280px;
-	height: 200px;
-	background:#fff;
-	box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
-	/*우측(-면 좌측) 하단 흐려지는정도*/
-	margin:auto;
-	border-radius:5px;
-}
-.click_menu > li > div{
-	text-align:center;
-	height:57px;
-	margin-top:37px;
-}
-.click_menu > li:not(:last-child) > div{ /*마지막 요소 빼고 회색 선 추가*/
-	border-right:2px solid #E1E1E1;
-}
-.click_menu > li{
-	flex:1;
-	height:132px;
-}
-.make_team img{
-	width: 100px;
-	height: 100px;
-	cursor:pointer;
-}
-.mypage img{
-	width: 100px;
-	height: 100px;
-	cursor:pointer;
-}
-.see_project img{
-	width: 100px;
-	height: 100px;
-	cursor:pointer;
-}
-
-.main_text1{
-	width:1500px;
-	margin:-150px auto auto auto;
-	height:2000px;
-	background: #2E2E2E;
-	padding-top:300px;
-	border-radius:10px;
-}
-
-.main_text1 > .contesnts1{
-	text-align: center;
-}
-.top_project{
-	display:flex;
-	width:1280px;
-	margin:auto;
-	height:75px;
-}
-.top_project > span{
-	font-size: 34px;
-	color: #F2F2F2;
-}
-
-.middle_project{
-	display:flex;
-	width:1280px;
-	margin:200px auto 50px auto;
-	height:75px;
-}
-.select_search{
-	display:flex;
-	width:1280px;
-	margin:auto;
-	height:40px;
-}
-.select_category{
-	width: 120px;
-	height: 40px;
-	background-color: #fff;
-	border-radius: 20px;
-	text-align: center;
-	border: solid rgba(0,0,0,0.3);
-	border-width:3px;
-}
-.select_skill{
-	margin-left:20px;
-	width: 120px;
-	height: 40px;
-	background-color: #fff;
-	border-radius: 20px;
-	text-align: center;
-	border: solid rgba(0,0,0,0.3);
-	border-width:3px;
-}
-.select_roll{
-	margin-left:20px;
-	width: 80px;
-	height: 40px;
-	background-color: #fff;
-	border-radius: 20px;
-	text-align: center;
-	border: solid rgba(0,0,0,0.3);
-	border-width:3px;
-}
-.select_skill > select{
-	width: 80px;
-	height:40px;
-	border: none;
-	cursor: pointer;
-	font-family: "Noto Sans KR", sans-serif;
-}
-.select_roll > select{
-	width: 50px;
-	height:40px;
-	border: none;
-	cursor: pointer;
-	font-family: "Noto Sans KR", sans-serif;
-}
-.select_category > select{
-	width: 80px;
-	height:40px;
-	border: none;
-	cursor: pointer;	
-	font-family: "Noto Sans KR", sans-serif;
-}
-.select_button{
-	margin-left:20px;
-	width: 40px;
-	height: 40px;
-	background-color: skyblue;
-	border-radius: 30px;
-	text-align: center;
-	border: solid skyblue;
-	border-width:3px;
-}
-.select_button > form > button {
-	border:none;
-	cursor: pointer;
-	text-align: center;	
-	font-family: "Noto Sans KR", sans-serif;
-	background-color: transparent;
-}
-.select_button img{
-	width: 20px;
-	height: 20px;
-	margin-top:10px;
-}
-#all_button{
-	border: none;
-	font-size: 34px;
-	background-color: rgba(0,0,0,0);
-	color: #F2F2F2;
-	cursor:pointer;
-}
-#all_button:hover{color:#ff5a20}
-#popular_button{
-	border: none;
-	font-size: 34px;
-	background-color: rgba(0,0,0,0);
-	color: #F2F2F2;
-	cursor:pointer;
-}
-#popular_button:hover{color:#ff5a20}
-#recent_button{
-	border: none;
-	font-size: 34px;
-	background-color: rgba(0,0,0,0);
-	color: #F2F2F2;
-	cursor:pointer;
-}
-#recent_button:hover{color:#ff5a20}
-
-.turn_project{
-	margin-left:20px;
-}
-.turn_project > img{
-	width:30px;
-	height:30px;
-	margin-top:8px;
-	cursor:pointer;
-}
-.select_search{
-	margin:auto;
-}
-.main_text2{
-	width:1644px;
-	height:300px;
-	margin:200px auto auto auto;
-	background-color: #fff;
-}
-.last_text{
-	text-align: center;
-	width:70%;
-	height:300px;
-	margin:auto;
-}
-.last_text img{
-	width: 50px;
-	height: 50px;
-	margin: 130px auto auto 50px;
-}
-.last_text span{
-	font-size: 15px;
-	color: #898786;
-}
-
-.github{
-	flex:1;
-}
-
-.icons{
-	display:flex;
-	width:1280px;
-	height:302px;
-	margin:auto;
-}
-.icons > li {
-	flex:1;
-	background: #fff;
-	margin-top:49px;
-	height:302px;
-	text-align: center;
-	border-radius:15px;
-	border: solid rgba(0,0,0,0.3);
-	border-width:7px;
-}
-.icons > li:not(:last-child){
-	margin-right:20px;
-}
-.icons > li > .icon_img{
-	margin-top:18px;
-}
-.icons .contents3{
-	width:190px;
-	margin:auto;
-	letter-spacing: -1px;/*글자 간격 줄이기*/
-}
-.more{
-	width:100px;
-	height:30px;
-	color:#f2f2f2;
-	background:skyblue;
-	margin:10px auto;
-	font-size: 12px;
-	line-height:30px;
-}
-.paging{padding:50px 0; text-align: center;
-margin:50px auto auto auto;}
-.paging li {display:inline-block; vertical-align:middle;}
-.paging li a {display:block; width:32px;height:32px;line-height:32px;color:#898786;}
-.paging li.on a,
-.paging li a:hover {color:#ff5a20;text-decoration:underline;}
-.paging li.first a,
-.paging li.prev a,
-.paging li.next a,
-.paging li.last a{overflow: hidden; margin:0 2px; width: 30px; height: 30px;
-border:1px solid #D8D8D8;; color:transparent;background:#D8D8D8 no-repeat center;
-border-radius: 8px;}
-.paging li.first a {background-image: url(page_first.png);}
-.paging li.prev a {background-image: url(page_prev.png);}
-.paging li.next a {background-image: url(page_next.png);}
-.paging li.last a {background-image: url(page_last.png);}
-.paging li.prev a {margin-right:23px;}
-.paging li.next a {margin-left:23px;}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="index.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Jua&family=Nanum+Pen+Script&family=Noto+Sans+KR&display=swap" rel="stylesheet">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
+	<title>Project Master</title>
+</head>
+<body>
+<div class="wrap">
+	<div class="homepage_top">
+		<div class="logo">
+			<img src="PM_logo_fin.png"><br>
+			<span>Project Master</span><br><br>
+		</div>
+		<div class="header">
+			<ul class="nav">
+				<li><a href="#">HOME</a></li>
+				<li><a href="#">알림</a></li>
+				<li><a href="signup.html">회원가입</a></li>
+				<li><a href="singin.html">로그인</a></li>
+			</ul>
+		</div>
+		<div class="hompage_top_text">
+			<h4>You can gather</h4>
+			<h2>project team members,<br>
+			collaborate, <br>
+			build your portfolio.</h2>
+			<div class="bg_img">
+				<img src="개발자.png">
+			</div>
+		</div>
+		<!-- 상단부분 끝 -->
+		<ul class="click_menu">
+			<li>
+				<div class = "make_team">
+					<a href="#"><img src="handshake2.png"></a>
+					<div class="hompage_top_contents2">팀원모집</div>
+				</div>
+			</li>
+			<li>
+				<div class = "mypage">
+					<a href="#"><img src="이력서.png"></a>
+					<div class="hompage_top_contents2">프로필</div>
+				</div>
+			</li>
+			<li>
+				<div class = "see_project">
+					<a href="#"><img src="게시판.png"></a>
+					<div class="hompage_top_contents2">나의 프로젝트</div>
+				</div>
+			</li>
+		</ul>
+		<!-- contents 끝 -->
+		<div class="main_text1">
+			<div class="top_project">
+				<span>추천 프로젝트</span>
+				<div class="turn_project"><img src="좌측화살표.png">  <img src="우측화살표.png"></div>
+			</div>
+			<ul class="icons">
+				<li>
+					<div class="icon_img">
+						<img src="c.png">
+					</div>
+					<div class="hompage_top_contents1_bold">추천 프로젝트1</div>
+					<div class="hompage_top_contents1">추천 프로젝트1</div>	
+					<div class="more">추천 프로젝트1</div>		
+				</li>
+				<li>
+					<div class="icon_img">
+						<img src="c++.png">
+					</div>
+					<div class="hompage_top_contents1_bold">추천 프로젝트2</div>
+					<div class="hompage_top_contents1">추천 프로젝트2</div>
+					<div class="more">추천 프로젝트2</div>
+				</li>
+				<li>
+					<div class="icon_img">
+						<img src="cc.png">
+					</div>
+					<div class="hompage_top_contents1_bold">추천 프로젝트3</div>
+					<div class="hompage_top_contents1">추천 프로젝트3</div>
+					<div class="more">추천 프로젝트3</div>
+				</li>
+			</ul>
+			<div class="middle_project">
+				<button id="all_button">전체</button>&emsp;
+				<button id="popular_button">인기순</button>&emsp;
+				<button id="recent_button">최신순</button>
+			</div>
+			<div class="select_search">
+				<div class="select_category">
+					<select name="category">
+						<option selected disabled hidden>카테고리
+						<option value="Project">프로젝트</option>
+						<option value="Study">스터디</option>
+					</select>
+				</div>
+				<div class="select_skill">
+					<select name="skill_stack">
+						<optgroup label="프론트엔드">
+							<option selected disabled hidden>기술스택
+							<option value="JavaScript">JavaScript</option>
+							<option value="TypeScript">TypeScript</option>
+							<option value="React">React</option>
+							<option value="Vue">Vue</option>
+							<option value="Svelte">Svelte</option>
+							<option value="Nextjs">Nextjs</option>
+						</optgroup>
+						<optgroup label="백엔드">
+							<option value="Nodejs">Nodejs</option>
+							<option value="Java">Java</option>
+							<option value="Spring">Spring</option>
+							<option value="Go">Go</option>
+							<option value="Nestjs">Nestjs</option>
+							<option value="Kotlin">Kotlin</option>
+							<option value="Express">Express</option>
+							<option value="MySQL">MySQL</option>
+							<option value="MonggoDB">MonggoDB</option>
+							<option value="Python">Python</option>
+							<option value="Django">Django</option>
+							<option value="php">php</option>
+							<option value="GraphQL">GraphQL</option>
+							<option value="Firebase">Firebase</option>
+						</optgroup>
+						<optgroup label="모바일">
+							<option value="Flutter">Flutter</option>
+							<option value="Swift">Swift</option>
+							<option value="ReactNative">ReactNative</option>
+							<option value="Unity">Unity</option>
+						</optgroup>
+						<optgroup label="기타">						
+							<option value="AWS">AWS</option>
+							<option value="Kubernetes">Kubernetes</option>
+							<option value="Docker">Docker</option>
+							<option value="Git">Git</option>
+							<option value="Figma">Figma</option>
+							<option value="Zeplin">Zeplin</option>
+							<option value="Jest">Jest</option>
+						</optgroup>
+					</select>
+				</div>
+				<div class="select_roll">
+					<select name="roll">
+						<option selected disabled hidden>역할
+						<option value="backend">백엔드</option>
+						<option value="frontend">프론트엔드</option>
+						<option value="designer">디자이너</option>
+						<option value="IOS">IOS</option>
+						<option value="android">안드로이드</option>
+						<option value="dev">데브옵스</option>
+						<option value="PM">PM</option>
+						<option value="planner">기획자</option>	
+						<option value="marketer">마케터</option>
+					</select>
+				</div>
+				<div class="select_button">
+					<form>
+						<button>
+							<img src="돋보기.png">
+						</button>
+					</form>
+				</div>
+				<div class="search_area">
+					<form>
+						<input type="search" placeholder="프로젝트 키워드 입력">
+						<span>검색</span>
+					</form>
+				</div>
+			</div>
+			<ul class="icons">
+				<li>
+					<div class="icon_img">
+						<img src="c.png">
+					</div>
+					<div class="hompage_top_contents1_bold">추천 프로젝트1</div>
+					<div class="hompage_top_contents1">추천 프로젝트1</div>	
+					<div class="more">추천 프로젝트1</div>		
+				</li>
+				<li>
+					<div class="icon_img">
+						<img src="c++.png">
+					</div>
+					<div class="hompage_top_contents1_bold">추천 프로젝트2</div>
+					<div class="hompage_top_contents1">추천 프로젝트2</div>
+					<div class="more">추천 프로젝트2</div>
+				</li>
+				<li>
+					<div class="icon_img">
+						<img src="cc.png">
+					</div>
+					<div class="hompage_top_contents1_bold">추천 프로젝트3</div>
+					<div class="hompage_top_contents1">추천 프로젝트3</div>
+					<div class="more">추천 프로젝트3</div>
+				</li>
+			</ul><br><br>
+			<ul class="icons">
+				<li>
+					<div class="icon_img">
+						<img src="c.png">
+					</div>
+					<div class="hompage_top_contents1_bold">추천 프로젝트1</div>
+					<div class="hompage_top_contents1">추천 프로젝트1</div>	
+					<div class="more">추천 프로젝트1</div>
+				</li>
+				<li>
+					<div class="icon_img">
+						<img src="c++.png">
+					</div>
+					<div class="hompage_top_contents1_bold">추천 프로젝트2</div>
+					<div class="hompage_top_contents1">추천 프로젝트2</div>
+					<div class="more">추천 프로젝트2</div>
+				</li>
+				<li>
+					<div class="icon_img">
+						<img src="cc.png">
+					</div>
+					<div class="hompage_top_contents1_bold">추천 프로젝트3</div>
+					<div class="hompage_top_contents1">추천 프로젝트3</div>
+					<div class="more">추천 프로젝트3</div>
+				</li>
+			</ul><br><br>
+			<ul class="icons">
+				<li>
+					<div class="icon_img">
+						<img src="c.png">
+					</div>
+					<div class="hompage_top_contents1_bold">추천 프로젝트1</div>
+					<div class="hompage_top_contents1">추천 프로젝트1</div>	
+					<div class="more">추천 프로젝트1</div>		
+				</li>
+				<li>
+					<div class="icon_img">
+						<img src="c++.png">
+					</div>
+					<div class="hompage_top_contents1_bold">추천 프로젝트2</div>
+					<div class="hompage_top_contents1">추천 프로젝트2</div>
+					<div class="more">추천 프로젝트2</div>
+				</li>
+				<li>
+					<div class="icon_img">
+						<img src="cc.png">
+					</div>
+					<div class="hompage_top_contents1_bold">추천 프로젝트3</div>
+					<div class="hompage_top_contents1">추천 프로젝트3</div>
+					<div class="more">추천 프로젝트3</div>
+				</li>
+			</ul>
+			<div>
+				<ol class="paging">
+					<li class="first"><a href="#">첫페이지</a></li>
+					<li class="prev"><a href="#">이전페이지</a></li>
+					<li><a href="#">1</a></li>
+					<li><a href="#">2</a></li>
+					<li><a href="#">3</a></li>
+					<li><a href="#">4</a></li>
+					<li><a href="#">5</a></li>
+					<li class="next"><a href="#">다음페이지</a></li>
+					<li class="last"><a href="#">마지막페이지</a></li>		
+				</ol>
+			</div>
+		</div>
 
 
-
-
-
-
-
-
+		<div class="main_text2">
+			<div class="last_text">
+				<div class="github">
+					<a href="https://github.com/Kimhanjae7/Project_Master">
+						<img src="github.png">
+						<span>Introducing the Project Master with GitHub</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
