@@ -73,6 +73,24 @@ app.get('/', (req, res) => {
   });
 })
 
+app.get('/mypage', (req, res) => { //수정한 부분
+  if(req.session.member == null){
+    res.send("<script> alert('로그인하고 접근해주세요'); location.href='/';</script>")
+  }else{
+    const user_id = req.session.member.user_id;
+    const sql = 'SELECT * FROM member WHERE user_id = ?';
+
+    connection.query(sql, [user_id], (err, result) => {
+      if (err) throw err;
+      if (result.length === 0) {
+        res.send("<script> alert('회원 정보를 찾을 수 없습니다'); location.href='/';</script>");
+      } else {
+        res.render('mypage', { member: result[0] });
+      }
+    });
+  }
+});
+
 app.post('/mypageProc', (req, res) => {
   const user_id = req.session.member.user_id; //수정한 부분
   let nickname = req.body.nickname;
