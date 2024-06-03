@@ -273,19 +273,26 @@ app.post('/joinProc', (req, res) => {
   const { user_id, user_pw, user_name, user_phone, nickname } = req.body;
 
   // 먼저 user_id 중복 확인
-  var checkSql = 'SELECT * FROM member WHERE user_id = ?';
-  connection.query(checkSql, [user_id], function(err, result) {
+  var checkSql = 'SELECT * FROM member WHERE user_id = ? OR nickname = ?';
+  connection.query(checkSql, [user_id, nickname], function(err, result) {
     if (err) throw err;
 
     if (result.length > 0) {
-      res.render('join', {
-        user_id: user_id,
-        user_pw: user_pw,
-        user_name: user_name,
-        user_phone: user_phone,
-        nickname: nickname,
-        error: '이미 존재하는 아이디입니다.'
-      });
+      let errorMessage = '이미 존재하는 ';
+
+      if (result.some(row => row.user_id === user_id)) {
+          errorMessage += '아이디';
+      }
+      if (result.some(row => row.nickname === nickname)) {
+          if (errorMessage !== '이미 존재하는 ') {
+              errorMessage += ' 및 ';
+          }
+          errorMessage += '닉네임';
+      }
+      errorMessage += '입니다.';
+      
+      res.send("<script> alert('" + errorMessage + "'); location.href='/join';</script>");
+      
     } else {
       var insertSql = `INSERT INTO member (user_id, user_pw, user_name, user_phone, nickname) VALUES (?, ?, ?, ?, ?)`;
       var values = [user_id, user_pw, user_name, user_phone, nickname];
