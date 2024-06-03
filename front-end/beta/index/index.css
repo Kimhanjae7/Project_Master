@@ -25,13 +25,12 @@
 }
 body{
 	background-color: #f2f2f2;
-	position: relative fixed;
 }
 
 .logo{
 	text-align:center;
 }
-.logo > img{
+.logo img{
 	margin-top:10px;
 	width:100px;
 	height:100px;
@@ -62,8 +61,6 @@ h1{
 	background:#f2f2f2;
 	width:100%;
 	height:900px;
-	position: relative;
-	z-index: -2;
 }
 .header{
 	display: flex;
@@ -127,6 +124,7 @@ h1{
 	height:80px;
 	text-align: left;
 	margin: -20px auto auto 260px;
+	width:800px;
 }
 .hompage_top_text > h4{
 	font-family: "Noto Sans KR", sans-serif;
@@ -146,7 +144,6 @@ h1{
 	height: 500px;
 	margin:-190px auto auto 600px;
 	position:relative;
-	z-index: -1;
 }
 
 .click_menu{
@@ -192,7 +189,7 @@ h1{
 .main_text1{
 	width:1500px;
 	margin:-150px auto auto auto;
-	height:2000px;
+	height:2100px;
 	background: #2E2E2E;
 	padding-top:300px;
 	border-radius:10px;
@@ -218,6 +215,13 @@ h1{
 	margin:200px auto 50px auto;
 	height:75px;
 }
+#projectList {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 20px; /* Adjust the gap between items as needed */
+	list-style: none;
+	margin: auto;
+ }
 .select_search{
 	display:flex;
 	width:1280px;
@@ -365,6 +369,27 @@ h1{
 	height:302px;
 	margin:auto;
 }
+.projectList_grid{
+	width:1280px;
+	height:1100px;
+	margin:50px auto auto auto;
+}
+.projectList_grid ul{
+	text-align: center;
+}
+.projectList_grid li {
+	flex:1;
+	background: #fff;
+	margin-top:49px;
+	height:302px;
+	text-align: center;
+	border-radius:15px;
+	border: solid rgba(0,0,0,0.3);
+	border-width:7px;
+}
+.projectList_grid .icon_img{
+	margin-top:18px;
+}
 .icons > li {
 	flex:1;
 	background: #fff;
@@ -413,6 +438,7 @@ border-radius: 8px;}
 .paging li.last a {background-image: url(page_last.png);}
 .paging li.prev a {margin-right:23px;}
 .paging li.next a {margin-left:23px;}
+
 
 
 
