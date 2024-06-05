@@ -116,9 +116,10 @@
     </form> <!--카테고리form-->
         <!-------------------------------------------->
         <div class="search_area">
-            <form id="searchForm">
+            <form id="searchForm" action="/" method="get">
+                <input type="hidden" name="page" value="1">
                 <input type="search" name="keyword" placeholder="프로젝트 키워드 입력">
-                <span><button type="submit">검색</button></span>
+                <span><button type="submit" id="searchButton">검색</button></span>
             </form>
         </div>
         <!-------------------------------------------->
@@ -143,12 +144,12 @@
         <ol class="paging">
             <li class="first"><a href="/">첫페이지</a></li>
             <li class="prev"><a href="/">이전페이지</a></li>
-            <% if (totalPages > 1) { %>
+            <% if (totalPages >= 1) { %>
                 <% for (let i = 1; i <= totalPages; i++) { %>
                     <% if (i === currentPage) { %>
-                        <li><a href="/" id="page<%= i %>" data-page="<%= i %>"><%= i %></a></li>
+                        <li><a href="/?page=<%= i %>&keyword=<%= keyword %>" id="page<%= i %>" data-page="<%= i %>"><%= i %></a></li> <!-- 수정된 부분 -->
                     <% } else { %>
-                        <li><a href="/" id="page<%= i %>" data-page="<%= i %>"><%= i %></a></li>
+                        <li><a href="/?page=<%= i %>&keyword=<%= keyword %>" id="page<%= i %>" data-page="<%= i %>"><%= i %></a></li> <!-- 수정된 부분 -->
                     <% } %>
                 <% } %>
             <% } %>
@@ -157,94 +158,34 @@
         </ol>
     </div>
 </div>
-
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const paginationLinks = document.querySelectorAll(".paging a");
-        paginationLinks.forEach(link => {
-            link.addEventListener("click", function(event) {
-                event.preventDefault();
-                const page = parseInt(this.getAttribute("data-page"));
-                fetchProjects(page);
+    $(document).ready(function() {
+        // .paging a 태그 클릭 이벤트 처리
+        $('.paging a').click(function(e) {
+            e.preventDefault(); // 기본 동작인 페이지 새로고침을 막음
+            var pageUrl = $(this).attr('href'); // 클릭한 링크의 URL 가져오기
+            $.get(pageUrl, function(data) {
+                $('#projectList').html($(data).find('#projectList').html()); // 프로젝트 목록 업데이트
+                $('.paging').html($(data).find('.paging').html()); // 페이징 업데이트
+                window.history.pushState(null, null, pageUrl); // 브라우저 히스토리 업데이트
             });
         });
-
-        function fetchProjects(page) {
-            fetch('/?page=' + page)
-            .then(response => response.text())
-            .then(data => {
-                const startIndex = data.indexOf('<ul class="icons" id="projectList">');
-                const endIndex = data.indexOf('</ul>', startIndex) + 5;
-                const projectListHTML = data.substring(startIndex, endIndex);
-                document.getElementById('projectList').innerHTML = projectListHTML;
-            })
-            .catch(error => console.error('Error:', error));
-        }
-
-        //---------------------------------
-        $(document).ready(function(){
-            $('#searchForm').on('submit', function(e){
-                e.preventDefault();
-                $.ajax({
-                    type: 'POST',
-                    url: '/',
-                    data: $(this).serialize(),
-                    success: function(response){
-                        $('#projectList').html('');
-                        response.projects.forEach(function(project) {
-                            if (project.project_seq) {
-                                $('#projectList').append(`
-                                    <li>
-                                        <div class="icon_img">
-                                            <img src="/images/c.png">
-                                        </div>
-                                        <div class="hompage_top_contents1_bold">${project.introduce_title}</div>
-                                        <div class="hompage_top_contents1">${project.nickname}</div>
-                                        <div class="more"><a href="/project/${project.project_seq}">들어가기</a></div>
-                                    </li>
-                                `);
-                            }
-                        });
-                    }
-                });
+    
+        // searchCategoryButton 버튼 클릭 이벤트 처리
+        $('#searchCategoryButton').click(function(e) {
+            e.preventDefault(); // 기본 동작인 페이지 새로고침을 막음
+            var form = $('#searchCategoryForm');
+            var formData = form.serialize(); // 폼 데이터 가져오기
+            $.get(form.attr('action'), formData, function(data) {
+                $('#projectList').html($(data).find('#projectList').html()); // 프로젝트 목록 업데이트
+                $('.paging').html($(data).find('.paging').html()); // 페이징 업데이트
+                window.history.pushState(null, null, form.attr('action') + '?' + formData); // 브라우저 히스토리 업데이트
             });
-        });
-        //--------------------------------
-
-        const searchCategoryButton = document.getElementById('searchCategoryButton');
-        searchCategoryButton.addEventListener('click', function() {
-            const form = document.getElementById('searchCategoryForm');
-            const formData = new FormData(form);
-
-            fetch('/searchCategory', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                const projectList = document.getElementById('projectList');
-                projectList.innerHTML = ''; // Clear the existing projects
-
-                if (data.projects && data.projects.length > 0) {
-                    data.projects.forEach(project => {
-                        const li = document.createElement('li');
-                        li.innerHTML = `
-                            <div class="icon_img">
-                                <img src="/images/c.png">
-                            </div>
-                            <div class="hompage_top_contents1_bold">${project.introduce_title}</div>
-                            <div class="hompage_top_contents1">${project.nickname}</div>    
-                            <div class="more"><a href="/project/${project.project_seq}">들어가기</a></div>
-                        `;
-                        projectList.appendChild(li);
-                    });
-                } else {
-                    projectList.innerHTML = '<li>검색 결과가 없습니다.</li>';
-                }
-            })
-            .catch(error => console.error('Error:', error));
         });
     });
-</script>  
+    </script>
+    
+    
+
 
 <%- include('footer') %>
