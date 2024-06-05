@@ -41,10 +41,11 @@ app.use((req, res, next) => {
 })
 
 //-----------------------search추가---------------------------
-function searchData(keywords, callback) {
+
+function searchData(keywords, page, perPage, callback) {
   let sql = 'SELECT * FROM project_info WHERE 1=1';
   let values = [];
-  
+
   keywords.forEach(keyword => {
     keyword = `%${keyword.trim()}%`;
     sql += `
@@ -61,37 +62,148 @@ function searchData(keywords, callback) {
         introduce_detail LIKE ?
       )
     `;
+    // 검색 키워드별로 값 배열(values)에 추가
     values.push(keyword, keyword, keyword, keyword, keyword, keyword, keyword, keyword, keyword, keyword);
   });
 
-  connection.query(sql, values, (err, results) => {
+    // OFFSET 값 계산
+        // 페이지네이션을 포함한 쿼리 실행
+        let offset = (page - 1) * perPage;
+        sql += `LIMIT ? OFFSET ?`
+        values.push(perPage, offset);
+      // 전체 데이터 수 조회 쿼리 실행
+      
+  // 전체 데이터 수를 가져오기 위한 쿼리
+  let countSql = `SELECT COUNT(*) as count FROM project_info WHERE 1=1`;
+  keywords.forEach(keyword => {
+    keyword = `%${keyword.trim()}%`;
+    countSql += `
+      AND (
+        category LIKE ? OR 
+        mem_number LIKE ? OR 
+        way LIKE ? OR 
+        period LIKE ? OR 
+        teck_stack LIKE ? OR 
+        deadline LIKE ? OR 
+        position LIKE ? OR 
+        contact LIKE ? OR 
+        introduce_title LIKE ? OR 
+        introduce_detail LIKE ?
+      )
+    `;
+    // 검색 키워드별로 값 배열(values)에 추가
+    values.push(keyword, keyword, keyword, keyword, keyword, keyword, keyword, keyword, keyword, keyword);
+  });
+
+  connection.query(countSql, values, (err, countResult) => {
     if (err) {
-      console.error('Error executing query:', err);
-      callback([]);
+      console.error('Error executing count query:', err);
+      callback([], 0);
       return;
     }
-    callback(results);
+    const totalCount = countResult[0].count;
+    const totalPages = Math.ceil(totalCount / perPage);
+    
+
+    // 검색 결과 및 전체 페이지 수 콜백으로 반환
+    connection.query(sql, values, (err, results) => {
+      if (err) {
+          console.error('Error executing query:', err);
+          callback([], 0);
+          return;
+      }
+      callback(results, totalPages);
+    });
   });
 }
-//----------------------------------------------------------
+/* 카테고리
+function searchCategory(category, skill_stack, roll, page, perPage,callback) {
+  let sql = 'SELECT * FROM project_info WHERE 1=1';
+  let values = [];
+
+  if (category) {
+      sql += ' AND category = ?';
+      values.push(category);
+  }
+
+  if (skill_stack) {
+      sql += ' AND teck_stack LIKE ?';
+      values.push(`%${skill_stack}%`);
+  }
+
+  if (roll) {
+      sql += ' AND position LIKE ?';
+      values.push(`%${roll}%`);
+  }
+
+  let offset = (page - 1) * perPage;
+        sql += `LIMIT ? OFFSET ?`
+        values.push(perPage, offset);
+  
+  let countSql = 'SELECT COUNT(*) AS count FROM project_info WHERE 1=1';
+
+  if (category) {
+      countSql += ' AND category = ?';
+  }
+
+  if (skill_stack) {
+      countSql += ' AND teck_stack LIKE ?';
+  }
+
+  if (roll) {
+      countSql += ' AND position LIKE ?';
+  }
+
+  connection.query(countSql, values, (err, countResult) => {
+    if (err) {
+      console.error('Error executing count query:', err);
+      callback([], 0);
+      return;
+    }
+    const totalCount = countResult[0].count;
+    const totalPages = Math.ceil(totalCount / perPage);
+    
+  
+    connection.query(sql, values, (err, results) => {
+      if (err) {
+          console.error('Error executing query:', err);
+          callback([], 0);
+          return;
+      }
+      callback(results, totalPages);
+    });
+  });
+}
+*/
 
 //localhost:3000/ 를 입력하면 나온다
 //추가
 app.get('/', (req, res) => {
   // 페이지 번호 가져오기
+  const keyword = req.query.keyword || '';
+  /*
+  const category = req.query.category; // 카테고리 가져오기
+  const skill_stack = req.query.skill_stack;
+  const roll = req.query.roll;
+  */
   const page = parseInt(req.query.page) || 1;
   const perPage = 9; // 페이지당 데이터 개수
 
   // 페이지에 해당하는 데이터 가져오는 쿼리 수정
-  let offset = (page - 1) * perPage;
-  let sql = `
-  SELECT p.category, p.project_seq, p.introduce_title, p.teck_stack, p.position, p.deadline, m.nickname
-  FROM project_info p
-  JOIN member m ON p.user_id = m.user_id
-  LIMIT ${perPage}
-  OFFSET ${offset}`;
+   if (keyword) {
+    const keywords = keyword.split(',');
+    searchData(keywords, page, perPage, (results, totalPages) => {
+      res.render('index', { projects: results, totalPages, currentPage: page, keyword: keyword });
+    });
+  } else{
+    let offset = (page - 1) * perPage;
+    let sql = `
+      SELECT p.category, p.project_seq, p.introduce_title, p.teck_stack, p.position, p.deadline, m.nickname
+      FROM project_info p
+      JOIN member m ON p.user_id = m.user_id
+      LIMIT ? OFFSET ?`;
 
-  connection.query(sql, (err, results) => {
+    connection.query(sql, [perPage, offset], (err, results) => {
       if (err) throw err;
 
       // 전체 데이터 개수 가져오기 (페이징 처리를 위해)
@@ -104,23 +216,12 @@ app.get('/', (req, res) => {
           const totalPages = Math.ceil(totalCount / perPage);
 
           // EJS 템플릿 렌더링
-          res.render('index', { projects: results, totalPages, currentPage: page });
+          res.render('index', { projects: results, totalPages, currentPage: page, keyword: '' });
       });
-  });
-})
-
-
-app.post('/', (req, res) => {
-  const keyword = req.body.keyword;
-  if (keyword) {
-      const keywords = keyword.split(',');
-      searchData(keywords, (results) => {
-          res.json({ projects: results });
-      });
-  } else {
-      res.redirect('/');
+    });
   }
 });
+
 
 app.post('/searchCategory', (req, res) => {
   const { category, skill_stack, roll } = req.body;
