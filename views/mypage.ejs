@@ -9,8 +9,15 @@
 <body>
     <div class="container">
         <h1>마이 페이지</h1>
-        <form action="/mypageProc" method="post">
+        <!-- form태그 내용 수정-->
+        <form action="/mypageProc" method="post" enctype="multipart/form-data">
             <ul>
+                <% if (member.profile_pic) { %> <!-- 수정된 부분: 프로필 사진 조건부 렌더링 -->
+                <div class="profile-picture">
+                    <img src="data:image/png;base64,<%= member.profile_pic %>" alt="프로필 사진" id="profileImage">
+                </div>
+                <% } %>
+                <li><span>프로필 사진 </span> <input type="file" name="profile_pic" id="profile_pic"></li>
                 <li><span>닉네임 </span> <input type="text" id="nickname" value="<%= member.nickname %>"></li>
                 <li><span>직무 </span> 
                         <select id="job" name="job">

@@ -2,31 +2,43 @@
 
 <div class="main_text1">
     <div class="top_project">
-        <span>추천 프로젝트</span> <!--G1담당-->
+        <!--------------추천 html------------------->
+        <span>추천 프로젝트</span> 
         <div class="turn_project">
             <img src="/images/좌측화살표.png" id="left-arrow">  
             <img src="/images/우측화살표.png" id="right-arrow">
         </div>
     </div>
     <ul class="icons" id="recommendations">
-        <!-- 추천 프로젝트 목록이 여기에 동적으로 추가됩니다 -->
+        <% recommendations.forEach(project => { %>
+            <li>
+                <div class="icon_img">
+                    <img src="/images/c.png">
+                </div>
+                <div class="hompage_top_contents1_bold"><%= project.post_title %></div>
+                <div class="hompage_top_contents1"><%= project.user_name %></div>    
+                <div class="more"><a href="/project/<%= project.project_seq %>">들어가기</a></div>
+            </li>
+        <% }); %>
     </ul>
+    <!-------------- 여기까지 추천 html------------------->
     
+    <!---------------카테고리 및 인기순 최신순 ------------------>
     <div class="middle_project">
         <button id="all_button">전체</button>&emsp;
         <button id="popular_button">인기순</button>&emsp;
         <button id="recent_button">최신순</button>
-     </div>
-     <div class="select_search">
+    </div>
+    <div class="select_search">
         <div class="select_category">
-            <select name="category">
+            <select name="category" id="category">
                 <option selected disabled hidden>카테고리</option>
-                <option>프로젝트</option>
-                <option>스터디</option>
+                <option value="프로젝트">프로젝트</option>
+                <option value="스터디">스터디</option>
             </select>
         </div>
         <div class="select_skill">
-            <select name="skill_stack">
+            <select name="skill_stack" id="skill_stack">
                 <optgroup label="프론트엔드">
                     <option selected disabled hidden>기술스택</option>
                     <option value="JavaScript">JavaScript</option>
@@ -70,7 +82,7 @@
             </select>
         </div>
         <div class="select_roll">
-            <select name="roll">
+            <select name="roll" id="roll">
                 <option selected disabled hidden>역할</option>
                 <option value="backend">백엔드</option>
                 <option value="frontend">프론트엔드</option>
@@ -84,19 +96,18 @@
             </select>
         </div>
         <div class="select_button">
-            <form> 
-                <button>
-                    <img src="/images/돋보기.png">
-                </button>
-            </form>
+            <button id="filter_button">
+                <img src="/images/돋보기.png">
+            </button>
         </div>
         <div class="search_area">
-            <form>
-            	<input type="search" placeholder="프로젝트 키워드 입력">
-				<span>검색</span> 
-            </form>
+            <input type="search" id="search_keyword" placeholder="프로젝트 키워드 입력">
+            <button id="search_button">검색</button>
         </div>
     </div>
+    
+    <!---------------여기까지 카테고리 및 인기순 최신순 검색------------------>
+
     <div class="projectList_grid">
         <ul class="icons" id="projectList">
             <% projects.forEach(project => { %>
@@ -106,11 +117,12 @@
                     </div>
                     <div class="hompage_top_contents1_bold"><%= project.introduce_title %></div>
                     <div class="hompage_top_contents1"><%= project.nickname %></div>    
-                    <div class="more"><a href="/project/<%= project.project_seq %>">들어가기</a></div>      
+                    <div class="more"><a href="/project/<%= project.project_seq %>">들어가기</a></div>
                 </li>
             <% }); %>
         </ul>
     </div>
+
     <div>
         <ol class="paging">
             <li class="first"><a href="/">첫페이지</a></li>
@@ -132,6 +144,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        //------------------page 넘버링--------------------------//
         const paginationLinks = document.querySelectorAll(".paging a");
         paginationLinks.forEach(link => {
             link.addEventListener("click", function(event) {
@@ -153,41 +166,100 @@
             })
             .catch(error => console.error('Error:', error));
         }
-
+        //----------------추천 javascript--------------------//
         let currentSlide = 0;
         const recommendations = <%- JSON.stringify(recommendations) %>;
-
         function showRecommendations(slideIndex) {
             const start = slideIndex * 3;
             const end = start + 3;
             const visibleRecommendations = recommendations.slice(start, end);
-
+            // 추천 프로젝트가 3개가 안될 경우 빈 칸 추가
+            while (visibleRecommendations.length < 3) {
+                visibleRecommendations.push({});
+            }
             const recommendationList = visibleRecommendations.map(project => `
-                <li>
+                <li class="${project.post_title ? '' : 'empty'}">
                     <div class="icon_img">
-                        <img src="/images/c.png">
+                        ${project.post_title ? '<img src="/images/c.png">' : ''}
                     </div>
-                    <div class="hompage_top_contents1_bold">${project.post_title}</div>
-                    <div class="hompage_top_contents1">${project.user_name}</div>    
-                    <div class="more"><a href="/project/${project.project_seq}">들어가기</a></div>      
+                    <div class="hompage_top_contents1_bold">${project.post_title || ''}</div>
+                    <div class="hompage_top_contents1">${project.user_name || ''}</div>    
+                    <div class="more">${project.project_seq ? `<a href="/project/${project.project_seq}">들어가기</a>` : ''}</div>
                 </li>
             `).join('');
 
             document.getElementById('recommendations').innerHTML = recommendationList;
         }
-
         document.getElementById('left-arrow').addEventListener('click', () => {
             currentSlide = (currentSlide - 1 + Math.ceil(recommendations.length / 3)) % Math.ceil(recommendations.length / 3);
             showRecommendations(currentSlide);
         });
-
         document.getElementById('right-arrow').addEventListener('click', () => {
             currentSlide = (currentSlide + 1) % Math.ceil(recommendations.length / 3);
             showRecommendations(currentSlide);
         });
-
         showRecommendations(currentSlide);
+         //----------------------------여기까지 추천 -------------------------------//
+
+         //----------------------------카테고리 javascript -------------------------------//
+         document.getElementById('filter_button').addEventListener('click', () => {
+        const category = document.getElementById('category').value || '';
+        const skill_stack = document.getElementById('skill_stack').value || '';
+        const role = document.getElementById('roll').value || '';
+        const keyword = document.getElementById('search_keyword').value || '';
+
+        console.log(`Filtering with: category=${category}, skill_stack=${skill_stack}, role=${role}, keyword=${keyword}`); // 필터링 정보 확인용 로그
+
+        fetch(`/filter_projects?category=${category}&skill_stack=${skill_stack}&role=${role}&keyword=${keyword}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Filtered Data:', data); // 필터링된 데이터 확인용 로그
+                const projectList = data.map(project => `
+                    <li>
+                        <div class="icon_img">
+                            <img src="/images/c.png">
+                        </div>
+                        <div class="hompage_top_contents1_bold">${project.introduce_title}</div>
+                        <div class="hompage_top_contents1">${project.nickname}</div>    
+                        <div class="more"><a href="/project/${project.project_seq}">들어가기</a></div>
+                    </li>
+                `).join('');
+
+                document.getElementById('projectList').innerHTML = projectList;
+            })
+            .catch(error => console.error('Error:', error));
     });
+
+    document.getElementById('search_button').addEventListener('click', () => {
+        const keyword = document.getElementById('search_keyword').value || '';
+
+        fetch(`/filter_projects?keyword=${keyword}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Filtered Data:', data); // 필터링된 데이터 확인용 로그
+                const projectList = data.map(project => `
+                    <li>
+                        <div class="icon_img">
+                            <img src="/images/c.png">
+                        </div>
+                        <div class="hompage_top_contents1_bold">${project.introduce_title}</div>
+                        <div class="hompage_top_contents1">${project.nickname}</div>    
+                        <div class="more"><a href="/project/${project.project_seq}">들어가기</a></div>
+                    </li>
+                `).join('');
+
+                document.getElementById('projectList').innerHTML = projectList;
+            })
+            .catch(error => console.error('Error:', error));
+    });
+    //----------------------------카테고리 javascript -------------------------------//
+});
+
 </script>
+<style>
+    .icons li.empty {
+        visibility: hidden;
+    }
+</style>
 
 <%- include('footer') %>

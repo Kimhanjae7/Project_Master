@@ -49,6 +49,7 @@ def get_matching_posts(user_id):
             score = calculate_match_score(new_user.interest_stack, post.teck_stack) # 사용 스킬 몇개 매칭되는 지
             if score > 0:  # 매칭 점수가 0이 아닌 것만 추가
                 matching_scores.append({ # 각각의 매치 점수 추가
+                    'project_seq': post.project_seq,  # project_seq 추가
                     'user_id': new_user.user_id,
                     'user_name': new_user.user_name,
                     'post_title': post.introduce_title,
@@ -76,4 +77,4 @@ def get_matching_posts_route():
         return jsonify({"error": "Missing user_id"}), 400
 
 if __name__ == '__main__':
-    app.run(port=5004)
+    app.run(port=4000)
