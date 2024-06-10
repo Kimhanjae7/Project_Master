@@ -1,0 +1,96 @@
+<%- include('header') %>
+<h1>게시물 상세보기</h1>
+<table border="1">
+    <tr>
+        <th>category</th>
+        <td><%= projects.category %></td>
+    </tr>
+    <tr>
+        <th>mem_number</th>
+        <td><%= projects.mem_number %></td>
+    </tr>
+    <tr>
+        <th>way</th>
+        <td><%= projects.way %></td>
+    </tr>
+    <tr>
+        <th>period</th>
+        <td><%= projects.period %></td>
+    </tr>
+    <tr>
+        <th>teck_stack</th>
+        <td><%= projects.teck_stack %></td>
+    </tr>
+    <tr>
+        <th>deadline</th>
+        <td><%= projects.deadline %></td>
+    </tr>
+    <tr>
+        <th>position</th>
+        <td><%= projects.position %></td>
+    </tr>
+    <tr>
+        <th>contact</th>
+        <td><%= projects.contact %></td>
+    </tr>
+    <tr>
+        <th>introduce_title</th>
+        <td><%= projects.introduce_title %></td>
+    </tr>
+    <tr>
+        <th>introduce_detail</th>
+        <td><%= projects.introduce_detail %></td>
+    </tr>
+    <tr>
+        <th>date</th>
+        <td><%= projects.date %></td>
+    </tr>
+</table>
+<a href="/board">목록으로 돌아가기</a>
+<br>
+<!-- 게시글 작성자와 현재 로그인한 사용자의 user_id를 비교하여 버튼 표시 -->
+<% if (isAuthor) { %>
+    <a href="/edit/<%= projects.project_seq %>">수정</a>
+    <a href="/start/<%= projects.project_seq %>">프로젝트시작</a>
+    <a href="/delete/<%= projects.project_seq %>">삭제</a>
+
+    <br>
+
+    <h2>프로젝트 참가자 목록</h2>
+    <ul>
+        <% participants.forEach(participant => { %>
+            <li>
+                참가자 ID: <%= participant.user_id %> - 직무: <%= participant.position %>
+                <% if (participant.status === '신청') { %>
+                    <form action="/accept" method="POST" style="display:inline;">
+                        <input type="hidden" name="user_id" value="<%= participant.user_id %>">
+                        <input type="hidden" name="project_seq" value="<%= projects.project_seq %>">
+                        <button type="submit">수락</button>
+                    </form>
+                    <form action="/reject" method="POST" style="display:inline;">
+                        <input type="hidden" name="user_id" value="<%= participant.user_id %>">
+                        <input type="hidden" name="project_seq" value="<%= projects.project_seq %>">
+                        <button type="submit">거절</button>
+                    </form>
+                <% } else { %>
+                    - 상태: <%= participant.status %>
+                <% } %>
+            </li>
+        <% }) %>
+    </ul>
+<% } %>
+
+<!-- 신청하기 버튼 추가 -->
+<form action="/apply" method="POST">
+    <input type="hidden" name="project_seq" value="<%= projects.project_seq %>">
+    <label for="position">직무 선택:</label>
+    <select name="position" id="position">
+        <option value="developer">개발자</option>
+        <option value="designer">디자이너</option>
+        <option value="manager">매니저</option>
+        <!-- 필요한 다른 직무 옵션들을 추가할 수 있습니다 -->
+    </select>
+    <button type="submit">신청하기</button>
+</form>
+
+<%- include('footer') %>
