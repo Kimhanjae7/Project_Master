@@ -35,6 +35,7 @@ const path = require('path');
 const port = process.env.PORT || 3000;
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const { exec } = require('child_process');
 
 const mysql = require('mysql2')
 const connection = mysql.createConnection(process.env.DATABASE_URL)
@@ -52,7 +53,19 @@ const fs = require('fs');
 const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+/*
+// Flask 서버 실행 코드 수정
+const flaskScriptPath = path.join(__dirname, 'flask_app.py');
+console.log(`Attempting to start Flask server with script at: ${flaskScriptPath}`);
 
+exec(`python ${flaskScriptPath} > flask_server.log 2>&1`, (err, stdout, stderr) => {
+    if (err) {
+        console.error(`Error executing Flask server: ${err}`);
+        return;
+    }
+    console.log(`Flask server started successfully.`);
+});
+*/
 // 정적 파일 서빙 설정
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -62,7 +75,7 @@ app.set('views', './views'); // views라는 폴더안에 있는걸 가져온다
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Use the session middleware
-app.use(session({ secret: 'yesung', cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true }));
+app.use(session({ secret: 'yesung', cookie: { maxAge: 24 * 60 * 60 * 1000 }, resave: true, saveUninitialized: true }));
 
 app.use((req, res, next) => {
     res.locals.user_id = "";
@@ -74,54 +87,130 @@ app.use((req, res, next) => {
 
 // 메인 페이지
 app.get('/', (req, res) => {
-    // 페이지 번호 가져오기
-    const page = parseInt(req.query.page) || 1;
-    const perPage = 9; // 페이지당 데이터 개수
-    const user_id = req.session.member ? req.session.member.user_id : 'user01'; // 기본 사용자 ID 설정
-       // 페이지에 해당하는 데이터 가져오는 쿼리 수정
-    let offset = (page - 1) * perPage;
-    let sql = `
-    SELECT p.category, p.project_seq, p.introduce_title, p.teck_stack, p.position, p.deadline, m.nickname
-    FROM project_info p
-    JOIN member m ON p.user_id = m.user_id
-    LIMIT ${perPage}
-    OFFSET ${offset}`;
+  const page = parseInt(req.query.page) || 1;
+  const perPage = 9;
+  const user_id = req.session.member ? req.session.member.user_id : 'user01';  // 세션에서 사용자 ID를 가져옴, 기본값은 null
+  const offset = (page - 1) * perPage;
 
-    // Flask 서버에 요청을 보내어 맞춤 추천 게시글 가져오기 (G1)
-    axios.get('http://localhost:4000/get_matching_posts', { params: { user_id } })
-        .then(response => {
-            const recommendations = response.data;
+  let sql = `
+  SELECT p.category, p.project_seq, p.introduce_title, p.teck_stack, p.position, p.deadline, m.nickname
+  FROM project_info p
+  JOIN member m ON p.user_id = m.user_id
+  ORDER BY p.project_seq ASC
+  LIMIT ${perPage}
+  OFFSET ${offset}`;
+
+  if (user_id) {
+      // 추천 포스트를 가져오는 API 호출
+      axios.get('http://localhost:2010/get_matching_posts', { params: { user_id } })
+          .then(response => {
+              const recommendations = response.data;
+              console.log('Recommendations:', recommendations); // 추천 결과 로그 출력
+
+              connection.query(sql, (err, results) => {
+                  if (err) throw err;
+
+                  let countSql = `SELECT COUNT(*) as count FROM project_info`;
+                  connection.query(countSql, (err, countResult) => {
+                      if (err) throw err;
+                      const totalCount = countResult[0].count;
+                      const totalPages = Math.ceil(totalCount / perPage);
+
+                      res.render('index', { projects: results, totalPages, currentPage: page, recommendations: recommendations });
+                  });
+              });
+          })
+          .catch(error => {
+              console.error('Error fetching recommendations:', error);
+              res.render('index', { projects: [], totalPages: 0, currentPage: 1, recommendations: [] });
+          });
+  } else {
+      // 세션에 사용자 ID가 없는 경우 추천 프로그램을 표시하지 않음
+      connection.query(sql, (err, results) => {
+          if (err) throw err;
+
+          let countSql = `SELECT COUNT(*) as count FROM project_info`;
+          connection.query(countSql, (err, countResult) => {
+              if (err) throw err;
+              const totalCount = countResult[0].count;
+              const totalPages = Math.ceil(totalCount / perPage);
+
+              res.render('index', { projects: results, totalPages, currentPage: page, recommendations: [] });
+          });
+      });
+  }
+});
 
 
-            // 페이지에 해당하는 데이터 가져오는 쿼리 수정
-            let offset = (page - 1) * perPage;
-            let sql = `
-            SELECT p.category, p.project_seq, p.introduce_title, p.teck_stack, p.position, p.deadline, m.nickname
-            FROM project_info p
-            JOIN member m ON p.user_id = m.user_id
-            LIMIT ${perPage}
-            OFFSET ${offset}`;
 
-            connection.query(sql, (err, results) => {
-                if (err) throw err;
 
-                // 전체 데이터 개수 가져오기 (페이징 처리를 위해)
-                let countSql = `SELECT COUNT(*) as count FROM project_info`;
-                connection.query(countSql, (err, countResult) => {
-                    if (err) throw err;
-                    const totalCount = countResult[0].count;
 
-                    // 전체 페이지 수 계산
-                    const totalPages = Math.ceil(totalCount / perPage);
+// ------------------------- 인기순 -------------------------------
+app.get('/get_popular_projects', (req, res) => {
+  // 페이지 번호 가져오기
+  const page = parseInt(req.query.page) || 1;
+  const perPage = 9; // 페이지당 데이터 개수
+  let offset = (page - 1) * perPage;
 
-                    // EJS 템플릿 렌더링
-                    res.render('index', { projects: results, totalPages, currentPage: page, recommendations: recommendations });
-                });
-            });
-        })
-        .catch(error => {
-            res.render('index', { projects: [], totalPages: 0, currentPage: 1, recommendations: [] });
-        });
+  // 조회수에 따라 프로젝트 정렬
+  let sql = `
+  SELECT p.category, p.project_seq, p.introduce_title, p.teck_stack, p.position, p.deadline, m.nickname, p.view_count
+  FROM project_info p
+  JOIN member m ON p.user_id = m.user_id
+  ORDER BY p.view_count DESC, p.project_seq ASC
+  LIMIT ${perPage}
+  OFFSET ${offset}`;
+
+  connection.query(sql, (err, results) => {
+      if (err) throw err;
+
+      // 전체 데이터 개수 가져오기 (페이징 처리를 위해)
+      let countSql = `SELECT COUNT(*) as count FROM project_info`;
+      connection.query(countSql, (err, countResult) => {
+          if (err) throw err;
+          const totalCount = countResult[0].count;
+
+          // 전체 페이지 수 계산
+          const totalPages = Math.ceil(totalCount / perPage);
+
+          // JSON 데이터로 응답
+          res.json({ projects: results, totalPages, currentPage: page });
+      });
+  });
+});
+
+// ------------------------- 최신순 -------------------------------
+app.get('/get_recent_projects', (req, res) => {
+  // 페이지 번호 가져오기
+  const page = parseInt(req.query.page) || 1;
+  const perPage = 9; // 페이지당 데이터 개수
+  let offset = (page - 1) * perPage;
+
+  // 최신순으로 정렬된 데이터 가져오는 쿼리
+  let sql = `
+  SELECT p.category, p.project_seq, p.introduce_title, p.teck_stack, p.position, p.deadline, m.nickname
+  FROM project_info p
+  JOIN member m ON p.user_id = m.user_id
+  ORDER BY p.date DESC
+  LIMIT ${perPage}
+  OFFSET ${offset}`;
+
+  connection.query(sql, (err, results) => {
+      if (err) throw err;
+
+      // 전체 데이터 개수 가져오기 (페이징 처리를 위해)
+      let countSql = `SELECT COUNT(*) as count FROM project_info`;
+      connection.query(countSql, (err, countResult) => {
+          if (err) throw err;
+          const totalCount = countResult[0].count;
+
+          // 전체 페이지 수 계산
+          const totalPages = Math.ceil(totalCount / perPage);
+
+          // JSON 데이터로 응답
+          res.json({ projects: results, totalPages, currentPage: page });
+      });
+  });
 });
 
 // 카테고리 로직
@@ -200,7 +289,10 @@ app.get('/filter_projects', (req, res) => {
 // 마이 페이지
 app.get('/mypage', (req, res) => { //수정한 부분
   if(req.session.member == null){
-    res.send("<script> alert('로그인하고 접근해주세요'); location.href='/';</script>")
+    res.render('popup', {
+      message: '로그인하고 이용해주세요.', // 표시할 메시지
+      redirectPath: '/' // 확인을 눌렀을 때 이동할 경로
+  });
   }else{
     const user_id = req.session.member.user_id;
     const sql = 'SELECT * FROM member WHERE user_id = ?';
@@ -208,7 +300,10 @@ app.get('/mypage', (req, res) => { //수정한 부분
     connection.query(sql, [user_id], (err, result) => {
       if (err) throw err;
       if (result.length === 0) {
-        res.send("<script> alert('회원 정보를 찾을 수 없습니다'); location.href='/';</script>");
+        res.render('popup', {
+          message: '회원 정보를 찾을 수 없습니다.',
+          redirectPath: '/' 
+      });
       } else {
         const member = result[0];
         // 프로필 이미지를 Base64로 인코딩하여 전달
@@ -260,7 +355,10 @@ app.post('/mypageProc', upload.single('profile_pic'), (req, res) => {
     if (err) throw err;
 
     if (result.length > 0) {
-      res.send("<script> alert('이미 존재하는 닉네임입니다. 다른 닉네임을 선택해주세요.'); history.back();</script>");
+      res.render('popup', {
+        message: '이미 존재하는 닉네임입니다. 다른 닉네임을 선택해주세요.',
+        redirectPath: 'back' 
+    });
     } else {
       var sql = `
         UPDATE member 
@@ -285,7 +383,10 @@ app.post('/mypageProc', upload.single('profile_pic'), (req, res) => {
       connection.query(sql, values, function(err, result) {
         if (err) throw err;
         console.log('자료 1개를 삽입하였습니다');
-        res.send("<script> alert('마이페이지가 수정되었습니다.'); location.href='/mypage';</script>");
+        res.render('popup', {
+          message: '마이페이지가 수정되었습니다.',
+          redirectPath: '/mypage' 
+      });
       });
     }
   });
@@ -307,7 +408,10 @@ app.post('/loginProc', (req, res) => {
   connection.query(sql, values, function(err, result){
     if(err) throw err;
     if(result.length==0){
-      res.send("<script> alert('존재하지 않는 아이디입니다.'); location.href='/login';</script>")
+      res.render('popup', {
+        message: '존재하지 않는 아이디입니다.',
+        redirectPath: '/login' 
+    });
     } else{
       req.session.member = result[0];
       res.send("<script> location.href='/';</script>")
@@ -318,8 +422,10 @@ app.post('/loginProc', (req, res) => {
 // 로그아웃
 app.get('/logout', (req, res) => {
   req.session.member = null;
-  res.send("<script> alert('로그아웃 되었습니다'); location.href='/';</script>")
-
+  res.render('popup', {
+    message: '로그아웃 되었습니다.',
+    redirectPath: '/' 
+});
 })
 
 // 회원가입
@@ -333,7 +439,7 @@ app.post('/joinProc', (req, res) => {
 
   // 이미지 파일을 읽어서 바이너리 데이터로 변환
   //---수정
-  const imagePath = '/Users/sung_a__/workspace/VsCode/project_1/public/images/c.png';
+  const imagePath = 'Users/재희/Desktop/project/public/images/c.png';
   const profile_pic = fs.readFileSync(imagePath);
 
   // 먼저 user_id 중복 확인
@@ -355,8 +461,10 @@ app.post('/joinProc', (req, res) => {
       }
       errorMessage += '입니다.';
       
-      res.send("<script> alert('" + errorMessage + "'); location.href='/join';</script>");
-      
+      res.render('popup', {
+        message: errorMessage,
+        redirectPath: '/join' 
+    });
     } else {
       var insertSql = `INSERT INTO member (user_id, user_pw, user_name, user_phone, nickname, profile_pic) VALUES (?, ?, ?, ?, ?, ?)`;
       var values = [user_id, user_pw, user_name, user_phone, nickname, profile_pic];
@@ -364,7 +472,10 @@ app.post('/joinProc', (req, res) => {
       connection.query(insertSql, values, function(err, result) {
         if (err) throw err;
 
-        res.send("<script> alert('회원가입 성공하였습니다'); location.href='/';</script>");
+        res.render('popup', {
+          message: '회원가입에 성공하였습니다.',
+          redirectPath: '/login' 
+      });
       });
     }
   })
@@ -374,7 +485,10 @@ app.post('/joinProc', (req, res) => {
 // 모집글
 app.get('/registration', (req, res) => {
   if(req.session.member == null){
-    res.send("<script> alert('로그인하고 접근해주세요'); location.href='/';</script>")
+    res.render('popup', {
+      message: '로그인하고 접근해주세요',
+      redirectPath: '/' 
+  });
   }else{
   res.render('registration')
   }
@@ -392,7 +506,10 @@ app.post('/registrationProc', (req, res) => {
 
   connection.query(insertSql, values, function (err, result) {
     if (err) throw err
-    res.send("<script> alert('게시글이 등록되었습니다'); location.href='/';</script>")
+    res.render('popup', {
+      message: '게시글이 등록되었습니다.',
+      redirectPath: '/' 
+  });
   })
 })
 
@@ -424,7 +541,10 @@ app.get('/project/:project_seq', (req, res) => {
       }
     } else {
       console.log('No project found');
-      res.send("<script> alert('게시물이 존재하지 않습니다'); location.href='/board';</script>");
+      res.render('popup', {
+        message: '게시물이 존재하지 않습니다.',
+        redirectPath: '/' 
+    });
     }
   });
 });
@@ -438,9 +558,15 @@ app.post('/accept', (req, res) => {
   connection.query(updateSql, [user_id, project_seq], function(err, result) {
     if (err) {
       console.error('Database query error:', err);
-      return res.send("<script> alert('수락 처리 중 오류가 발생했습니다. 다시 시도해 주세요.'); history.go(-1);</script>");
+      res.render('popup', {
+        message: '수락 처리 중 오류가 발생했습니다. 다시 시도해 주세요.',
+        redirectPath: 'back' 
+    });
     }
-    res.send("<script> alert('참가 신청이 수락되었습니다.'); location.href='/project/" + project_seq + "';</script>");
+    res.render('popup', {
+      message: '참가 신청이 수락되었습니다.',
+      redirectPath: '/poject/' + project_seq 
+  }); 
   });
 });
 
@@ -453,9 +579,15 @@ app.post('/reject', (req, res) => {
   connection.query(deleteSql, [user_id, project_seq], function(err, result) {
     if (err) {
       console.error('Database query error:', err);
-      return res.send("<script> alert('거절 처리 중 오류가 발생했습니다. 다시 시도해 주세요.'); history.go(-1);</script>");
+      res.render('popup', {
+        message: '거절 처리 중 오류가 발생했습니다. 다시 시도해 주세요.',
+        redirectPath: 'back' 
+    });
     }
-    res.send("<script> alert('참가 신청이 거절되었습니다.'); location.href='/project/" + project_seq + "';</script>");
+    res.render('popup', {
+      message: '참가 신청이 거절되었습니다..',
+      redirectPath: '/project' + project_seq 
+  });
   });
 });
 
@@ -466,7 +598,10 @@ app.post('/apply', async (req, res) => {
 
   // 사용자 ID가 없는 경우 처리
   if (!user_id) {
-    return res.send("<script> alert('사용자 ID를 찾을 수 없습니다. 다시 로그인 해주세요.'); location.href='/login';</script>");
+    res.render('popup', {
+      message: '사용자 ID를 찾을 수 없습니다. 다시 로그인 해주세요.',
+      redirectPath: '/login' 
+  });
   }
 
   // 폼 데이터 가져오기
@@ -476,13 +611,19 @@ app.post('/apply', async (req, res) => {
   connection.query('SELECT user_id FROM project_info WHERE project_seq = ?', [project_seq], (err, result) => {
     if (err) {
       console.error('Database query error:', error);
-      return res.send("<script> alert('신청 중 오류가 발생했습니다. 다시 시도해 주세요.'); location.href='/';</script>");
+      res.render('popup', {
+        message: '신청 중 오류가 발생했습니다. 다시 시도해 주세요.',
+        redirectPath: '/' 
+    });
     }
 
     // 게시글 작성자와 로그인한 사용자의 user_id 비교하여 신청 가능 여부 확인
     const author_id = result[0].user_id;
     if (user_id === author_id) {
-      return res.send("<script> alert('본인 게시글에는 신청할 수 없습니다.'); history.go(-1);</script>");
+      res.render('popup', {
+        message: '본인 게시글에는 신청할 수 없습니다.',
+        redirectPath: '/back' 
+    });
     }
 
     // SQL 삽입문
@@ -496,10 +637,16 @@ app.post('/apply', async (req, res) => {
     connection.query(insertSql, values, (err, result) => {
       if (err) {
         console.error('Database query error:', error);
-        return res.send("<script> alert('신청 중 오류가 발생했습니다. 다시 시도해 주세요.'); location.href='/';</script>");
+        res.render('popup', {
+          message: '신청 중 오류가 발생했습니다. 다시 시도해 주세요.',
+          redirectPath: '/' 
+      });
       }
       
-      res.send("<script> alert('신청이 완료되었습니다'); location.href='/';</script>");
+      res.render('popup', {
+        message: '신청이 완료되었습니다.',
+        redirectPath: '/' 
+    });
     });
   });
 });
@@ -513,7 +660,10 @@ app.post('/delete/:project_seq', (req, res) => {
       console.error(err);
       return res.status(500).send('게시물을 삭제하는 중 오류가 발생했습니다.');
     }
-    res.send("<script> alert('게시물 삭제가 완료되었습니다'); location.href='/';</script>");
+    res.render('popup', {
+      message: '게시글 삭제가 완료되었습니다.',
+      redirectPath: '/' 
+  });
   });
 });
 
@@ -522,7 +672,10 @@ app.post('/edit/:project_seq', (req, res) => {
   const user_id = req.session.member ? req.session.member.user_id : null;
 
   if(req.session.member == null){
-    res.send("<script> alert('로그인하고 접근해주세요'); location.href='/login';</script>")
+    res.render('popup', {
+      message: '로그인하고 접근해주세요.',
+      redirectPath: '/login' 
+  });
   }else{
   const selectSql = `SELECT * FROM project_info WHERE project_seq = ?`;
 
@@ -543,11 +696,17 @@ app.post('/edit/:project_seq', (req, res) => {
         });
       } else {
         //작성자 아닌 사람
-        res.send("<script> alert('작성자가 아닙니다.'); history.back();</script>");
+        res.render('popup', {
+          message: '작성자가 아닙니다.',
+          redirectPath: 'back' 
+      });
       }
     } else {
       console.log('No project found');
-      res.send("<script> alert('게시물이 존재하지 않습니다'); location.href='/';</script>");
+      res.render('popup', {
+        message: '게시글이 존재하지 않습니다.',
+        redirectPath: '/' 
+    });
     }
   });
 }
@@ -561,7 +720,10 @@ app.post('/editProc/:project_seq', (req, res) => {
   connection.query(getExistingSql, [project_seq], function (err, results) {
     if (err) throw err;
     if (results.length === 0) {
-      return res.send("<script> alert('해당 게시글을 찾을 수 없습니다.'); history.back(); </script>");
+      return res.render('popup', {
+        message: '해당 게시글을 찾을 수 없습니다.',
+        redirectPath: 'back' 
+    });
     }
   
   const existingProject = results[0];
@@ -596,9 +758,15 @@ app.post('/editProc/:project_seq', (req, res) => {
    connection.query(updateSql, values, function (err, result) {
     if (err) throw err
     if (result.length === 0) {
-      return res.send("<script> alert('수정을 실패했습니다. 다시 시도해주세요.'); history.back(); </script>");
+      return res.render('popup', {
+        message: '수정을 실패했습니다. 다시 시도해주세요.',
+        redirectPath: '/back' 
+    });
     }
-    res.send("<script> alert('게시글이 수정되었습니다.'); location.href='/project/" + project_seq + "';</script>");
+    res.render('popup', {
+      message: '게시글이 수정되었습니다.',
+      redirectPath: '/project/' + project_seq 
+  });
   });
 });
 });
