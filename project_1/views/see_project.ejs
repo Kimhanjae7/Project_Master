@@ -4,22 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>내 프로젝트 보기</title>
+  <link rel="stylesheet" href="/Users/sung_a__/workspace/VsCode/project_1/public/images/">
 </head>
 <body>
   <div class="container">
-    <h1>내 프로젝트 보기</h1>
+    <h1>My Projects</h1>
+  <div class="user-info">
+    <h3><%= nickname %></h3>
+    <img src="<%= profile_pic %>" alt="Profile Picture" class="profile-pic">
+  </div>
     <% if (posts.length > 0) { %>
       <ul>
         <% posts.forEach(post => { %>
           <li>
-            <h2><%= post.category %></h2>
-            <p><%= post.content %></p>
-            <small>작성일: <%= post.created_at %></small>
+            <h2><%= post.introduce_title %></h2>
+            <p><%= post.category %></p>
+            <p><%= post.deadline %></p>
+            <p><%= post.position %></p>
+            <p><%= post.teck_stack %></p>
           </li>
-        <% }) %>
+        <% }); %>
       </ul>
     <% } else { %>
-      <p>게시글이 없습니다.</p>
+      <p>No projects found.</p>
     <% } %>
   </div>
 </body>
