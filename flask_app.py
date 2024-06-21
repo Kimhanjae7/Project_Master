@@ -40,41 +40,31 @@ def get_matching_posts(user_id):
     def calculate_match_score(member_tech_stack, post_tech_stack):
         if not post_tech_stack:
             return 0
-        return len(set(member_tech_stack) & set(post_tech_stack)) / len(set(post_tech_stack))
+        return len(set(member_tech_stack) & set(post_tech_stack))
 
     matching_scores = []
     for post in p_df.itertuples():
-        # 포지션이 일치하는 경우 우선 고려
+        score = calculate_match_score(new_user.interest_stack, post.teck_stack)  # 사용 스킬 몇개 매칭되는 지
+        priority = 0
         if new_user.job == post.position:
-            score = calculate_match_score(new_user.interest_stack, post.teck_stack) # 사용 스킬 몇개 매칭되는 지
-            if score > 0:  # 매칭 점수가 0이 아닌 것만 추가
-                matching_scores.append({ # 각각의 매치 점수 추가
-                    'project_seq': post.project_seq,  # project_seq 추가
-                    'user_id': new_user.user_id,
-                    'user_name': new_user.user_name,
-                    'post_title': post.introduce_title,
-                    'position': post.position,
-                    'tech_stack_match_score': score,
-                    'matched_skills': ', '.join(set(new_user.interest_stack) & set(post.teck_stack)),
-                    'total_required_skills': len(post.teck_stack)
-                })
-    
+            priority = 1  # job과 position이 일치하면 우선순위를 1로 설정
+        
+        matching_scores.append({  # 각각의 매치 점수 추가
+            'project_seq': post.project_seq,  # project_seq 추가
+            'user_id': new_user.user_id,
+            'user_name': new_user.user_name,
+            'post_title': post.introduce_title,
+            'position': post.position,
+            'priority': priority,
+            'tech_stack_match_score': score,
+            'matched_skills': ', '.join(set(new_user.interest_stack) & set(post.teck_stack)),
+            'total_required_skills': len(post.teck_stack)
+        })
+
     # 매치 점수 df 생성
     match_df = pd.DataFrame(matching_scores)
 
-    # 매치 점수로 정렬 (높은순으로)
-    match_df = match_df.sort_values(by=['tech_stack_match_score'], ascending=False)
-    
+    # 우선순위(priority)와 매칭 점수(tech_stack_match_score)로 정렬 (우선순위 높은 것 먼저, 매칭 점수 높은 것 먼저)
+    match_df = match_df.sort_values(by=['priority', 'tech_stack_match_score'], ascending=[False, False])
+
     return match_df.to_dict(orient='records')
-
-@app.route('/get_matching_posts', methods=['GET'])
-def get_matching_posts_route():
-    user_id = request.args.get('user_id')
-    if user_id:
-        matching_posts = get_matching_posts(user_id)
-        return jsonify(matching_posts)
-    else:
-        return jsonify({"error": "Missing user_id"}), 400
-
-if __name__ == '__main__':
-    app.run(port=4000)

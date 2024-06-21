@@ -252,10 +252,71 @@
             })
             .catch(error => console.error('Error:', error));
     });
-    //----------------------------카테고리 javascript -------------------------------//
+    //-------------------------------------------------카테고리 javascript -------------------------------//
+
+    //------------------------------------------ 최신순 javascript-------------------------------------------//
+    // ----------------------------------------------------//
+    document.getElementById('recent_button').addEventListener('click', () => {
+        fetchRecentProjects(1); // 1페이지부터 시작
+    });
+
+    function fetchRecentProjects(page) {
+        fetch('/get_recent_projects?page=' + page)
+        .then(response => response.json())
+        .then(data => {
+            const projectList = data.projects.map(project => `
+                <li>
+                    <div class="icon_img">
+                        <img src="/images/c.png">
+                    </div>
+                    <div class="hompage_top_contents1_bold">${project.introduce_title}</div>
+                    <div class="hompage_top_contents1">${project.nickname}</div>    
+                    <div class="more"><a href="/project/${project.project_seq}">들어가기</a></div>
+                </li>
+            `).join('');
+
+            document.getElementById('projectList').innerHTML = projectList;
+
+            // 페이징 업데이트
+            updatePagination(data.totalPages, data.currentPage, fetchRecentProjects);
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    //------------------------------------------ 인기순 javascript-------------------------------------------//
+    document.getElementById('popular_button').addEventListener('click', () => {
+        fetchPopularProjects(1); // 1페이지부터 시작
+    });
+
+    function fetchPopularProjects(page) {
+        fetch('/get_popular_projects?page=' + page)
+        .then(response => response.json())
+        .then(data => {
+            const projectList = data.projects.map(project => `
+                <li>
+                    <div class="icon_img">
+                        <img src="/images/c.png">
+                    </div>
+                    <div class="hompage_top_contents1_bold">${project.introduce_title}</div>
+                    <div class="hompage_top_contents1">${project.nickname}</div>    
+                    <div class="more"><a href="/project/${project.project_seq}">들어가기</a></div>
+                </li>
+            `).join('');
+
+            document.getElementById('projectList').innerHTML = projectList;
+
+            // 페이징 업데이트
+            updatePagination(data.totalPages, data.currentPage, fetchPopularProjects);
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    // ----------------------------------------------------//
 });
 
 </script>
+
+
 <style>
     .icons li.empty {
         visibility: hidden;

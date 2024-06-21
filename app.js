@@ -4,9 +4,11 @@ const ejs = require('ejs');
 const axios = require('axios');
 const app = express();
 const path = require('path');
-const port = process.env.PORT || 5030;
+const port = process.env.PORT || 5070;
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const { exec } = require('child_process');  // 추가된 부분
+
 
 const mysql = require('mysql2');
 const connection = mysql.createConnection({
@@ -29,13 +31,26 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+// Flask 서버 실행 코드 수정
+const flaskScriptPath = path.join(__dirname, 'flask_app.py');
+exec(`python3 ${flaskScriptPath} > flask_server.log 2>&1`, (err, stdout, stderr) => {
+    if (err) {
+        console.error(`Error executing Flask server: ${err}`);
+        return;
+    }
+    console.log(`Flask server started successfully.`);
+});
+
 // 정적 파일 서빙 설정
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.set('view engine', 'ejs');
-app.set('views', './views'); // views라는 폴더안에 있는걸 가져온다
+app.set('views', path.join(__dirname, 'views')); // views 경로를 절대 경로로 설정
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
+// ----------  admin 때문에 추가함. -----------//
+app.use(bodyParser.json()); // --> admin 때문에 추가함.
 
 // Use the session middleware
 app.use(session({ secret: 'yesung', cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true }));
@@ -100,7 +115,7 @@ app.get('/', (req, res) => {
     OFFSET ${offset}`;
 
     // Flask 서버에 요청을 보내어 맞춤 추천 게시글 가져오기 (G1)
-    axios.get('http://localhost:4000/get_matching_posts', { params: { user_id } })
+    axios.get('http://localhost:2010/get_matching_posts', { params: { user_id } })
         .then(response => {
             const recommendations = response.data;
 
@@ -148,6 +163,76 @@ app.post('/', (req, res) => {
   }
 });
 
+
+// ------------------------- 인기순 -------------------------------
+app.get('/get_popular_projects', (req, res) => {
+  // 페이지 번호 가져오기
+  const page = parseInt(req.query.page) || 1;
+  const perPage = 9; // 페이지당 데이터 개수
+  let offset = (page - 1) * perPage;
+
+  // 조회수에 따라 프로젝트 정렬
+  let sql = `
+  SELECT p.category, p.project_seq, p.introduce_title, p.teck_stack, p.position, p.deadline, m.nickname, p.view_count
+  FROM project_info p
+  JOIN member m ON p.user_id = m.user_id
+  ORDER BY p.view_count DESC, p.project_seq ASC
+  LIMIT ${perPage}
+  OFFSET ${offset}`;
+
+  connection.query(sql, (err, results) => {
+      if (err) throw err;
+
+      // 전체 데이터 개수 가져오기 (페이징 처리를 위해)
+      let countSql = `SELECT COUNT(*) as count FROM project_info`;
+      connection.query(countSql, (err, countResult) => {
+          if (err) throw err;
+          const totalCount = countResult[0].count;
+
+          // 전체 페이지 수 계산
+          const totalPages = Math.ceil(totalCount / perPage);
+
+          // JSON 데이터로 응답
+          res.json({ projects: results, totalPages, currentPage: page });
+      });
+  });
+});
+
+// ------------------------- 최신순 -------------------------------
+app.get('/get_recent_projects', (req, res) => {
+  // 페이지 번호 가져오기
+  const page = parseInt(req.query.page) || 1;
+  const perPage = 9; // 페이지당 데이터 개수
+  let offset = (page - 1) * perPage;
+
+  // 최신순으로 정렬된 데이터 가져오는 쿼리
+  let sql = `
+  SELECT p.category, p.project_seq, p.introduce_title, p.teck_stack, p.position, p.deadline, m.nickname
+  FROM project_info p
+  JOIN member m ON p.user_id = m.user_id
+  ORDER BY p.date DESC
+  LIMIT ${perPage}
+  OFFSET ${offset}`;
+
+  connection.query(sql, (err, results) => {
+      if (err) throw err;
+
+      // 전체 데이터 개수 가져오기 (페이징 처리를 위해)
+      let countSql = `SELECT COUNT(*) as count FROM project_info`;
+      connection.query(countSql, (err, countResult) => {
+          if (err) throw err;
+          const totalCount = countResult[0].count;
+
+          // 전체 페이지 수 계산
+          const totalPages = Math.ceil(totalCount / perPage);
+
+          // JSON 데이터로 응답
+          res.json({ projects: results, totalPages, currentPage: page });
+      });
+  });
+});
+
+
 //----------------------------카테고리 -------------------------------//
 app.get('/filter_projects', (req, res) => {
   const { category, skill_stack, role, keyword } = req.query;
@@ -180,8 +265,6 @@ app.get('/filter_projects', (req, res) => {
       res.json(results);
   });
 });
-
-
 
 //----------------------------카테고리 여기까지-------------------------------//
 
@@ -286,6 +369,12 @@ app.get('/login', (req, res) => {
 app.post('/loginProc', (req, res) => {
   const user_id = req.body.user_id;
   const user_pw = req.body.user_pw;
+
+  if (user_id === 'admin' && user_pw === '0000') {
+    req.session.admin = true;
+    res.redirect('/admin');
+    return;
+}
 
   var sql = `select * from member where user_id=? and user_pw=? `
   var values = [user_id, user_pw]
@@ -450,7 +539,253 @@ app.get('/see_project', (req, res) => {
   });
 });
 
+//------------------------ADMIN 로그인 -------------------------//
+app.post('/admin/login', (req, res) => {
+  const { user_id, user_pw } = req.body;
+  if (user_id === 'admin' && user_pw === '0000') {
+      req.session.admin = true;
+      res.redirect('/admin');
+  } else {
+      res.send("<script> alert('잘못된 관리자 로그인 정보입니다.'); location.href='/admin/login';</script>");
+  }
+});
 
+app.get('/admin/logout', (req, res) => {
+  req.session.admin = null;
+  res.redirect('/admin/login');
+});
+
+app.get('/admin/login', (req, res) => {
+  res.render('admin_login');
+});
+
+// 관리자 페이지 보호 미들웨어 추가
+function adminAuth(req, res, next) {
+  if (req.session.admin) {
+      next();
+  } else {
+      res.redirect('/admin/login');
+  }
+}
+
+app.get('/admin', adminAuth, (req, res) => {
+  res.render('admin_dashboard');
+});
+
+//-------------------ADMIN 사용자 생성,수정,삭제-----------------------//
+app.get('/admin/users', adminAuth, (req, res) => {
+  const sql = 'SELECT * FROM member';
+  connection.query(sql, (err, results) => {
+      if (err) throw err;
+      res.render('admin_users', { users: results }); // 'admin_users.ejs' 템플릿에 데이터 전달
+  });
+});
+
+app.post('/admin/users/create', adminAuth, (req, res) => {
+  const { user_id, user_pw, user_name, user_phone, nickname } = req.body;
+  const sql = `INSERT INTO member (user_id, user_pw, user_name, user_phone, nickname) VALUES (?, ?, ?, ?, ?)`;
+
+  connection.query(sql, [user_id, user_pw, user_name, user_phone, nickname], (err, result) => {
+      if (err) return res.json({ success: false });
+      res.json({ success: true });
+  });
+});
+
+app.put('/admin/users/edit/:user_id', adminAuth, (req, res) => {
+  const user_id = req.params.user_id;
+  const updateFields = req.body;
+
+  console.log('Received updateFields:', updateFields); // 수신된 데이터 확인
+
+  const allowedFields = ['user_pw', 'user_name', 'user_phone', 'nickname', 'job', 'affiliation', 'career', 'introduce', 'interest_stack'];
+
+  // 필터링된 필드만 업데이트 쿼리에 포함
+  let sql = `UPDATE member SET `;
+  let params = [];
+
+  allowedFields.forEach(field => {
+      if (updateFields[field] !== undefined && updateFields[field] !== null && updateFields[field] !== '') {
+          sql += `${field} = ?, `;
+          params.push(updateFields[field]);
+      }
+  });
+
+  // 마지막 쉼표와 공백 제거
+  if (params.length > 0) {
+      sql = sql.slice(0, -2);
+      sql += ` WHERE user_id = ?`;
+      params.push(user_id);
+
+      console.log('SQL Query:', sql); // SQL 쿼리 로그
+      console.log('Params:', params); // 파라미터 로그
+
+      connection.query(sql, params, (err, result) => {
+          if (err) return res.json({ success: false, error: err });
+          res.json({ success: true });
+      });
+  } else {
+      console.log('No fields to update', updateFields); // 전달된 데이터 로그
+      return res.json({ success: false, error: 'No fields to update' });
+  }
+});
+
+
+
+
+app.delete('/admin/users/delete/:user_id', adminAuth, (req, res) => {
+  const user_id = req.params.user_id;
+
+  // 먼저 project_info 테이블에서 해당 user_id를 참조하는 행을 삭제합니다.
+  const deleteProjects = 'DELETE FROM project_info WHERE user_id = ?';
+  connection.query(deleteProjects, [user_id], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.json({ success: false });
+    }
+
+    // 이후 member 테이블에서 해당 user_id를 삭제합니다.
+    const deleteUser = 'DELETE FROM member WHERE user_id = ?';
+    connection.query(deleteUser, [user_id], (err, result) => {
+      if (err) {
+        console.error(err);
+        return res.json({ success: false });
+      }
+      return res.json({ success: true });
+    });
+  });
+});
+
+// admin - user - serach
+app.get('/admin/users/search', adminAuth, (req, res) => {
+  const keyword = req.query.keyword;
+  const sql = `SELECT * FROM member WHERE 
+               user_id LIKE ? OR 
+               user_name LIKE ? OR 
+               user_phone LIKE ? OR 
+               nickname LIKE ? OR 
+               job LIKE ? OR 
+               affiliation LIKE ? OR 
+               career LIKE ? OR 
+               introduce LIKE ? OR 
+               interest_stack LIKE ?`;
+
+  const searchValue = `%${keyword}%`;
+  const params = Array(9).fill(searchValue); // 각 필드에 대해 동일한 검색어 사용
+
+  connection.query(sql, params, (err, results) => {
+      if (err) return res.json({ success: false, error: err });
+      res.json({ success: true, users: results });
+  });
+});
+
+
+
+//-------------------ADMIN 게시글 생성,수정,삭제-----------------------//
+// 게시글 관리 페이지
+app.get('/admin/posts', adminAuth, (req, res) => {
+  const searchQuery = req.query.search || '';
+  let sql = 'SELECT * FROM project_info';
+
+  if (searchQuery) {
+    sql += ` WHERE introduce_title LIKE ? OR teck_stack LIKE ? OR category LIKE ? OR project_seq LIKE ? OR user_id LIKE ?`;
+  }
+
+  connection.query(sql, [`%${searchQuery}%`, `%${searchQuery}%`, `%${searchQuery}%`, `%${searchQuery}%`, `%${searchQuery}%`], (err, results) => {
+      if (err) throw err;
+      res.render('admin_posts', { posts: results, searchQuery }); // 'admin_posts.ejs' 템플릿에 데이터 전달
+  });
+});
+
+
+
+// 게시글 검색
+app.get('/admin/posts/search', adminAuth, (req, res) => {
+  const keyword = req.query.keyword;
+  const sql = `SELECT * FROM project_info WHERE 
+               category LIKE ? OR 
+               mem_number LIKE ? OR 
+               way LIKE ? OR 
+               period LIKE ? OR 
+               teck_stack LIKE ? OR 
+               deadline LIKE ? OR 
+               position LIKE ? OR 
+               contact LIKE ? OR 
+               introduce_title LIKE ? OR 
+               introduce_detail LIKE ?`;
+
+  const searchValue = `%${keyword}%`;
+  const params = Array(10).fill(searchValue);
+
+  connection.query(sql, params, (err, results) => {
+      if (err) return res.json({ success: false, error: err });
+      res.json({ success: true, posts: results });
+  });
+});
+
+// 게시글 생성
+app.post('/admin/posts/create', adminAuth, (req, res) => {
+  const { category, mem_number, way, period, teck_stack, deadline, position, contact, introduce_title, introduce_detail, user_id } = req.body;
+  const sql = `INSERT INTO project_info (category, mem_number, way, period, teck_stack, deadline, position, contact, introduce_title, introduce_detail, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+  connection.query(sql, [category, mem_number, way, period, teck_stack, deadline, position, contact, introduce_title, introduce_detail, user_id], (err, result) => {
+      if (err) return res.json({ success: false });
+      res.json({ success: true });
+  });
+});
+
+// 게시글 수정
+app.put('/admin/posts/edit/:project_seq', adminAuth, (req, res) => {
+  const project_seq = req.params.project_seq;
+  const updateFields = req.body;
+  const allowedFields = [
+    'category', 'mem_number', 'way', 'period', 'teck_stack', 
+    'deadline', 'position', 'contact', 'introduce_title', 'user_id'
+  ];
+
+  // 필터링된 필드만 업데이트 쿼리에 포함
+  let sql = `UPDATE project_info SET `;
+  let params = [];
+
+  allowedFields.forEach(field => {
+      if (updateFields[field] !== undefined && updateFields[field] !== '') {
+          sql += `${field} = ?, `;
+          params.push(updateFields[field]);
+      }
+  });
+
+  // 마지막 쉼표와 공백 제거
+  sql = sql.slice(0, -2);
+  sql += ` WHERE project_seq = ?`;
+  params.push(project_seq);
+
+  // 필드가 없는 경우의 처리
+  if (params.length === 1) {
+      console.log('No fields to update', updateFields); // 전달된 데이터 로그
+      return res.json({ success: false, error: 'No fields to update' });
+  }
+
+  console.log('SQL Query:', sql); // SQL 쿼리 로그
+  console.log('Params:', params); // 파라미터 로그
+
+  connection.query(sql, params, (err, result) => {
+      if (err) return res.json({ success: false, error: err });
+      res.json({ success: true });
+  });
+});
+
+
+// 게시글 삭제
+app.delete('/admin/posts/delete/:project_seq', adminAuth, (req, res) => {
+  const project_seq = req.params.project_seq;
+  const sql = 'DELETE FROM project_info WHERE project_seq = ?';
+
+  connection.query(sql, [project_seq], (err, result) => {
+      if (err) return res.json({ success: false });
+      res.json({ success: true });
+  });
+});
+
+//------------------------ADMIN-------------------------//
 app.listen(port, () => {
   console.log(`서버 실행 성공하였습니다. 접속주소 : http://localhost:${port}`)
 })
