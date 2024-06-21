@@ -1,0 +1,10 @@
+ * Serving Flask app 'flask_app'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:2010
+Press CTRL+C to quit
+/Users/g1/Desktop/sw/Project_Master_g1/flask_app.py:25: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+  m_df = pd.read_sql(query_member, conn)
+/Users/g1/Desktop/sw/Project_Master_g1/flask_app.py:28: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+  p_df = pd.read_sql(query_project_info, conn)
+127.0.0.1 - - [21/Jun/2024 20:42:55] "GET /get_matching_posts?user_id=user03 HTTP/1.1" 200 -

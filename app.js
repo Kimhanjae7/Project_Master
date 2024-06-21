@@ -101,67 +101,61 @@ function searchData(keywords, callback) {
 
 // 메인 페이지 라우팅
 app.get('/', (req, res) => {
-    // 페이지 번호 가져오기
-    const page = parseInt(req.query.page) || 1;
-    const perPage = 9; // 페이지당 데이터 개수
-    const user_id = req.session.member ? req.session.member.user_id : 'user01'; // 기본 사용자 ID 설정
-       // 페이지에 해당하는 데이터 가져오는 쿼리 수정
-    let offset = (page - 1) * perPage;
-    let sql = `
-    SELECT p.category, p.project_seq, p.introduce_title, p.teck_stack, p.position, p.deadline, m.nickname
-    FROM project_info p
-    JOIN member m ON p.user_id = m.user_id
-    LIMIT ${perPage}
-    OFFSET ${offset}`;
+  const page = parseInt(req.query.page) || 1;
+  const perPage = 9;
+  const user_id = req.session.member ? req.session.member.user_id : null;  // 세션에서 사용자 ID를 가져옴, 기본값은 null
+  const offset = (page - 1) * perPage;
 
-    // Flask 서버에 요청을 보내어 맞춤 추천 게시글 가져오기 (G1)
-    axios.get('http://localhost:2010/get_matching_posts', { params: { user_id } })
-        .then(response => {
-            const recommendations = response.data;
+  let sql = `
+  SELECT p.category, p.project_seq, p.introduce_title, p.teck_stack, p.position, p.deadline, m.nickname
+  FROM project_info p
+  JOIN member m ON p.user_id = m.user_id
+  ORDER BY p.project_seq ASC
+  LIMIT ${perPage}
+  OFFSET ${offset}`;
 
+  if (user_id) {
+      // 추천 포스트를 가져오는 API 호출
+      axios.get('http://localhost:2010/get_matching_posts', { params: { user_id } })
+          .then(response => {
+              const recommendations = response.data;
+              console.log('Recommendations:', recommendations); // 추천 결과 로그 출력
 
-            // 페이지에 해당하는 데이터 가져오는 쿼리 수정
-            let offset = (page - 1) * perPage;
-            let sql = `
-            SELECT p.category, p.project_seq, p.introduce_title, p.teck_stack, p.position, p.deadline, m.nickname
-            FROM project_info p
-            JOIN member m ON p.user_id = m.user_id
-            LIMIT ${perPage}
-            OFFSET ${offset}`;
+              connection.query(sql, (err, results) => {
+                  if (err) throw err;
 
-            connection.query(sql, (err, results) => {
-                if (err) throw err;
+                  let countSql = `SELECT COUNT(*) as count FROM project_info`;
+                  connection.query(countSql, (err, countResult) => {
+                      if (err) throw err;
+                      const totalCount = countResult[0].count;
+                      const totalPages = Math.ceil(totalCount / perPage);
 
-                // 전체 데이터 개수 가져오기 (페이징 처리를 위해)
-                let countSql = `SELECT COUNT(*) as count FROM project_info`;
-                connection.query(countSql, (err, countResult) => {
-                    if (err) throw err;
-                    const totalCount = countResult[0].count;
-
-                    // 전체 페이지 수 계산
-                    const totalPages = Math.ceil(totalCount / perPage);
-
-                    // EJS 템플릿 렌더링
-                    res.render('index', { projects: results, totalPages, currentPage: page, recommendations: recommendations });
-                });
-            });
-        })
-        .catch(error => {
-            res.render('index', { projects: [], totalPages: 0, currentPage: 1, recommendations: [] });
-        });
-});
-
-app.post('/', (req, res) => {
-  const keyword = req.body.keyword;
-  if (keyword) {
-      const keywords = keyword.split(',');
-      searchData(keywords, (results) => {
-          res.json({ projects: results });
-      });
+                      res.render('index', { projects: results, totalPages, currentPage: page, recommendations: recommendations });
+                  });
+              });
+          })
+          .catch(error => {
+              console.error('Error fetching recommendations:', error);
+              res.render('index', { projects: [], totalPages: 0, currentPage: 1, recommendations: [] });
+          });
   } else {
-      res.redirect('/');
+      // 세션에 사용자 ID가 없는 경우 추천 프로그램을 표시하지 않음
+      connection.query(sql, (err, results) => {
+          if (err) throw err;
+
+          let countSql = `SELECT COUNT(*) as count FROM project_info`;
+          connection.query(countSql, (err, countResult) => {
+              if (err) throw err;
+              const totalCount = countResult[0].count;
+              const totalPages = Math.ceil(totalCount / perPage);
+
+              res.render('index', { projects: results, totalPages, currentPage: page, recommendations: [] });
+          });
+      });
   }
 });
+
+
 
 
 // ------------------------- 인기순 -------------------------------

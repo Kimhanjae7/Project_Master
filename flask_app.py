@@ -67,4 +67,21 @@ def get_matching_posts(user_id):
     # 우선순위(priority)와 매칭 점수(tech_stack_match_score)로 정렬 (우선순위 높은 것 먼저, 매칭 점수 높은 것 먼저)
     match_df = match_df.sort_values(by=['priority', 'tech_stack_match_score'], ascending=[False, False])
 
+    # 로그 출력 추가
     return match_df.to_dict(orient='records')
+
+@app.route('/get_matching_posts', methods=['GET'])
+def get_matching_posts_route():
+    user_id = request.args.get('user_id')
+    if not user_id:
+        return jsonify({"error": "user_id is required"}), 400
+    
+    try:
+        recommendations = get_matching_posts(user_id)
+        return jsonify(recommendations)
+    except Exception as e:
+        print(f"Error getting matching posts: {e}")
+        return jsonify({"error": "An error occurred while getting matching posts"}), 500
+
+if __name__ == '__main__':
+    app.run(port=2010)
