@@ -432,10 +432,6 @@ app.get('/project/:project_seq', (req, res) => {
   const project_seq = req.params.project_seq;
   const user_id = req.session.member ? req.session.member.user_id : null;
 
-  if (!user_id) {
-    return res.send("<script> alert('로그인이 필요합니다.'); location.href='/login';</script>");
-  }
-
   const selectSql = `SELECT * FROM project_info WHERE project_seq = ?`;
 
   connection.query(selectSql, [project_seq], function(err, result) {
@@ -494,11 +490,6 @@ app.post('/reject', (req, res) => {
   });
 });
 
-
-
-
-
-
 //----수정(추가)
 app.get('/see_project', (req, res) => {
   if (req.session.member == null) {
@@ -507,12 +498,25 @@ app.get('/see_project', (req, res) => {
   }
 
   const user_id = req.session.member.user_id;
-  const sql = 'SELECT * FROM project_info WHERE user_id = ?';
 
-  connection.query(sql, [user_id], (err, results) => {
+  const projectSql = 'SELECT introduce_title, category, deadline, position, teck_stack FROM project_info WHERE user_id = ?';
+  
+  const memberSql = 'SELECT nickname, profile_pic FROM member WHERE user_id = ?';
+
+  connection.query(projectSql, [user_id], (err, projectResults) => {
     if (err) throw err;
     
-    res.render('see_project', { posts: results });
+    connection.query(memberSql, [user_id], (err, memberResults) => {
+      if (err) throw err;
+      
+      const memberInfo = memberResults[0];
+      
+      res.render('see_project', { 
+        posts: projectResults,
+        nickname: memberInfo.nickname,
+        profile_pic: memberInfo.profile_pic
+      });
+    });
   });
 });
 
@@ -523,7 +527,7 @@ app.post('/apply', async (req, res) => {
 
   // 사용자 ID가 없는 경우 처리
   if (!user_id) {
-    return res.send("<script> alert('사용자 ID를 찾을 수 없습니다. 다시 로그인 해주세요.'); location.href='/login';</script>");
+    return res.send("<script> alert('로그인 후 시도해주세요'); location.href='/login';</script>");
   }
 
   // 폼 데이터 가져오기
@@ -561,7 +565,18 @@ app.post('/apply', async (req, res) => {
   });
 });
 
+// 게시물 삭제 라우트
+app.post('/delete/:project_seq', (req, res) => {
+  const projectSeq = req.params.project_seq;
 
+  connection.query('DELETE FROM project_info WHERE project_seq = ?', [projectSeq], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('게시물을 삭제하는 중 오류가 발생했습니다.');
+    }
+    res.send("<script> alert('게시물 삭제가 완료되었습니다'); location.href='/';</script>");
+  });
+});
 
 
 app.listen(port, () => {
