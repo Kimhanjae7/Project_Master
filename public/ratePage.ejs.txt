@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/css/ratePage.css">
+    <title>Grade input</title>
+</head>
+<body>
+    <div class="logo_home">
+        <a href="/public/index.ejs"><img src="/images/PM_logo_fin.png"></a><br>
+    </div>
+    <div class="ratePage_wrap">
+        <div class="ratePage_bg">
+            <div class="ratePage">
+                <div class="page_title">
+                    <span class="page_title_text">
+                        "<%= introduceTitle %>"프로젝트 참여자들에 대한 리뷰
+                    </span>
+                </div>
+                <div class="page_section">
+                    <div class="page_section_top">
+                        <form action="/grade" method="POST">
+                        <input type="hidden" name="project_seq" value="<%= project_seq %>">
+                        <input type="hidden" name="introduce_title" value="<%= introduceTitle %>">         
+                        <span class="rate_font_style2">프로젝트를 함께한 <%= participant.nickname %>님에 대한<br>
+                            (직무 <%= participant.position %>) 직무평가를 해주세요 </h2>
+                        <input type="hidden" name="user_ids[]" value="<%= participant.user_id %>">
+                        <input type="hidden" name="job_roles[]" value="<%= participant.position %>">
+                    </div>
+                    <div class="page_section_bottom">
+                        <label for="grade_<%= participant.user_id %>" class="rate_font_style">평점:</label>
+                        <div class="star-rating">
+                            <input type="radio" id="5-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="5"/>
+                            <label for="5-stars-<%= participant.user_id %>" class="star">★</label>
+                            <input type="radio" id="4-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="4"/>
+                            <label for="4-stars-<%= participant.user_id %>" class="star">★</label>
+                            <input type="radio" id="3-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="3"/>
+                            <label for="3-stars-<%= participant.user_id %>" class="star">★</label>
+                            <input type="radio" id="2-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="2"/>
+                            <label for="2-stars-<%= participant.user_id %>" class="star">★</label>
+                            <input type="radio" id="1-star-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="1"/>
+                            <label for="1-star-<%= participant.user_id %>" class="star">★</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="page_section">
+                    <div class="page_section_top">
+                        <form action="/grade" method="POST">
+                        <input type="hidden" name="project_seq" value="<%= project_seq %>">
+                        <input type="hidden" name="introduce_title" value="<%= introduceTitle %>">         
+                        <span class="rate_font_style2">프로젝트를 함께한 <%= participant.nickname %>님에 대한<br>
+                            (직무 <%= participant.position %>) 직무평가를 해주세요 </h2>
+                        <input type="hidden" name="user_ids[]" value="<%= participant.user_id %>">
+                        <input type="hidden" name="job_roles[]" value="<%= participant.position %>">
+                    </div>
+                    <div class="page_section_bottom">
+                        <label for="grade_<%= participant.user_id %>" class="rate_font_style">평점:</label>
+                        <div class="star-rating">
+                            <input type="radio" id="5-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="5"/>
+                            <label for="5-stars-<%= participant.user_id %>" class="star">★</label>
+                            <input type="radio" id="4-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="4"/>
+                            <label for="4-stars-<%= participant.user_id %>" class="star">★</label>
+                            <input type="radio" id="3-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="3"/>
+                            <label for="3-stars-<%= participant.user_id %>" class="star">★</label>
+                            <input type="radio" id="2-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="2"/>
+                            <label for="2-stars-<%= participant.user_id %>" class="star">★</label>
+                            <input type="radio" id="1-star-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="1"/>
+                            <label for="1-star-<%= participant.user_id %>" class="star">★</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="page_section">     
+                    <div class="page_section_top">
+                        <form action="/grade" method="POST">
+                        <input type="hidden" name="project_seq" value="<%= project_seq %>">
+                        <input type="hidden" name="introduce_title" value="<%= introduceTitle %>">         
+                        <span class="rate_font_style2">프로젝트를 함께한 <%= participant.nickname %>님에 대한<br>
+                            (직무 <%= participant.position %>) 직무평가를 해주세요 </h2>
+                        <input type="hidden" name="user_ids[]" value="<%= participant.user_id %>">
+                        <input type="hidden" name="job_roles[]" value="<%= participant.position %>">
+                    </div>
+                    <div class="page_section_bottom">
+                        <label for="grade_<%= participant.user_id %>" class="rate_font_style">평점:</label>
+                        <div class="star-rating">
+                            <input type="radio" id="5-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="5"/>
+                            <label for="5-stars-<%= participant.user_id %>" class="star">★</label>
+                            <input type="radio" id="4-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="4"/>
+                            <label for="4-stars-<%= participant.user_id %>" class="star">★</label>
+                            <input type="radio" id="3-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="3"/>
+                            <label for="3-stars-<%= participant.user_id %>" class="star">★</label>
+                            <input type="radio" id="2-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="2"/>
+                            <label for="2-stars-<%= participant.user_id %>" class="star">★</label>
+                            <input type="radio" id="1-star-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="1"/>
+                            <label for="1-star-<%= participant.user_id %>" class="star">★</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="page_section">
+                    <div class="page_section_top">
+                        <form action="/grade" method="POST">
+                        <input type="hidden" name="project_seq" value="<%= project_seq %>">
+                        <input type="hidden" name="introduce_title" value="<%= introduceTitle %>">         
+                        <span class="rate_font_style2">프로젝트를 함께한 <%= participant.nickname %>님에 대한<br>
+                            (직무 <%= participant.position %>) 직무평가를 해주세요 </h2>
+                        <input type="hidden" name="user_ids[]" value="<%= participant.user_id %>">
+                        <input type="hidden" name="job_roles[]" value="<%= participant.position %>">
+                    </div>
+                    <div class="page_section_bottom">
+                        <label for="grade_<%= participant.user_id %>" class="rate_font_style">평점:</label>
+                        <div class="star-rating">
+                            <input type="radio" id="5-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="5"/>
+                            <label for="5-stars-<%= participant.user_id %>" class="star">★</label>
+                            <input type="radio" id="4-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="4"/>
+                            <label for="4-stars-<%= participant.user_id %>" class="star">★</label>
+                            <input type="radio" id="3-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="3"/>
+                            <label for="3-stars-<%= participant.user_id %>" class="star">★</label>
+                            <input type="radio" id="2-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="2"/>
+                            <label for="2-stars-<%= participant.user_id %>" class="star">★</label>
+                            <input type="radio" id="1-star-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="1"/>
+                            <label for="1-star-<%= participant.user_id %>" class="star">★</label>
+                        </div>
+                    </div>                   
+                </div>               
+                <div class="page_button">
+                    <button class="btPage_style btnFloat"></button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
