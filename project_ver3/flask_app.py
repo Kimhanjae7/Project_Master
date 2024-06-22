@@ -22,7 +22,7 @@ def get_matching_posts(user_id):
     with engine.connect() as conn:
         # 쿼리 실행 및 데이터 가져오기
         query_member = "SELECT * FROM member"
-        query_project_info = "SELECT * FROM project_info"
+        query_project_info = "SELECT * FROM project_info WHERE status = 'active'"
 
         # member 데이터 로드
         m_df = pd.read_sql(query_member, conn)
@@ -51,7 +51,7 @@ def get_matching_posts(user_id):
     def calculate_match_score(member_tech_stack, post_tech_stack):
         if not post_tech_stack:
             return 0
-        return len(set(member_tech_stack) & set(post_tech_stack)) / len(set(post_tech_stack))
+        return len(set(member_tech_stack) & set(post_tech_stack))
 
     for post in p_df.itertuples():
         print(f"Checking post: {post.project_seq}, Position: {post.position}")
@@ -72,6 +72,9 @@ def get_matching_posts(user_id):
             'position': post.position,
             'priority': priority,
             'tech_stack_match_score': score,
+            'category': post.category,
+            'teck_stack': post.teck_stack,
+            'view': post.view_count,
             'matched_skills': ', '.join(set(new_user.interest_stack) & set(post.teck_stack)),
             'total_required_skills': len(post.teck_stack)
         })
