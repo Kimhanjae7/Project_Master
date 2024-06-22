@@ -156,7 +156,69 @@
     right: 5px; /* 우측 여백 */
     box-shadow: 0px 0px 5px rgba(0,0,0,0.5); /* 그림자 효과 */
 }
+#saveButton, #cancelButton {
+    display: none; /* 처음에는 보이지 않도록 설정 */
+}
 
+#saveButton {
+    right: 5px; /* 정보수정 버튼 왼쪽에 위치 */
+}
+
+#cancelButton {
+    right: 120px; /* 정보수정 버튼 왼쪽에 위치 */
+}
+
+.input_style{
+    font-size: 16px;
+    border:none;
+    margin-left: 10px;
+    width: 80%;
+    height: 80%;
+    border: 1px solid #2E2E2E;
+    border-radius: 5px;
+    padding-left: 5px;
+}
+
+.select_style{
+    margin-left: 10px;
+    width: 80%;
+    height: 80%;
+    border: 1px solid #2E2E2E;
+    border-radius: 5px;
+    padding-left: 5px;
+}
+
+.textarea_style{
+    font-size: 16px;
+    border:none;
+    margin-left: 10px;
+    width: 90%;
+    height: 90%;
+    border: 1px solid #2E2E2E;
+    border-radius: 5px;
+    padding-left: 5px;
+}
+.input_style2{
+    font-size: 16px;
+    border:none;
+    margin-left: 10px;
+    width: 90%;
+    height: 60%;
+    border: 1px solid #2E2E2E;
+    border-radius: 5px;
+    padding-left: 5px;
+}
+.select_stack_style{
+    margin-left: 10px;
+    width: 80%;
+    height: 80%;
+    border: 1px solid #2E2E2E;
+    border-radius: 5px;
+    padding-left: 5px;
+}
+.file_input_style{
+    margin-left: 60px;
+}
 /*상단 영역1*/
 .myinfo_style {
     display: flex;
