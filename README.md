@@ -28,4 +28,5 @@
 |:-----:|:--------------:|
 |FrontEnd|HTML, CSS, JavaScript|
 |BackEnd|Node.js, Flask|
-|Tool|vsCode, Python|
+|DataBase|MySQL|
+|TOOL|vsCode, Python|
