@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>내 프로젝트 보기</title>
+  <link rel="stylesheet" href="/Users/sung_a__/workspace/VsCode/project_1/public/images/">
+</head>
+<body>
+  <div class="container">
+    <h1>내 작성글</h1>
+  <div class="user-info">
+    <h3><%= nickname %></h3>
+    <img src="<%= profile_pic %>" alt="Profile Picture" class="profile-pic">
+  </div>
+    <% if (posts.length > 0) { %>
+      <ul>
+        <% posts.forEach(post => { %>
+          <li>
+            <h2><%= post.introduce_title %></h2>
+            <p><%= post.category %></p>
+            <p><%= post.deadline %></p>
+            <p><%= post.position %></p>
+            <p><%= post.teck_stack %></p>
+            <a href="/project/<%= post.project_seq %>">들어가기</a>
+          </li>
+        <% }); %>
+      </ul>
+    <% } else { %>
+      <p>No projects found.</p>
+    <% } %>
+  </div>
+
+  <div class="container">
+    <h1>지원한 프로젝트</h1>
+    <ul>
+      <% appliedProjects.forEach(project => { %>
+        <li>
+          <div class="project-details">
+            <h2><%= project.introduce_title %></h2>
+            <p>Category: <%= project.category %></p>
+            <p>Deadline: <%= project.deadline %></p>
+            <p>Position: <%= project.position %></p>
+            <p>Teck Stack: <%= project.teck_stack %></p>
+            <p>Nickname: <%= project.nickname %></p>
+            <img src="<%= project.profile_pic %>" alt="Profile Picture">
+            <a href="/project/<%= project.project_seq %>">들어가기</a>
+          </div>
+        </li>
+      <% }); %>
+    </ul>
+  </div>
+
+  <div class="container">
+    <h1>진행중인 프로젝트</h1>
+    <% if (participantProjects.length > 0) { %>
+      <ul>
+        <% participantProjects.forEach(project => { %>
+          <li>
+            <h2><%= project.introduce_title %></h2>
+            <p><%= project.category %></p>
+            <p><%= project.deadline %></p>
+            <p><%= project.position %></p>
+            <p><%= project.teck_stack %></p>
+            <p>작성자: <%= project.nickname %></p>
+            <img src="<%= project.profile_pic %>" alt="Profile Picture" class="profile-pic">
+            <a href="/project/<%= project.project_seq %>">들어가기</a>
+          </li>
+        <% }); %>
+      </ul>
+    <% } else { %>
+      <p>No ongoing projects found.</p>
+    <% } %>
+  </div>
+
+</body>
+</html>

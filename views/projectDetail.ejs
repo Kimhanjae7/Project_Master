@@ -1,50 +1,50 @@
-<%- include('header') %>
-<h1>게시물 상세보기</h1>
-<table border="1">
-    <tr>
-        <th>category</th>
-        <td><%= projects.category %></td>
-    </tr>
-    <tr>
-        <th>mem_number</th>
-        <td><%= projects.mem_number %></td>
-    </tr>
-    <tr>
-        <th>way</th>
-        <td><%= projects.way %></td>
-    </tr>
-    <tr>
-        <th>period</th>
-        <td><%= projects.period %></td>
-    </tr>
-    <tr>
-        <th>teck_stack</th>
-        <td><%= projects.teck_stack %></td>
-    </tr>
-    <tr>
-        <th>deadline</th>
-        <td><%= projects.deadline %></td>
-    </tr>
-    <tr>
-        <th>position</th>
-        <td><%= projects.position %></td>
-    </tr>
-    <tr>
-        <th>contact</th>
-        <td><%= projects.contact %></td>
-    </tr>
-    <tr>
-        <th>introduce_title</th>
-        <td><%= projects.introduce_title %></td>
-    </tr>
-    <tr>
-        <th>introduce_detail</th>
-        <td><%= projects.introduce_detail %></td>
-    </tr>
-    <tr>
-        <th>date</th>
-        <td><%= projects.date %></td>
-    </tr>
-</table>
-<a href="/board">목록으로 돌아가기</a>
-<%- include('footer') %>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>게시물 상세보기</title>
+</head>
+<body>
+    <h1>게시물 상세보기</h1>
+    <table>
+        <tr><td>category</td><td><%= projects.category %></td></tr>
+        <tr><td>mem_number</td><td><%= projects.mem_number %></td></tr>
+        <tr><td>way</td><td><%= projects.way %></td></tr>
+        <tr><td>period</td><td><%= projects.period %></td></tr>
+        <tr><td>teck_stack</td><td><%= projects.teck_stack %></td></tr>
+        <tr><td>deadline</td><td><%= projects.deadline %></td></tr>
+        <tr><td>position</td><td><%= projects.position %></td></tr>
+        <tr><td>contact</td><td><%= projects.contact %></td></tr>
+        <tr><td>introduce_title</td><td><%= projects.introduce_title %></td></tr>
+        <tr><td>introduce_detail</td><td><%= projects.introduce_detail %></td></tr>
+        <tr><td>date</td><td><%= projects.date %></td></tr>
+    </table>
+    <a href="/board">목록으로 돌아가기</a>
+
+    <% if (isAuthor) { %>
+        <form action="/edit/<%= projects.project_seq %>" method="POST">
+            <button type="submit">수정</button>
+        </form>
+        <% if (projects.status === '진행중') { %>
+            <form action="/end_project" method="POST">
+                <input type="hidden" name="project_seq" value="<%= projects.project_seq %>">
+                <input type="hidden" name="introduce_title" value="<%= projects.introduce_title %>">
+                <button type="submit">프로젝트 종료</button>
+            </form>
+        <% } else { %>
+            <form action="/start_project" method="POST">
+                <input type="hidden" name="project_seq" value="<%= projects.project_seq %>">
+                <button type="submit">프로젝트 시작</button>
+            </form>
+        <% } %>
+        <form action="/delete/<%= projects.project_seq %>" method="POST">
+            <button type="submit">삭제</button>
+        </form>
+    <% } %>
+    <h2>프로젝트 참가자 목록</h2>
+    <% participants.forEach(participant => { %>
+        <p>참가자 ID: <%= participant.user_id %> - 직무: <%= participant.position %> - 상태: <%= participant.status %></p>
+    <% }); %>
+</body>
+</html>

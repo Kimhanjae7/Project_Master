@@ -31,15 +31,6 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// Flask 서버 실행 코드 수정
-const flaskScriptPath = path.join(__dirname, 'flask_app.py');
-exec(`python3 ${flaskScriptPath} > flask_server.log 2>&1`, (err, stdout, stderr) => {
-    if (err) {
-        console.error(`Error executing Flask server: ${err}`);
-        return;
-    }
-    console.log(`Flask server started successfully.`);
-});
 
 // 정적 파일 서빙 설정
 app.use(express.static(path.join(__dirname, 'public')));
@@ -100,10 +91,11 @@ function searchData(keywords, callback) {
 //------------------------------------------------
 
 // 메인 페이지 라우팅
+// 메인 페이지 라우팅
 app.get('/', (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const perPage = 9;
-  const user_id = req.session.member ? req.session.member.user_id : null;  // 세션에서 사용자 ID를 가져옴, 기본값은 null
+  const user_id = req.session.member ? req.session.member.user_id : null;
   const offset = (page - 1) * perPage;
 
   let sql = `
@@ -114,23 +106,29 @@ app.get('/', (req, res) => {
   LIMIT ${perPage}
   OFFSET ${offset}`;
 
+
+
   if (user_id) {
-      // 추천 포스트를 가져오는 API 호출
-      axios.get('http://localhost:2010/get_matching_posts', { params: { user_id } })
+      axios.get('http://localhost:2060/get_matching_posts', { params: { user_id } })
           .then(response => {
               const recommendations = response.data;
-              console.log('Recommendations:', recommendations); // 추천 결과 로그 출력
 
               connection.query(sql, (err, results) => {
-                  if (err) throw err;
+                  if (err) {
+                      console.error('Error executing query:', err);
+                      throw err;
+                  }
 
                   let countSql = `SELECT COUNT(*) as count FROM project_info`;
                   connection.query(countSql, (err, countResult) => {
-                      if (err) throw err;
+                      if (err) {
+                          console.error('Error executing count query:', err);
+                          throw err;
+                      }
                       const totalCount = countResult[0].count;
                       const totalPages = Math.ceil(totalCount / perPage);
 
-                      res.render('index', { projects: results, totalPages, currentPage: page, recommendations: recommendations });
+                      res.render('index', { projects: results, totalPages, currentPage: page, recommendations });
                   });
               });
           })
@@ -139,13 +137,18 @@ app.get('/', (req, res) => {
               res.render('index', { projects: [], totalPages: 0, currentPage: 1, recommendations: [] });
           });
   } else {
-      // 세션에 사용자 ID가 없는 경우 추천 프로그램을 표시하지 않음
       connection.query(sql, (err, results) => {
-          if (err) throw err;
+          if (err) {
+              console.error('Error executing query:', err);
+              throw err;
+          }
 
           let countSql = `SELECT COUNT(*) as count FROM project_info`;
           connection.query(countSql, (err, countResult) => {
-              if (err) throw err;
+              if (err) {
+                  console.error('Error executing count query:', err);
+                  throw err;
+              }
               const totalCount = countResult[0].count;
               const totalPages = Math.ceil(totalCount / perPage);
 
@@ -155,6 +158,230 @@ app.get('/', (req, res) => {
   }
 });
 
+
+//------------------------- 평점 -------------------------------//
+app.get('/grade', (req, res) => {
+  const userId = req.session.member ? req.session.member.user_id : null;
+  const projectSeq = req.query.project_seq;
+  const introduceTitle = req.query.introduce_title;
+
+  if (!userId) {
+    res.send("<script> alert('로그인하고 접근해주세요'); location.href='/login';</script>");
+    return;
+  }
+
+  // projectSeq가 없으면 메인 페이지로 리다이렉트
+  if (!projectSeq) {
+    res.send("<script> alert('프로젝트 정보를 찾을 수 없습니다.'); location.href='/';</script>");
+    return;
+  }
+
+  const sql = `
+    SELECT p.introduce_title, p.project_seq, pp.user_id, m.nickname, pp.position
+    FROM project_info p 
+    JOIN project_participants pp ON p.project_seq = pp.project_seq
+    JOIN member m ON pp.user_id = m.user_id
+    WHERE p.project_seq = ?
+  `;
+
+  connection.query(sql, [projectSeq], (err, results) => {
+    if (err) {
+      console.error('Error fetching project info:', err);
+      res.status(500).send('Database error');
+      return;
+    }
+
+    if (results.length === 0) {
+      res.send("<script> alert('프로젝트 정보를 찾을 수 없습니다'); location.href='/';</script>");
+      return;
+    }
+
+    const introduceTitle = results[0].introduce_title;
+    const participants = results.map(row => ({
+      user_id: row.user_id,
+      nickname: row.nickname,
+      position: row.position
+    }));
+
+    res.render('grade', { introduceTitle, participants, user_id: userId, project_seq: projectSeq });
+  });
+});
+// Handle form submission for grading participants
+app.post('/grade', (req, res) => {
+  const userId = req.session.member ? req.session.member.user_id : null;
+  if (!userId) {
+    res.send("<script> alert('로그인하고 접근해주세요'); location.href='/login';</script>");
+    return;
+  }
+
+  const projectSeq = req.body.project_seq;
+  const introduceTitle = req.body.introduce_title;
+
+  if (!projectSeq) {
+    res.send("Invalid input: project_seq is missing");
+    return;
+  }
+
+  const userIds = Array.isArray(req.body['user_ids[]']) ? req.body['user_ids[]'] : [req.body['user_ids[]']];
+  const jobRoles = Array.isArray(req.body['job_roles[]']) ? req.body['job_roles[]'] : [req.body['job_roles[]']];
+  const grades = {};
+
+  userIds.forEach(uid => {
+    grades[uid] = req.body[`grades[${uid}]`];
+  });
+
+  if (userIds.length !== jobRoles.length || userIds.length !== Object.keys(grades).length) {
+    res.send("Invalid input: Mismatched lengths of user IDs, job roles, or grades");
+    return;
+  }
+
+  const gradeProcedures = userIds.map((uid, i) => {
+    const jobRole = jobRoles[i];
+    const grade = parseFloat(grades[uid]);
+
+    if (!uid || !jobRole || isNaN(grade)) {
+      return Promise.reject(`Invalid input: Missing or invalid data for user ID ${uid}, job role ${jobRole}, or grade ${grade}`);
+    }
+
+    return new Promise((resolve, reject) => {
+      connection.query('CALL grade_proc(?, ?, ?, @output_grade)', [uid, jobRole, grade], (err) => {
+        if (err) return reject(err);
+
+        connection.query('CALL update_role_counts(?, ?)', [uid, jobRole], (err) => {
+          if (err) return reject(err);
+
+          connection.query('SELECT @output_grade AS average_grade', (err, results) => {
+            if (err) return reject(err);
+            resolve();
+          });
+        });
+      });
+    });
+  });
+
+  // Check if the current user is the writer
+  const checkWriterSql = `SELECT check_writer FROM project_participants WHERE project_seq = ? AND user_id = ?`;
+  connection.query(checkWriterSql, [projectSeq, userId], (err, results) => {
+    if (err) {
+      res.status(500).send('Database error');
+      return;
+    }
+
+    if (results.length > 0 && results[0].check_writer === 'Writer') {
+      // Update role count for the writer themselves
+      const userRoleSql = `SELECT position FROM project_participants WHERE project_seq = ? AND user_id = ?`;
+      connection.query(userRoleSql, [projectSeq, userId], (err, userRoleResults) => {
+        if (err) {
+          res.status(500).send('Database error');
+          return;
+        }
+
+        const writerRole = userRoleResults[0].position;
+        connection.query('CALL update_role_counts(?, ?)', [userId, writerRole], (err) => {
+          if (err) {
+            res.status(500).send('Database error');
+            return;
+          }
+
+          // Send notifications to all participants
+          const notifySql = `SELECT user_id FROM project_participants WHERE project_seq = ? AND user_id != ?`;
+          connection.query(notifySql, [projectSeq, userId], (err, notifyResults) => {
+            if (err) {
+              res.status(500).send('Database error');
+              return;
+            }
+
+            const notifications = notifyResults.map(row => new Promise((resolve, reject) => {
+              const insertAlarmSql = `INSERT INTO alarms (user_id, message, project_seq) VALUES (?, ?, ?)`;
+              const message = `프로젝트 "${introduceTitle}" 종료되었습니다. 평점을 남겨주세요.`;
+              connection.query(insertAlarmSql, [row.user_id, message, projectSeq], (err) => {
+                if (err) return reject(err);
+                resolve();
+              });
+            }));
+
+            Promise.all(notifications)
+              .then(() => Promise.all(gradeProcedures))
+              .then(() => {
+                res.send(`
+                  <script>
+                    alert('성공적으로 평점을 부여하였고 알림을 전송하였습니다!');
+                    window.location.href = '/';
+                  </script>
+                `);
+              })
+              .catch(err => {
+                res.send(`
+                  <script>
+                    alert('평점 부여 또는 알림 전송 중 오류가 발생했습니다.');
+                    window.location.href = '/';
+                  </script>
+                `);
+              });
+          });
+        });
+      });
+    } else {
+      Promise.all(gradeProcedures)
+        .then(() => {
+          res.send(`
+            <script>
+              alert('성공적으로 평점을 부여하였습니다!');
+              window.location.href = '/';
+            </script>
+          `);
+        })
+        .catch(err => {
+          res.send(`
+            <script>
+              alert('평점 부여 중 오류가 발생했습니다.');
+              window.location.href = '/';
+            </script>
+          `);
+        });
+    }
+  });
+});
+
+//--------------------------------------------------------//
+
+//------------------------- 알람 -------------------------------//
+app.get('/alarms', (req, res) => {
+  if (req.session.member == null) {
+    res.send("<script> alert('로그인하고 접근해주세요'); location.href='/login';</script>");
+  } else {
+    const userId = req.session.member.user_id;
+    const sql = `
+      SELECT DISTINCT a.message, a.project_seq, p.introduce_title
+      FROM alarms a
+      JOIN project_info p ON a.project_seq = p.project_seq
+      WHERE a.user_id = ?
+    `;
+
+    console.log(`Executing SQL: ${sql} with userId: ${userId}`); // SQL 쿼리 로그
+
+    connection.query(sql, [userId], (err, results) => {
+      if (err) {
+        console.error('Error fetching alarms:', err);
+        res.status(500).send('Database error');
+        return;
+      }
+
+      console.log('Fetched alarms:', results); // 결과 로그
+
+      const alarms = results.map(row => ({
+        message: row.message,
+        project_seq: row.project_seq,
+        introduce_title: row.introduce_title
+      }));
+
+      res.render('alarm', { alarms });
+    });
+  }
+});
+
+
+//--------------------------------------------------------//
 
 
 
@@ -498,21 +725,62 @@ app.post('/registrationProc', (req, res) => {
 })
 
 //추가 (프로젝트 제목 클릭하면 그 게시물에 대한 페이지 열림)
+// 게시글
+// 프로젝트 상세 페이지 라우트
 app.get('/project/:project_seq', (req, res) => {
   const project_seq = req.params.project_seq;
-  
-  var selectSql = `SELECT * FROM project_info WHERE project_seq = ?`;
-  
+  const user_id = req.session.member ? req.session.member.user_id : null;
+
+  const selectSql = `SELECT * FROM project_info WHERE project_seq = ?`;
+
   connection.query(selectSql, [project_seq], function(err, result) {
     if (err) throw err;
-    
+
     if (result.length > 0) {
-      console.log(result);
-      res.render('projectDetail', { projects: result[0] });
+      const project = result[0];
+      const isAuthor = user_id === project.user_id;
+      const isOngoing = project.status === '진행중'; // 상태가 '진행중'인 경우에만 true
+
+      const participantsSql = `SELECT user_id, position, status FROM project_participants WHERE project_seq = ?`;
+      connection.query(participantsSql, [project_seq], function(err, participantsResult) {
+        if (err) throw err;
+        res.render('projectDetail', { projects: project, isAuthor, participants: participantsResult, isOngoing });
+      });
     } else {
       console.log('No project found');
       res.send("<script> alert('게시물이 존재하지 않습니다'); location.href='/board';</script>");
     }
+  });
+});
+
+
+// 수락 라우트 추가
+app.post('/accept', (req, res) => {
+  const { user_id, project_seq } = req.body;
+
+  const updateSql = `UPDATE project_participants SET status = '수락' WHERE user_id = ? AND project_seq = ?`;
+
+  connection.query(updateSql, [user_id, project_seq], function(err, result) {
+    if (err) {
+      console.error('Database query error:', err);
+      return res.send("<script> alert('수락 처리 중 오류가 발생했습니다. 다시 시도해 주세요.'); history.go(-1);</script>");
+    }
+    res.send("<script> alert('참가 신청이 수락되었습니다.'); location.href='/project/" + project_seq + "';</script>");
+  });
+});
+
+// 참가 신청 거절
+app.post('/reject', (req, res) => {
+  const { user_id, project_seq } = req.body;
+
+  const deleteSql = `DELETE FROM project_participants WHERE user_id = ? AND project_seq = ?`;
+
+  connection.query(deleteSql, [user_id, project_seq], function(err, result) {
+    if (err) {
+      console.error('Database query error:', err);
+      return res.send("<script> alert('거절 처리 중 오류가 발생했습니다. 다시 시도해 주세요.'); history.go(-1);</script>");
+    }
+    res.send("<script> alert('참가 신청이 거절되었습니다.'); location.href='/project/" + project_seq + "';</script>");
   });
 });
 
@@ -524,14 +792,248 @@ app.get('/see_project', (req, res) => {
   }
 
   const user_id = req.session.member.user_id;
-  const sql = 'SELECT * FROM project_info WHERE user_id = ?';
 
-  connection.query(sql, [user_id], (err, results) => {
+  const projectSql = 'SELECT introduce_title, category, deadline, position, teck_stack, project_seq, status FROM project_info WHERE user_id = ?';
+  
+  const memberSql = 'SELECT nickname, profile_pic FROM member WHERE user_id = ?';
+
+  connection.query(projectSql, [user_id], (err, projectResults) => {
     if (err) throw err;
     
-    res.render('see_project', { posts: results });
+    connection.query(memberSql, [user_id], (err, memberResults) => {
+      if (err) throw err;
+      
+      const memberInfo = memberResults[0];
+      
+      // 새로운 기능 추가: project_participants 테이블과 project_info 테이블을 조인하여 데이터 조회
+      const participantProjectsSql = `
+        SELECT pi.introduce_title, pi.category, pi.deadline, pi.position, pi.teck_stack, pi.project_seq, m.nickname, m.profile_pic
+        FROM project_participants p
+        INNER JOIN project_info pi ON p.project_seq = pi.project_seq
+        INNER JOIN member m ON pi.user_id = m.user_id
+        WHERE p.user_id = ? AND pi.status = 'hidden'
+      `;
+      
+      connection.query(participantProjectsSql, [user_id], (err, participantResults) => {
+        if (err) {
+          console.error('Database query error:', err);
+          res.send("<script> alert('프로젝트 정보를 가져오는 중 오류가 발생했습니다.'); location.href='/';</script>");
+          return;
+        }
+
+        // 새로운 기능 추가: 지원한 프로젝트 데이터 조회
+        const appliedProjectsSql = `
+          SELECT pi.introduce_title, pi.category, pi.deadline, pi.position, pi.teck_stack, pi.project_seq, m.nickname, m.profile_pic
+          FROM project_participants p
+          INNER JOIN project_info pi ON p.project_seq = pi.project_seq
+          INNER JOIN member m ON pi.user_id = m.user_id
+          WHERE p.user_id = ? AND p.status = '신청'
+        `;
+
+        connection.query(appliedProjectsSql, [user_id], (err, appliedProjects) => {
+          if (err) {
+            console.error('Database query error:', err);
+            res.send("<script> alert('지원한 프로젝트 정보를 가져오는 중 오류가 발생했습니다.'); location.href='/';</script>");
+            return;
+          }
+
+          // 데이터를 렌더링할 템플릿에 전달
+          res.render('post_view_see', { 
+            posts: projectResults,
+            nickname: memberInfo.nickname,
+            profile_pic: memberInfo.profile_pic,
+            participantProjects: participantResults,  // 추가된 participantProjects 데이터 추가
+            appliedProjects: appliedProjects         // 추가된 appliedProjects 데이터 추가
+          });
+        });
+      });
+    });
   });
 });
+
+
+//----추가
+app.post('/apply', async (req, res) => {
+  // 현재 세션의 사용자 ID 가져오기
+  const user_id = req.session.member ? req.session.member.user_id : null;
+
+  // 사용자 ID가 없는 경우 처리
+  if (!user_id) {
+    return res.send("<script> alert('로그인 후 시도해주세요'); location.href='/login';</script>");
+  }
+
+  // 폼 데이터 가져오기
+  const { project_seq, position } = req.body;
+
+  // 현재 게시글의 작성자 정보 가져오기
+  connection.query('SELECT user_id FROM project_info WHERE project_seq = ?', [project_seq], (err, result) => {
+    if (err) {
+      console.error('Database query error:', err);
+      return res.send("<script> alert('신청 중 오류가 발생했습니다. 다시 시도해 주세요.'); location.href='/';</script>");
+    }
+
+    // 게시글 작성자와 로그인한 사용자의 user_id 비교하여 신청 가능 여부 확인
+    const author_id = result[0].user_id;
+    if (user_id === author_id) {
+      return res.send("<script> alert('본인 게시글에는 신청할 수 없습니다.'); history.go(-1);</script>");
+    }
+
+    // SQL 삽입문
+    const insertSql = `
+      INSERT INTO project_participants (user_id, project_seq, position, status) 
+      VALUES (?, ?, ?, ?)
+    `;
+    const values = [user_id, project_seq, position, '신청']; // status의 값으로 '신청'을 사용
+
+    // 데이터베이스 쿼리 실행
+    connection.query(insertSql, values, (err, result) => {
+      if (err) {
+        console.error('Database query error:', err);
+        return res.send("<script> alert('신청 중 오류가 발생했습니다. 다시 시도해 주세요.'); location.href='/';</script>");
+      }
+      
+      res.send("<script> alert('신청이 완료되었습니다'); location.href='/';</script>");
+    });
+  });
+});
+
+app.post('/end_project', (req, res) => {
+  const project_seq = req.body.project_seq;
+  const updateSql = 'UPDATE project_info SET status = ? WHERE project_seq = ?';
+  connection.query(updateSql, ['종료됨', project_seq], (err, result) => {
+    if (err) throw err;
+    res.send("<script> alert('프로젝트가 종료되었습니다'); location.href='/grade?project_seq=" + project_seq + "&introduce_title=" + encodeURIComponent(req.body.introduce_title) + "';</script>");
+  });
+});
+
+
+app.post('/delete/:project_seq', (req, res) => {
+  const projectSeq = req.params.project_seq;
+  connection.query('DELETE FROM project_info WHERE project_seq = ?', [projectSeq], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('게시물을 삭제하는 중 오류가 발생했습니다.');
+    }
+    res.send("<script> alert('게시물 삭제가 완료되었습니다'); location.href='/';</script>");
+  });
+});
+// 추가
+app.post('/start_project', (req, res) => {
+  const project_seq = req.body.project_seq;
+  const updateSql = 'UPDATE project_info SET status = ? WHERE project_seq = ?';
+  connection.query(updateSql, ['진행중', project_seq], (err, result) => {
+    if (err) throw err;
+    res.send("<script> alert('프로젝트가 시작되었습니다'); location.href='/project/" + project_seq + "';</script>");
+  });
+});
+
+
+
+app.post('/edit/:project_seq', (req, res) => {
+  const project_seq = req.params.project_seq;
+  const user_id = req.session.member ? req.session.member.user_id : null;
+
+  if(req.session.member == null){
+    res.render('popup', {
+      message: '로그인하고 접근해주세요.',
+      redirectPath: '/login' 
+  });
+  }else{
+  const selectSql = `SELECT * FROM project_info WHERE project_seq = ?`;
+
+  connection.query(selectSql, [project_seq], function(err, result) {
+    if (err) throw err;
+
+    if (result.length > 0) {
+      const project = result[0];
+      const isAuthor = user_id === project.user_id;
+
+      if (isAuthor) {
+        const participantsSql = `SELECT user_id, position, status FROM project_participants WHERE project_seq = ?`;
+
+        connection.query(participantsSql, [project_seq], function(err, participantsResult) {
+          if (err) throw err;
+          //작성자
+          res.render('post_edit', { projects: project, isAuthor: true, participants: participantsResult });
+        });
+      } else {
+        //작성자 아닌 사람
+        res.render('popup', {
+          message: '작성자가 아닙니다.',
+          redirectPath: 'back' 
+      });
+      }
+    } else {
+      console.log('No project found');
+      res.render('popup', {
+        message: '게시글이 존재하지 않습니다.',
+        redirectPath: '/' 
+    });
+    }
+  });
+}
+});
+
+app.post('/editProc/:project_seq', (req, res) => {
+  const project_seq = req.params.project_seq;
+  let { category, mem_number, way, period, teck_stack, deadline, position, contact, introduce_title, introduce_detail } = req.body
+
+  const getExistingSql = `SELECT * FROM project_info WHERE project_seq = ?`;
+  connection.query(getExistingSql, [project_seq], function (err, results) {
+    if (err) throw err;
+    if (results.length === 0) {
+      return res.render('popup', {
+        message: '해당 게시글을 찾을 수 없습니다.',
+        redirectPath: 'back' 
+    });
+    }
+  
+  const existingProject = results[0];
+
+  const newCategory = category !== '' ? category : existingProject.category;
+  const newMemNumber = mem_number !== '' ? mem_number : existingProject.mem_number;
+  const newWay = way !== '' ? way : existingProject.way;
+  const newPeriod = period !== '' ? period : existingProject.period;
+  const newTeckStack = teck_stack !== '' ? teck_stack : existingProject.teck_stack;
+  const newDeadline = deadline !== '' ? deadline : existingProject.deadline;
+  const newPosition = position !== '' ? position : existingProject.position;
+  const newContact = contact !== '' ? contact : existingProject.contact;
+  const newIntroduceTitle = introduce_title !== '' ? introduce_title : existingProject.introduce_title;
+  const newIntroduceDetail = introduce_detail !== '' ? introduce_detail : existingProject.introduce_detail;
+
+
+  var updateSql = `UPDATE project_info
+   SET 
+   category = ?,  
+   mem_number = ?, 
+   way = ?, 
+   period = ?, 
+   teck_stack = ?, 
+   deadline = ?, 
+   position = ?, 
+   contact = ?, 
+   introduce_title = ?, 
+   introduce_detail = ?
+   WHERE project_seq = ?`
+   var values = [newCategory, newMemNumber, newWay, newPeriod, newTeckStack, newDeadline, newPosition, newContact, newIntroduceTitle, newIntroduceDetail, project_seq];
+   console.log(values);
+   connection.query(updateSql, values, function (err, result) {
+    if (err) throw err
+    if (result.length === 0) {
+      return res.render('popup', {
+        message: '수정을 실패했습니다. 다시 시도해주세요.',
+        redirectPath: '/back' 
+    });
+    }
+    res.render('popup', {
+      message: '게시글이 수정되었습니다.',
+      redirectPath: '/project/' + project_seq 
+  });
+  });
+});
+});
+
+
 
 //------------------------ADMIN 로그인 -------------------------//
 app.post('/admin/login', (req, res) => {
@@ -689,8 +1191,6 @@ app.get('/admin/posts', adminAuth, (req, res) => {
       res.render('admin_posts', { posts: results, searchQuery }); // 'admin_posts.ejs' 템플릿에 데이터 전달
   });
 });
-
-
 
 // 게시글 검색
 app.get('/admin/posts/search', adminAuth, (req, res) => {

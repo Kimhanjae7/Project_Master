@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alarms</title>
+</head>
+<body>
+    <h1>알림</h1>
+    <ul>
+        <% if (alarms.length === 0) { %>
+            <li>알림이 없습니다.</li>
+        <% } else { %>
+            <% alarms.forEach(function(alarm) { %>
+                <li>
+                    <%= alarm.message %>
+                    <form action="/grade" method="get" style="display:inline;">
+                        <input type="hidden" name="project_seq" value="<%= alarm.project_seq %>">
+                        <input type="hidden" name="introduce_title" value="<%= alarm.introduce_title %>">
+                        <button type="submit">평점남기기</button>
+                    </form>
+                </li>
+            <% }); %>
+        <% } %>
+    </ul>
+    <a href="/">홈으로 돌아가기</a>
+</body>
+</html>
