@@ -1,0 +1,527 @@
+@charset "UTF-8";
+*{
+    list-style: none;
+    text-decoration: none;
+    border-collapse: collapse;
+    margin:0px;
+    padding:0px;
+    color:#000;
+}
+
+.profile_wrap {background-color:#f2f2f2;}
+.profile_top {
+    background-color: #f2f2f2;
+    width:100%;
+    height:280px; 
+}
+.profile_logo {
+    text-align: center;
+}
+.profile_logo img {
+    margin-top:10px;
+    width:100px;
+    height:100px;
+    cursor:pointer;
+}
+.profile_logo span {
+    font-size:40px;
+    font-weight:bold;
+    font-family: "Nanum Pen Script", cursive;
+}
+.menubar {
+    display: flex;
+    justify-content: end;
+    width:1500px;
+    margin:auto;
+    height:75px;
+    background-color:#2E2E2E;
+    border-radius:10px;
+}
+.nav {
+    display: flex;
+    justify-content: end;
+    margin-right: 120px;
+    line-height:75px;
+    width:calc(100% - 500px);
+}
+.nav > li {
+    margin-left:60px;
+}
+.nav > li > a {
+    color:#F2F2F2;
+    font-weight:bold;
+    font-size: 20px;
+}
+.nav > li > a:hover {color:#ff5a20;}
+
+.bottom_wrap {
+    width: 100%;
+    height: 1800px;
+    background-color: #f2f2f2;
+    position: relative;
+}
+.bottom_bg {
+    width: 95%;
+    height: 1620px;
+    background-color: #2e2e2e;
+    position: relative;
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 20px;
+}
+.bottom {
+    width:90%;
+    height: 1458px;
+    background-color: #2e2e2e;
+    margin: auto;
+    border-radius: 20px;  
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    gap: 60px; 
+}
+.section {
+    flex: 1;
+    background-color: #f2f2f2;
+    border-radius: 20px;
+    border: none;
+}
+.profile_head{
+    width: 100%;
+    height: 10%;
+    text-align: center;
+    display: flex;  /* flexbox 사용 */
+    align-items: center;  /* 세로 중앙 정렬 */
+    justify-content: center;  /* 가로 중앙 정렬 */
+}
+.profile_body{
+    margin:20px;
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
+    text-align: center;
+    height: 88%;
+}
+.profile_body_top{
+    height: 10%;
+    width: 100%;
+    position: relative; /* 부모 요소를 상대 위치로 설정 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.profile_body_bottom{
+    height: 90%;
+    width: 100%;
+    display: flex;
+}
+.profile_body_bottom_div_center{
+    flex:1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    display: flex;  /* flexbox 사용 */
+    overflow: hidden;
+    padding: 5px;
+    border-radius: 20px;
+}
+.profile_body_bottom_div{
+    flex: 1;
+    flex-direction: column;
+    justify-content: center; /* 세로 중앙 정렬 */
+    align-items: flex-start; /* 가로 좌측 정렬 */
+    display: flex;
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.5);
+    text-align: left;
+    padding: 20px; /* 내부 여백 추가 */
+}
+.edit-button {
+    background-color: #2e2e2e; /* 버튼 배경색 */
+    color: #f2f2f2; /* 버튼 글자색 */
+    border: none; /* 버튼 테두리 없애기 */
+    border-radius: 12px; /* 버튼 둥글게 */
+    padding: 10px 20px; /* 버튼 안쪽 여백 */
+    cursor: pointer; /* 마우스 커서 모양 변경 */
+    font-size: 16px; /* 버튼 글꼴 크기 */
+    position: absolute; /* 절대 위치 */
+    top: 35%; /* 수직 중앙 정렬 */
+    transform: translateY(-50%); /* 수직 중앙 정렬 보정 */
+    right: 5px; /* 우측 여백 */
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.5); /* 그림자 효과 */
+}
+#saveButton, #cancelButton {
+    display: none; /* 처음에는 보이지 않도록 설정 */
+}
+
+#saveButton {
+    right: 5px; /* 정보수정 버튼 왼쪽에 위치 */
+}
+
+#cancelButton {
+    right: 120px; /* 정보수정 버튼 왼쪽에 위치 */
+}
+
+.input_style{
+    font-size: 16px;
+    border:none;
+    margin-left: 10px;
+    width: 80%;
+    height: 80%;
+    border: 1px solid #2E2E2E;
+    border-radius: 5px;
+    padding-left: 5px;
+}
+
+.select_style{
+    margin-left: 10px;
+    width: 80%;
+    height: 80%;
+    border: 1px solid #2E2E2E;
+    border-radius: 5px;
+    padding-left: 5px;
+}
+
+.textarea_style{
+    font-size: 16px;
+    border:none;
+    margin-left: 10px;
+    width: 90%;
+    height: 90%;
+    border: 1px solid #2E2E2E;
+    border-radius: 5px;
+    padding-left: 5px;
+}
+.input_style2{
+    font-size: 16px;
+    border:none;
+    margin-left: 10px;
+    width: 90%;
+    height: 60%;
+    border: 1px solid #2E2E2E;
+    border-radius: 5px;
+    padding-left: 5px;
+}
+.select_stack_style{
+    margin-left: 10px;
+    width: 80%;
+    height: 80%;
+    border: 1px solid #2E2E2E;
+    border-radius: 5px;
+    padding-left: 5px;
+}
+.file_input_style{
+    margin-left: 60px;
+}
+/*상단 영역1*/
+.myinfo_style {
+    display: flex;
+    align-items: center;
+    background-color: #efeded; /* 배경색을 흰색으로 변경 */
+    border-radius: 15px; /* 둥근 테두리 반경 */
+    padding: 10px 20px; /* 내부 여백 */
+    color: #000; /* 텍스트 색상 */
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5); /* 그림자 효과를 줄여서 부드럽게 */
+    margin-bottom: 15px; /* 항목 간 간격 */
+    font-size: 16px; /* 글꼴 크기 */
+    text-align: left; /* 텍스트 왼쪽 정렬 */
+    width: 370px;
+    height: 30px;
+    white-space: nowrap; /* 텍스트를 한 줄로 */
+    overflow: hidden; /* 넘치는 텍스트 숨기기 */
+    text-overflow: ellipsis; /* 넘치는 텍스트에 "..." 표시 */
+    position: relative; /* 툴팁 위치를 상대적으로 설정 */
+    cursor: default; /* 커서 변경 */
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+.size_up{
+    height: 50px;
+}
+.img_design{
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background-color: transparent;
+	border: solid rgba(56, 101, 101, 0.4);
+	border-width:3px;
+	display: flex;
+	margin-left: 10px;
+	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.3);
+    align-items: center;
+    justify-content: center;
+ }
+ .img_design img{
+    width: 35px;
+    height: 35px;
+ }
+
+/*상단 영역2*/
+.profile_image{
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    background-color: #efeded;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    box-shadow: 0px 2px 6px 0px rgba(0,0,0,0.5);
+    margin-bottom: 50px;
+}
+.profile_image img {
+    width: 90%;
+    height: 90%;
+    object-fit: cover; /* 이미지가 요소를 완전히 덮도록 설정 */
+    border-radius: 50%; /* 이미지도 둥글게 */
+}
+
+/*상단 영역3*/
+.profile_myinfo_area{
+    width: 100%;
+    height: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.profile_myinfo{
+    width: 100%;
+    height: 80%;
+    background-color: #efeded;
+    border-radius: 20px;
+    box-shadow: 0px 2px 6px 0px rgba(0,0,0,0.7);
+    align-items: center;
+    justify-self: center;
+    display: flex;
+    text-align: left;
+    margin-bottom: 40px;
+}
+.myinfo_text{
+    width: 93%;
+    height: 95%;
+    margin: auto;
+}
+.contact_area{
+    width: 100%;
+    height: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.contact{
+    width: 100%;
+    height: 100%;
+    background-color: #efeded;
+    border-radius: 20px;
+    box-shadow: 0px 2px 6px 0px rgba(0,0,0,0.7);
+    align-items: left;
+    justify-self: center;
+    display: flex;
+    text-align: left;
+    margin-bottom: 30px;
+}
+.contact_text{
+    width: 93%;
+    height: 90%;
+    margin: auto;
+}
+
+/* 하단 스타일*/
+
+.half_section {
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.half_left, .half_right {
+    flex: 1;
+    margin: 20px;
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
+    text-align: center;
+}
+
+.half_right {
+    margin-left: 10px;
+}
+
+.half_left {
+    margin-right: 10px;
+}
+
+.half_left_div{
+    width: 100%;
+    height: 90%;
+    margin-top: 10px;
+    display:flex;
+}
+.chart_area{
+    flex: 1.7;
+    display: flex;
+    align-items: center;
+    justify-self: center;
+}
+.job_area{
+    flex: 1;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.myjob_count_area{
+    width: 100%;
+    height: 80%;
+    background-color: #fff;
+    text-align: left;
+}
+
+/* 폰트 디자인*/
+.font_style {
+	font-size: 24px;
+	font-weight: bold;
+    background-color: #efeded;
+    color: black;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
+    border-radius: 40px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.font_style2{
+    font-size: 15px;
+}
+.font_style3{
+    font-size: 18px;
+    font-weight:lighter;
+    display: block;
+    margin-top: -5px;
+    margin-left: 20px;
+    cursor: default;
+}
+.hyphen {
+    margin-right: 7px; /* 하이픈과 텍스트 사이의 간격 설정 */
+    font-size: 26px;
+    font-weight: bold;
+    background-color: #000;
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.8);
+    cursor: default;
+    margin-left: 20px;
+}
+
+
+/* 위치 조정 스타일 */
+.plus_margin_left {
+	margin-left:140px;
+}
+.plus_margin_left2 {
+	margin-left: 10px;
+}
+.plus_margin_left3 {
+	margin-left: 20px;
+}
+.left-align {
+    text-align: left;
+}
+.margin_bottom{
+    margin-bottom: 50px;
+}
+
+
+/*차트 출력*/
+
+#container{
+	/*box-shadow: 0px 0px 8px 0px rgb(0,0,0,0.5);*/
+	width: 550px;
+	height: 500px;
+	margin: 40px auto auto auto;
+	border-radius: 50%;
+	border-width: 3px;
+}
+.newTip{
+	min-width: 8em;
+	text-align: center;
+}
+.newTip big {
+	font-size: 10pt;
+	font-weight: bold;
+}
+
+@import url(//fonts.googleapis.com/css?family=Oswald:400);
+.chart {
+	position: absolute;
+	font-family: "Oswald", sans-serif;
+	width: 450px;  /* 차트의 너비 조정 */
+	height: 450px; /* 차트의 높이 조정 */
+	margin: auto auto auto -25px; /* 페이지 가운데 정렬 */
+	padding: 20px; /* 차트 주위에 패딩 추가 */
+	box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+.doughnutTip {
+    position: absolute;
+    min-width: 30px;
+    max-width: 300px;
+    padding: 5px 15px;
+    border-radius: 1px;
+    background: rgba(0,0,0,.8);
+    color: #ddd;
+    font-size: 17px;
+    text-shadow: 0 1px 0 #000;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.3;
+    letter-spacing: .06em;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    pointer-events: none;
+  }
+  
+  .doughnutTip::after {
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    content: "";
+    height: 0;
+    margin: 0 0 0 -6px;
+    border-right: 5px solid transparent;
+    border-left: 5px solid transparent;
+    border-top: 6px solid rgba(0,0,0,.7);
+    line-height: 0;
+  }
+  
+.doughnutSummary {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: #d5d5d5;
+  text-align: center;
+  text-shadow: 0 -1px 0 #111;
+  cursor: default;
+}
+.doughnutSummaryTitle {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  margin-top: -27%;
+  font-size: 22px;
+  letter-spacing: .06em;
+}
+.doughnutSummaryNumber {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  margin-top: -15%;
+  font-size: 55px;
+}
+.chart path:hover { opacity: 0.65; }
