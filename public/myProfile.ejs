@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>내 정보</title>
+    <link rel="stylesheet" type="text/css" href="myProfile.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Jua&family=Nanum+Pen+Script&family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <!--차트 출력-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="myProfile_.js"></script>
+</head>
+<body>
+    <div class="wrap">
+        <div class="profile_top">
+            <div class="profile_logo">
+                <a href="index.html"><img src="PM_logo_fin.png"></a><br>
+                <span>Project Master</span><br><br>
+            </div>
+            <div class="menubar">
+                <ul class="nav">
+                    <li><a href="index.html">HOME</a></li>
+                    <li><a href="#">알림</a></li>
+                    <li><a href="signup.html">회원가입</a></li>
+                    <li><a href="signin.html">로그인</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="bottom_wrap">
+            <div class="bottom_bg">
+                <div class="bottom">
+                    <div class="section">
+                        <div class="profile_body">
+                            <div class="profile_body_top">
+                                <button class="edit-button">정보수정</button>
+                            </div>
+                            <div class="profile_body_bottom">
+                                <div class="profile_body_bottom_div left-align">
+                                    <span class="myinfo_style">닉네임 :</span>
+                                    <span class="myinfo_style">링크 : </span>
+                                    <span class="myinfo_style">소속 : </span>
+                                    <span class="myinfo_style">직무 : </span>
+                                    <span class="myinfo_style">경력 : </span>
+                                    <span class="myinfo_style size_up">관심스택 : 
+                                        <div class="img_design"><img src="c.png"></div>
+                                        <div class="img_design"><img src="cc.png"></div>
+                                        <div class="img_design"><img src="c++.png"></div></span>
+                                </div>
+                                <div class="profile_body_bottom_div_center">
+                                    <span class="font_style margin_bottom">님의 프로필</span>
+                                    <div class="profile_image">
+                                        <img src="코딩2.webp">
+                                    </div>
+                                </div>
+                                <div class="profile_body_bottom_div">
+                                    <div class="profile_myinfo_area">
+                                        <div class="profile_myinfo">
+                                            <div class="myinfo_text">
+                                                <span class="font_style2">자기소개</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="contact_area">
+                                        <div class="contact">
+                                            <div class="contact_text">
+                                                <span class="contact_span">
+                                                    연락방법 :
+                                                </span>
+                                            </div>                      
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <div class="half_section">
+                            <div class="half_left">
+                                <br><span class="font_style">나의 프로젝트 참여 현황</span><br>
+                                <div class="half_left_div">
+                                    <div class="chart_area">
+                                        <div id="doughnutChart" class="chart"></div>
+                                        <script src="profile_jobcount_chart.js"></script>
+                                    </div>
+                                    <div class="job_area">
+                                        <div class="myjob_count_area">
+                                            <span class="font_style3"><span class="hyphen" style="color: #E0F2F7; background-color: #E0F2F7;">─</span> 프론트엔드 : 0회</span><br>
+                                            <span class="font_style3"><span class="hyphen" style="color: #A9E2F3; background-color: #A9E2F3;">─</span> 백엔드 : 0회</span><br>
+                                            <span class="font_style3"><span class="hyphen" style="color: #A9BCF5; background-color: #A9BCF5;">─</span> 디자이너 : 0회</span><br>
+                                            <span class="font_style3"><span class="hyphen" style="color: #D0A9F5; background-color: #D0A9F5;">─</span> IOS : 0회</span><br>
+                                            <span class="font_style3"><span class="hyphen" style="color: #0431B4; background-color: #0431B4;">─</span> 안드로이드 : 0회</span><br>
+                                            <span class="font_style3"><span class="hyphen" style="color: #FFFFFF; background-color: #FFFFFF;">─</span> 데브옵스 : 0회</span><br>
+                                            <span class="font_style3"><span class="hyphen" style="color: #CECEF6; background-color: #CECEF6;">─</span> 기획자 : 0회</span><br>
+                                            <span class="font_style3"><span class="hyphen" style="color: #00BFFF; background-color: #00BFFF;">─</span> PM : 0회</span><br>
+                                            <span class="font_style3"><span class="hyphen" style="color: #8181F7; background-color: #8181F7;">─</span> 마케터 : 0회</span><br>
+                                        </div>
+                                    </div>                                    
+                                </div>
+                            </div>
+                            <div class="half_right">
+                                <br><span class="font_style">나의 프로젝트 평점</span><br>
+                                <div id="container"></div><br>
+                                <script src="profile_score_chart.js"></script>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
