@@ -15,7 +15,8 @@ CREATE TABLE member (
     affiliation VARCHAR(100),
     career VARCHAR(50),
     introduce TEXT,
-    interest_stack VARCHAR(255)
+    interest_stack VARCHAR(255),
+    profile_pic blob
 );
 
 DROP TABLE IF EXISTS project_info;
@@ -33,7 +34,9 @@ CREATE TABLE project_info (
     introduce_detail TEXT,
     date DATE,
     user_id VARCHAR(50),
-    FOREIGN KEY (user_id) REFERENCES member(user_id)
+    status varchar(10),
+	view_count INT DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES member(user_id) on update cascade on delete cascade
 );
 
 DROP TABLE IF EXISTS project_participants;
@@ -42,39 +45,89 @@ CREATE TABLE project_participants (
     user_id VARCHAR(50) not null,
     status VARCHAR(50) not null,
     position VARCHAR(50),
+    check_writer char(15) not null,
     FOREIGN KEY (project_seq) REFERENCES project_info(project_seq) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES member(user_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS grade;
 CREATE TABLE grade (
-  project_seq INT NOT NULL, 
   user_id VARCHAR(45) NOT NULL,
+  Front_end_count INT default 0,
   Front_end_rating_count INT NOT NULL DEFAULT 0,
   Front_end_total_rating FLOAT NOT NULL DEFAULT 0,
   Front_end_average_rating FLOAT NOT NULL DEFAULT 0,
+  Back_end_count INT default 0, 
   Back_end_rating_count INT NOT NULL DEFAULT 0,
   Back_end_total_rating FLOAT NOT NULL DEFAULT 0,
   Back_end_average_rating FLOAT NOT NULL DEFAULT 0,
+  Designer_count INT default 0, 
   Designer_rating_count INT NOT NULL DEFAULT 0,
   Designer_total_rating FLOAT NOT NULL DEFAULT 0,
   Designer_average_rating FLOAT NOT NULL DEFAULT 0,
+  IOS_count INT default 0, 
   IOS_rating_count INT NOT NULL DEFAULT 0,
   IOS_total_rating FLOAT NOT NULL DEFAULT 0,
   IOS_average_rating FLOAT NOT NULL DEFAULT 0,
+  Android_count INT default 0, 
   Android_rating_count INT NOT NULL DEFAULT 0,
   Android_total_rating FLOAT NOT NULL DEFAULT 0,
   Android_average_rating FLOAT NOT NULL DEFAULT 0,
+  DevOps_count INT default 0,
   DevOps_rating_count INT NOT NULL DEFAULT 0,
   DevOps_total_rating FLOAT NOT NULL DEFAULT 0,
   DevOps_average_rating FLOAT NOT NULL DEFAULT 0,
+  PM_count INT default 0,
   PM_rating_count INT NOT NULL DEFAULT 0,
   PM_total_rating FLOAT NOT NULL DEFAULT 0,
   PM_average_rating FLOAT NOT NULL DEFAULT 0,
-  PRIMARY KEY (user_id),
-  CONSTRAINT fk_grade_member FOREIGN KEY (user_id) REFERENCES member (user_id) ON UPDATE CASCADE ON DELETE CASCADE,
-  CONSTRAINT fk_grade_postinfo FOREIGN KEY (project_seq) REFERENCES project_info (project_seq) ON UPDATE CASCADE ON DELETE CASCADE
+  Planner_count INT default 0,
+  Planner_rating_count INT NOT NULL DEFAULT 0,
+  Planner_total_rating FLOAT NOT NULL DEFAULT 0,
+  Planner_average_rating FLOAT NOT NULL DEFAULT 0,
+  Marketer_count INT default 0,
+  Marketer_rating_count INT NOT NULL DEFAULT 0,
+  Marketer_total_rating FLOAT NOT NULL DEFAULT 0,
+  Marketer_average_rating FLOAT NOT NULL DEFAULT 0,
+  CONSTRAINT fk_grade_member FOREIGN KEY (user_id) REFERENCES member (user_id) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DELIMITER $$
+CREATE PROCEDURE update_role_counts(IN p_user_id VARCHAR(45), IN p_role VARCHAR(20))
+BEGIN
+    CASE p_role
+        WHEN 'Front_end' THEN
+            UPDATE grade SET Front_end_count = Front_end_count + 1 WHERE user_id = p_user_id;
+        WHEN 'Back_end' THEN
+            UPDATE grade SET Back_end_count = Back_end_count + 1 WHERE user_id = p_user_id;
+        WHEN 'Designer' THEN
+            UPDATE grade SET Designer_count = Designer_count + 1 WHERE user_id = p_user_id;
+        WHEN 'IOS' THEN
+            UPDATE grade SET IOS_count = IOS_count + 1 WHERE user_id = p_user_id;
+        WHEN 'Android' THEN
+            UPDATE grade SET Android_count = Android_count + 1 WHERE user_id = p_user_id;
+        WHEN 'DevOps' THEN
+            UPDATE grade SET DevOps_count = DevOps_count + 1 WHERE user_id = p_user_id;
+        WHEN 'PM' THEN
+            UPDATE grade SET PM_count = PM_count + 1 WHERE user_id = p_user_id;
+        WHEN 'Planner' THEN
+            UPDATE grade SET Planner_count = Planner_count + 1 WHERE user_id = p_user_id;
+        WHEN 'Marketer' THEN
+            UPDATE grade SET Marketer_count = Marketer_count + 1 WHERE user_id = p_user_id;
+    END CASE;
+END $$
+DELIMITER ;
+
+
+DROP TABLE IF EXISTS alarms;
+CREATE TABLE alarms (
+  user_id VARCHAR(50) NOT NULL,
+  message TEXT NOT NULL,
+  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  project_seq int,
+  FOREIGN KEY (user_id) REFERENCES member(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (project_seq) REFERENCES project_info(project_seq) ON UPDATE CASCADE ON DELETE CASCADE
+);
 
 DROP PROCEDURE IF EXISTS grade_proc;
 DELIMITER $$
@@ -84,7 +137,7 @@ CREATE PROCEDURE grade_proc(
     IN input_grade FLOAT, 
     OUT output_grade FLOAT)
 BEGIN
-    IF input_job_role = 'Front-end' THEN
+    IF input_job_role = 'Front_end' THEN
         UPDATE grade 
         SET Front_end_rating_count = Front_end_rating_count + 1,
             Front_end_total_rating = Front_end_total_rating + input_grade,
@@ -94,8 +147,9 @@ BEGIN
         SELECT Front_end_average_rating 
         INTO output_grade 
         FROM grade 
-        WHERE user_id = input_user_id;
-    ELSEIF input_job_role = 'Back-end' THEN
+        WHERE user_id = input_user_id
+        LIMIT 1;
+    ELSEIF input_job_role = 'Back_end' THEN
         UPDATE grade 
         SET Back_end_rating_count = Back_end_rating_count + 1,
             Back_end_total_rating = Back_end_total_rating + input_grade,
@@ -105,7 +159,8 @@ BEGIN
         SELECT Back_end_average_rating 
         INTO output_grade 
         FROM grade 
-        WHERE user_id = input_user_id;
+        WHERE user_id = input_user_id
+        LIMIT 1;
     ELSEIF input_job_role = 'Designer' THEN
         UPDATE grade 
         SET Designer_rating_count = Designer_rating_count + 1,
@@ -116,7 +171,8 @@ BEGIN
         SELECT Designer_average_rating 
         INTO output_grade 
         FROM grade 
-        WHERE user_id = input_user_id;
+        WHERE user_id = input_user_id
+        LIMIT 1;
     ELSEIF input_job_role = 'IOS' THEN
         UPDATE grade 
         SET IOS_rating_count = IOS_rating_count + 1,
@@ -127,7 +183,8 @@ BEGIN
         SELECT IOS_average_rating 
         INTO output_grade 
         FROM grade 
-        WHERE user_id = input_user_id;
+        WHERE user_id = input_user_id
+        LIMIT 1;
     ELSEIF input_job_role = 'Android' THEN
         UPDATE grade 
         SET Android_rating_count = Android_rating_count + 1,
@@ -138,7 +195,8 @@ BEGIN
         SELECT Android_average_rating 
         INTO output_grade 
         FROM grade 
-        WHERE user_id = input_user_id;
+        WHERE user_id = input_user_id
+        LIMIT 1;
     ELSEIF input_job_role = 'DevOps' THEN
         UPDATE grade 
         SET DevOps_rating_count = DevOps_rating_count + 1,
@@ -149,7 +207,8 @@ BEGIN
         SELECT DevOps_average_rating 
         INTO output_grade 
         FROM grade 
-        WHERE user_id = input_user_id;
+        WHERE user_id = input_user_id
+        LIMIT 1;
     ELSEIF input_job_role = 'PM' THEN
         UPDATE grade 
         SET PM_rating_count = PM_rating_count + 1,
@@ -160,10 +219,38 @@ BEGIN
         SELECT PM_average_rating 
         INTO output_grade 
         FROM grade 
+        WHERE user_id = input_user_id
+        LIMIT 1;
+        
+    ELSEIF input_job_role = 'Planner' THEN
+        UPDATE grade 
+        SET Planner_rating_count = Planner_rating_count + 1,
+            Planner_total_rating = Planner_total_rating + input_grade,
+            Planner_average_rating = Planner_total_rating / Planner_rating_count
         WHERE user_id = input_user_id;
+        
+        SELECT Planner_average_rating 
+        INTO output_grade 
+        FROM grade 
+        WHERE user_id = input_user_id
+        LIMIT 1;
+    
+    ELSEIF input_job_role = 'Marketer' THEN
+        UPDATE grade 
+        SET Marketer_rating_count = Marketer_rating_count + 1,
+            Marketer_total_rating = Marketer_total_rating + input_grade,
+            Marketer_average_rating = Marketer_total_rating / Marketer_rating_count
+        WHERE user_id = input_user_id;
+        
+        SELECT Marketer_average_rating 
+        INTO output_grade 
+        FROM grade 
+        WHERE user_id = input_user_id
+        LIMIT 1;
     END IF;
 END $$
 DELIMITER ;
+
 
 -- Dummy Data - member
 INSERT INTO member (user_id, user_pw, user_name, user_phone, nickname, job, affiliation, career, introduce, interest_stack) VALUES
@@ -237,21 +324,26 @@ VALUES
 ('user30', '프로젝트', '3', '온오프라인', '2개월', 'Python, Django, PostgreSQL', '2024-10-05', '백엔드', '구글 폼', 'Django 프로젝트 팀원 모집', 'Python과 Django를 활용한 백엔드 프로젝트입니다.', '2024-07-05');
 
 -- Assuming the project_seq for the above insert is 1
-INSERT INTO project_participants (project_seq, user_id, status, position) VALUES
-(1, 'user01','수락','Front-end'),
-(1, 'user31','수락','PM'),
-(1, 'user32','수락','Front-end'),
-(1, 'user33','수락','Back-end');
+INSERT INTO project_participants (project_seq, user_id, status, position,check_writer) VALUES
+(1, 'user01','수락','Front_end','Writer'),
+(1, 'user31','수락','Planner','Participant'),
+(1, 'user32','수락','Front_end','Participant'),
+(1, 'user33','수락','Back_end','Participant'),
+(2, 'user02','수락','Front_end','Writer'),
+(2, 'user31','수락','PM','Participant'),
+(2, 'user32','수락','Front_end','Participant'),
+(2, 'user33','수락','Back_end','Participant');
 
-insert into grade(project_seq,user_id) values
-(1,'user01'),
-(1,'user31'),
-(1,'user32'),
-(1,'user33');
+insert into grade(user_id) values
+('user01'),
+('user31'),
+('user32'),
+('user33'),
+('user02');
 
 
 select * from grade; # 평점 잘 계산되는 지 확인
-select * from project_info; # project 게시글 목록들
+select * from project_info where user_id = 'user01'; # project 게시글 목록들
 select * from project_participants; # project에 참여하는 인원들의 정보
-select * from member; # 사용자들 목록
-
+select * from member where user_id = 'user31'; # 사용자들 목록
+select * from alarms;
