@@ -22,3 +22,9 @@
 <br/>
 
 ## 📖 기술 스택
+<br/>
+|분야|사용 기술|
+|:-----:|:--------------:|
+|FrontEnd|HTML, CSS, JavaScript|
+|BackEnd|Node.js, Flask|
+|Tool|vsCode, Python|
