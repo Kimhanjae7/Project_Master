@@ -50,9 +50,13 @@
 <br>
 <!-- 게시글 작성자와 현재 로그인한 사용자의 user_id를 비교하여 버튼 표시 -->
 <% if (isAuthor) { %>
-
     <a href="/edit/<%= projects.project_seq %>">수정</a>
-    <a href="/start/<%= projects.project_seq %>">프로젝트시작</a>
+
+    <% if (projects.status === 'hidden') { %>
+        <a href="/end/<%= projects.project_seq %>">프로젝트 종료</a>
+    <% } else { %>
+        <a href="/start/<%= projects.project_seq %>">프로젝트 시작</a>
+    <% } %>
 
     <form action="/delete/<%= projects.project_seq %>" method="POST" style="display:inline;">
         <button type="submit">삭제</button>
