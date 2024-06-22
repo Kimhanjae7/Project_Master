@@ -123,22 +123,23 @@
         </div>
         <!-------------------------------------------->
     </div>
+
+    <!-- 수정-->
     <div class="projectList_grid">
         <ul id="projectList">
             <% projects.forEach(project => { %>
-                <% if (project.project_seq) { %>
-                    <li>
-                        <div class="icon_img">
-                            <img src="/images/c.png">
-                        </div>
-                        <div class="hompage_top_contents1_bold"><%= project.introduce_title %></div>
-                        <div class="hompage_top_contents1"><%= project.nickname %></div>    
-                        <div class="more"><a href="/project/<%= project.project_seq %>">들어가기</a></div>      
-                    </li>
-                <% } %>
+                <li>
+                    <div class="icon_img">
+                        <img src="/images/c.png">
+                    </div>
+                    <div class="hompage_top_contents1_bold"><%= project.introduce_title %></div>
+                    <div class="hompage_top_contents1"><%= project.nickname %></div>    
+                    <div class="more"><a href="/project/<%= project.project_seq %>">들어가기</a></div>
+                </li>
             <% }); %>
         </ul>
-    </div>
+      </div>
+      
     <div>
         <ol class="paging">
             <li class="first"><a href="/">첫페이지</a></li>
