@@ -30,3 +30,21 @@
 |BackEnd|Node.js, Flask|
 |DataBase|MySQL|
 |TOOL|vsCode, Python|
+
+<br/>
+
+## 🥇 함께한 팀원
+
+|학번|이름|깃허브|
+|:----:|:---:|:-----:|
+|2024482|김한재|Kimhanjae7|
+|2023874|최혁진|HyeokJin-Choi|
+|2022546|조재희|zozeyx|
+|2023734|위예성|yesung20|
+|2023770|박지원|G1|
+
+<br/>
+<br/>
+
+## 🔖 참고한 사이트
+- HOLA
