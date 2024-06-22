@@ -1,77 +1,293 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>내 프로젝트 보기</title>
-  <link rel="stylesheet" href="/Users/sung_a__/workspace/VsCode/project_1/public/images/">
+    <meta charset="UTF-8">
+    <title>내 프로젝트</title>
+    <link rel="stylesheet" type="text/css" href="/css/myProject.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Jua&family=Nanum+Pen+Script&family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="container">
-    <h1>내 작성글</h1>
-  <div class="user-info">
-    <h3><%= nickname %></h3>
-    <img src="<%= profile_pic %>" alt="Profile Picture" class="profile-pic">
-  </div>
-    <% if (posts.length > 0) { %>
-      <ul>
-        <% posts.forEach(post => { %>
-          <li>
-            <h2><%= post.introduce_title %></h2>
-            <p><%= post.category %></p>
-            <p><%= post.deadline %></p>
-            <p><%= post.position %></p>
-            <p><%= post.teck_stack %></p>
-            <a href="/project/<%= post.project_seq %>">들어가기</a>
-          </li>
-        <% }); %>
-      </ul>
-    <% } else { %>
-      <p>No projects found.</p>
-    <% } %>
-  </div>
-
-  <div class="container">
-    <h1>지원한 프로젝트</h1>
-    <ul>
-      <% appliedProjects.forEach(project => { %>
-        <li>
-          <div class="project-details">
-            <h2><%= project.introduce_title %></h2>
-            <p>Category: <%= project.category %></p>
-            <p>Deadline: <%= project.deadline %></p>
-            <p>Position: <%= project.position %></p>
-            <p>Teck Stack: <%= project.teck_stack %></p>
-            <p>Nickname: <%= project.nickname %></p>
-            <img src="<%= project.profile_pic %>" alt="Profile Picture">
-            <a href="/project/<%= project.project_seq %>">들어가기</a>
-          </div>
-        </li>
-      <% }); %>
-    </ul>
-  </div>
-
-  <div class="container">
-    <h1>진행중인 프로젝트</h1>
-    <% if (participantProjects.length > 0) { %>
-      <ul>
-        <% participantProjects.forEach(project => { %>
-          <li>
-            <h2><%= project.introduce_title %></h2>
-            <p><%= project.category %></p>
-            <p><%= project.deadline %></p>
-            <p><%= project.position %></p>
-            <p><%= project.teck_stack %></p>
-            <p>작성자: <%= project.nickname %></p>
-            <img src="<%= project.profile_pic %>" alt="Profile Picture" class="profile-pic">
-            <a href="/project/<%= project.project_seq %>">들어가기</a>
-          </li>
-        <% }); %>
-      </ul>
-    <% } else { %>
-      <p>No ongoing projects found.</p>
-    <% } %>
-  </div>
-
+    <div class="wrap">
+        <div class="profile_top">
+            <div class="profile_logo">
+                <a href="/"><img src="/images/PM_logo_fin.png"></a><br>
+                <span>Project Master</span><br><br>
+            </div>
+            <div class="menubar">
+                <ul class="nav">
+                    <li><a href="/">HOME</a></li>
+                    <li><a href="/alarms">알림</a></li>
+                    <li><a href="/join">회원가입</a></li>
+                    <li><a href="/login">로그인</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="bottom_wrap">
+            <div class="bottom_bg">
+                <div class="bottom">
+                    <div class="section">
+                        <br><span class="font_style_head"> 내 작성글 </span><br>
+                        <div class="project_sort">
+                            <button class="project_sort_arrow left_arrow"> <!-- 왼쪽 화살표 -->
+                            </button>
+                            <ul class="icons">
+                                <% posts.forEach(post => { %>
+                                    <li>
+                                        <div class="project_preview">
+                                            <div class="project_preview_top">
+                                                <img src="/images/default_profile.png">
+                                                <span class="font_style"><%= nickname %></span>
+                                                <span class="font_style2"><%= post.category %></span>
+                                                <button class="bt_mark"><img src="/images/bookmark.png"></button>
+                                            </div>	
+                                            <div class="project_preview_middle">
+                                                <hr class="hr_style">
+                                                <div class="middle_top">
+                                                    <span class="font_style3"><%= post.introduce_title %></span>
+                                                </div>
+                                                <span class="font_style4_1">프론트엔드</span>
+                                                <span class="font_style4_1">백엔드</span>
+                                                <span class="font_style4_1">UI/UX</span>
+                                                <div class="middle_bottom">
+                                                    <div class="img_design2"><img src="/images/c.png"></div>
+                                                    <div class="img_design"><img src="/images/cc.png"></div>
+                                                    <div class="img_design"><img src="/images/c++.png"></div>
+                                                </div>
+                                            </div>
+                                            <div class="project_preview_bottom">
+                                                <hr class="hr_style2">
+                                                <div class="bottom_sort">
+                                                    <span class="font_style4">마감일 | <%= post.deadline %></span>
+                                                    <img src="/images/see.png" class="plus_margin_left">
+                                                    <span class="font_style5">0</span>
+                                                    <img class="plus_margin_left2" src="/images/comments.png">
+                                                    <span class="font_style5">0</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                <% }); %>
+                            </ul>
+                            <button class="project_sort_arrow right_arrow"> <!-- 오른쪽 화살표 -->
+                            </button>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <br><span class="font_style_head"> 지원한 프로젝트</span><br>
+                        <div class="project_sort">
+                            <button class="project_sort_arrow left_arrow"> <!-- 왼쪽 화살표 -->
+                            </button>
+                            <ul class="icons">
+                                <% appliedProjects.forEach(project => { %>
+                                    <li>
+                                        <div class="project_preview">
+                                            <div class="project_preview_top">
+                                                <img src="/images/default_profile.png">
+                                                <span class="font_style"><%= project.nickname %></span>
+                                                <span class="font_style2"><%= project.category %></span>
+                                                <button class="bt_mark"><img src="/images/bookmark.png"></button>
+                                            </div>	
+                                            <div class="project_preview_middle">
+                                                <hr class="hr_style">
+                                                <div class="middle_top">
+                                                    <span class="font_style3"><%= project.introduce_title %></span>
+                                                </div>
+                                                <span class="font_style4_1">프론트엔드</p></span>
+                                                <span class="font_style4_1">백엔드</span>
+                                                <span class="font_style4_1">UI/UX</span>
+                                                <div class="middle_bottom">
+                                                    <div class="img_design2"><img src="/images/c.png"></div>
+                                                    <div class="img_design"><img src="/images/cc.png"></div>
+                                                    <div class="img_design"><img src="/images/c++.png"></div>
+                                                </div>
+                                            </div>
+                                            <div class="project_preview_bottom">
+                                                <hr class="hr_style2">
+                                                <div class="bottom_sort">
+                                                    <span class="font_style4">마감일 | <%= project.deadline %></span>
+                                                    <img src="/images/see.png" class="plus_margin_left">
+                                                    <span class="font_style5">0</span>
+                                                    <img class="plus_margin_left2" src="/images/comments.png">
+                                                    <span class="font_style5">0</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                <% }); %>
+                            </ul>
+                            <button class="project_sort_arrow right_arrow"> <!-- 오른쪽 화살표 -->
+                            </button>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <br><span class="font_style_head"> 내 관심글</span><br>
+                        <div class="project_sort">
+                            <button class="project_sort_arrow left_arrow"> <!-- 왼쪽 화살표 -->
+                            </button>
+                            <ul class="icons">
+                                <li>
+                                    <div class="project_preview">
+                                        <div class="project_preview_top">
+                                            <img src="/images/default_profile.png">
+                                            <span class="font_style">닉네임</span>
+                                            <span class="font_style2">프로젝트</span>
+                                            <button class="bt_mark"><img src="/images/bookmark.png"></button>
+                                        </div>	
+                                        <div class="project_preview_middle">
+                                            <hr class="hr_style">
+                                            <div class="middle_top">
+                                                <span class="font_style3">게시글 제목</span>
+                                            </div>
+                                            <span class="font_style4_1">프론트엔드</span>
+                                            <span class="font_style4_1">백엔드</span>
+                                            <span class="font_style4_1">UI/UX</span>
+                                            <div class="middle_bottom">
+                                                <div class="img_design2"><img src="/images/c.png"></div>
+                                                <div class="img_design"><img src="/images/cc.png"></div>
+                                                <div class="img_design"><img src="/images/c++.png"></div>
+                                            </div>
+                                        </div>
+                                        <div class="project_preview_bottom">
+                                            <hr class="hr_style2">
+                                            <div class="bottom_sort">
+                                                <span class="font_style4">마감일 | 2024.06.30</span>
+                                                <img src="/images/see.png" class="plus_margin_left">
+                                                <span class="font_style5">0</span>
+                                                <img class="plus_margin_left2" src="/images/comments.png">
+                                                <span class="font_style5">0</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="project_preview">
+                                        <div class="project_preview_top">
+                                            <img src="/images/default_profile.png">
+                                            <span class="font_style">닉네임</span>
+                                            <span class="font_style2">프로젝트</span>
+                                            <button class="bt_mark"><img src="/images/bookmark.png"></button>
+                                        </div>	
+                                        <div class="project_preview_middle">
+                                            <hr class="hr_style">
+                                            <div class="middle_top">
+                                                <span class="font_style3">게시글 제목</span>
+                                            </div>
+                                            <span class="font_style4_1">프론트엔드</span>
+                                            <span class="font_style4_1">백엔드</span>
+                                            <span class="font_style4_1">UI/UX</span>
+                                            <div class="middle_bottom">
+                                                <div class="img_design2"><img src="/images/c.png"></div>
+                                                <div class="img_design"><img src="/images/cc.png"></div>
+                                                <div class="img_design"><img src="/images/c++.png"></div>
+                                            </div>
+                                        </div>
+                                        <div class="project_preview_bottom">
+                                            <hr class="hr_style2">
+                                            <div class="bottom_sort">
+                                                <span class="font_style4">마감일 | 2024.06.30</span>
+                                                <img src="/images/see.png" class="plus_margin_left">
+                                                <span class="font_style5">0</span>
+                                                <img class="plus_margin_left2" src="/images/comments.png">
+                                                <span class="font_style5">0</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="project_preview">
+                                        <div class="project_preview_top">
+                                            <img src="/images/default_profile.png">
+                                            <span class="font_style">닉네임</span>
+                                            <span class="font_style2">프로젝트</span>
+                                            <button class="bt_mark"><img src="/images/bookmark.png"></button>
+                                        </div>	
+                                        <div class="project_preview_middle">
+                                            <hr class="hr_style">
+                                            <div class="middle_top">
+                                                <span class="font_style3">게시글 제목</span>
+                                            </div>
+                                            <span class="font_style4_1">프론트엔드</span>
+                                            <span class="font_style4_1">백엔드</span>
+                                            <span class="font_style4_1">UI/UX</span>
+                                            <div class="middle_bottom">
+                                                <div class="img_design2"><img src="/images/c.png"></div>
+                                                <div class="img_design"><img src="/images/cc.png"></div>
+                                                <div class="img_design"><img src="/images/c++.png"></div>
+                                            </div>
+                                        </div>
+                                        <div class="project_preview_bottom">
+                                            <hr class="hr_style2">
+                                            <div class="bottom_sort">
+                                                <span class="font_style4">마감일 | 2024.06.30</span>
+                                                <img src="/images/see.png" class="plus_margin_left">
+                                                <span class="font_style5">0</span>
+                                                <img class="plus_margin_left2" src="/images/comments.png">
+                                                <span class="font_style5">0</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <br><span class="font_style_head"> 진행중인 프로젝트 </span><br>
+                        <div class="project_sort">
+                            <ul class="icons">
+                                <% participantProjects.forEach(project => { %>
+                                    <li>
+                                        <div class="project_preview">
+                                            <div class="project_preview_top">
+                                                <img src="/images/default_profile.png">
+                                                <span class="font_style"><%= project.nickname %></span>
+                                                <span class="font_style2"><%= project.category %></span>
+                                                <button class="bt_mark"><img src="/images/bookmark.png"></button>
+                                            </div>	
+                                            <div class="project_preview_middle">
+                                                <hr class="hr_style">
+                                                <div class="middle_top">
+                                                    <span class="font_style3"><%= project.introduce_title %></span>
+                                                </div>
+                                                <span class="font_style4_1">프론트엔드</span>
+                                                <span class="font_style4_1">백엔드</span>
+                                                <span class="font_style4_1">UI/UX</span>
+                                                <div class="middle_bottom">
+                                                    <div class="img_design2"><img src="/images/c.png"></div>
+                                                    <div class="img_design"><img src="/images/cc.png"></div>
+                                                    <div class="img_design"><img src="/images/c++.png"></div>
+                                                </div>
+                                            </div>
+                                            <div class="project_preview_bottom">
+                                                <hr class="hr_style2">
+                                                <div class="bottom_sort">
+                                                    <span class="font_style4">마감일 | <%= project.deadline %></span>
+                                                    <img src="/images/see.png" class="plus_margin_left">
+                                                    <span class="font_style5">0</span>
+                                                    <img class="plus_margin_left2" src="/images/comments.png">
+                                                    <span class="font_style5">0</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                <% }); %>
+                            </ul>
+                            <button class="project_sort_arrow right_arrow"> <!-- 오른쪽 화살표 -->
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
+
+<script>
+    
+</script>
+
