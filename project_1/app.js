@@ -93,29 +93,31 @@ app.get('/', (req, res) => {
   // 페이지에 해당하는 데이터 가져오는 쿼리 수정
   let offset = (page - 1) * perPage;
   let sql = `
-  SELECT p.category, p.project_seq, p.introduce_title, p.teck_stack, p.position, p.deadline, m.nickname
-  FROM project_info p
-  JOIN member m ON p.user_id = m.user_id
-  LIMIT ${perPage}
-  OFFSET ${offset}`;
+    SELECT p.category, p.project_seq, p.introduce_title, p.teck_stack, p.position, p.deadline, m.nickname
+    FROM project_info p
+    JOIN member m ON p.user_id = m.user_id
+    WHERE p.status = 'active'
+    LIMIT ${perPage}
+    OFFSET ${offset}`;
 
   connection.query(sql, (err, results) => {
+    if (err) throw err;
+
+    // 전체 데이터 개수 가져오기 (페이징 처리를 위해)
+    let countSql = `SELECT COUNT(*) as count FROM project_info WHERE status = 'active'`;
+    connection.query(countSql, (err, countResult) => {
       if (err) throw err;
+      const totalCount = countResult[0].count;
 
-      // 전체 데이터 개수 가져오기 (페이징 처리를 위해)
-      let countSql = `SELECT COUNT(*) as count FROM project_info`;
-      connection.query(countSql, (err, countResult) => {
-          if (err) throw err;
-          const totalCount = countResult[0].count;
+      // 전체 페이지 수 계산
+      const totalPages = Math.ceil(totalCount / perPage);
 
-          // 전체 페이지 수 계산
-          const totalPages = Math.ceil(totalCount / perPage);
-
-          // EJS 템플릿 렌더링
-          res.render('index', { projects: results, totalPages, currentPage: page });
-      });
+      // EJS 템플릿 렌더링
+      res.render('index', { projects: results, totalPages, currentPage: page });
+    });
   });
-})
+});
+
 
 
 app.post('/', (req, res) => {
@@ -410,8 +412,8 @@ app.post('/registrationProc', (req, res) => {
 
   // SQL 삽입문
   var insertSql = `
-    INSERT INTO project_info (category, mem_number, way, period, teck_stack, deadline, position, contact, introduce_title, introduce_detail, date, user_id) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_DATE(), ?)
+    INSERT INTO project_info (category, mem_number, way, period, teck_stack, deadline, position, contact, introduce_title, introduce_detail, date, user_id, status) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_DATE(), ?, 'active')
   `;
   var values = [category, mem_number, way, period, teck_stack, deadline, position, contact, introduce_title, introduce_detail, user_id];
 
@@ -421,9 +423,31 @@ app.post('/registrationProc', (req, res) => {
       console.error('Database query error:', err);
       return res.send("<script> alert('게시글 등록 중 오류가 발생했습니다. 다시 시도해 주세요.'); location.href='/registration';</script>");
     }
-    res.send("<script> alert('게시글이 등록되었습니다'); location.href='/';</script>");
+    
+    // 삽입된 프로젝트의 ID 가져오기
+    const project_seq = result.insertId;
+
+    // participants 테이블에 데이터 삽입
+    const participantSql = `
+      INSERT INTO participants (user_id, project_seq, status, position)
+      VALUES (?, ?, '작성자', '미정')
+    `;
+    const participantValues = [user_id, project_seq];
+
+    // participants 테이블에 쿼리 실행
+    connection.query(participantSql, participantValues, function (err, participantResult) {
+      if (err) {
+        console.error('Database query error:', err);
+        return res.send("<script> alert('게시글 등록 중 오류가 발생했습니다. 다시 시도해 주세요.'); location.href='/registration';</script>");
+      }
+      
+      // 등록 성공 메시지 출력 및 리다이렉트
+      res.send("<script> alert('게시글이 등록되었습니다'); location.href='/';</script>");
+    });
   });
 });
+
+
 
 
 //추가 (프로젝트 제목 클릭하면 그 게시물에 대한 페이지 열림)
@@ -491,6 +515,7 @@ app.post('/reject', (req, res) => {
 });
 
 //----수정(추가)
+//----수정(추가)
 app.get('/see_project', (req, res) => {
   if (req.session.member == null) {
     res.send("<script> alert('로그인하고 접근해주세요'); location.href='/';</script>");
@@ -499,7 +524,7 @@ app.get('/see_project', (req, res) => {
 
   const user_id = req.session.member.user_id;
 
-  const projectSql = 'SELECT introduce_title, category, deadline, position, teck_stack FROM project_info WHERE user_id = ?';
+  const projectSql = 'SELECT introduce_title, category, deadline, position, teck_stack, project_seq FROM project_info WHERE user_id = ?';
   
   const memberSql = 'SELECT nickname, profile_pic FROM member WHERE user_id = ?';
 
@@ -511,14 +536,54 @@ app.get('/see_project', (req, res) => {
       
       const memberInfo = memberResults[0];
       
-      res.render('see_project', { 
-        posts: projectResults,
-        nickname: memberInfo.nickname,
-        profile_pic: memberInfo.profile_pic
+      // 새로운 기능 추가: participants 테이블과 project_info 테이블을 조인하여 데이터 조회
+      const participantProjectsSql = `
+        SELECT pi.introduce_title, pi.category, pi.deadline, pi.position, pi.teck_stack, pi.project_seq, m.nickname, m.profile_pic
+        FROM participants p
+        INNER JOIN project_info pi ON p.project_seq = pi.project_seq
+        INNER JOIN member m ON pi.user_id = m.user_id
+        WHERE p.user_id = ? AND pi.status = 'hidden'
+      `;
+      
+      connection.query(participantProjectsSql, [user_id], (err, participantResults) => {
+        if (err) {
+          console.error('Database query error:', err);
+          res.send("<script> alert('프로젝트 정보를 가져오는 중 오류가 발생했습니다.'); location.href='/';</script>");
+          return;
+        }
+
+        // 새로운 기능 추가: 지원한 프로젝트 데이터 조회
+        const appliedProjectsSql = `
+          SELECT pi.introduce_title, pi.category, pi.deadline, pi.position, pi.teck_stack, pi.project_seq, m.nickname, m.profile_pic
+          FROM participants p
+          INNER JOIN project_info pi ON p.project_seq = pi.project_seq
+          INNER JOIN member m ON pi.user_id = m.user_id
+          WHERE p.user_id = ? AND p.status = '신청'
+        `;
+
+        connection.query(appliedProjectsSql, [user_id], (err, appliedProjects) => {
+          if (err) {
+            console.error('Database query error:', err);
+            res.send("<script> alert('지원한 프로젝트 정보를 가져오는 중 오류가 발생했습니다.'); location.href='/';</script>");
+            return;
+          }
+
+          // 데이터를 렌더링할 템플릿에 전달
+          res.render('see_project', { 
+            posts: projectResults,
+            nickname: memberInfo.nickname,
+            profile_pic: memberInfo.profile_pic,
+            participantProjects: participantResults,  // 추가된 participantProjects 데이터 추가
+            appliedProjects: appliedProjects         // 추가된 appliedProjects 데이터 추가
+          });
+        });
       });
     });
   });
 });
+
+
+
 
 //----추가
 app.post('/apply', async (req, res) => {
@@ -578,6 +643,15 @@ app.post('/delete/:project_seq', (req, res) => {
   });
 });
 
+// 추가
+app.get('/start/:project_seq', (req, res) => {
+  const projectSeq = req.params.project_seq;
+  const updateSql = 'UPDATE project_info SET status = ? WHERE project_seq = ?';
+  connection.query(updateSql, ['hidden', projectSeq], (err, result) => {
+      if (err) throw err;
+      res.send("<script> alert('프로젝트가 시작되었습니다'); location.href='/';</script>");
+  });
+});
 
 app.listen(port, () => {
   console.log(`서버 실행 성공하였습니다. 접속주소 : http://localhost:${port}`)
