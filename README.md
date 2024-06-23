@@ -51,5 +51,8 @@
 <br/>
 <br/>
 
-## 🔖 참고한 사이트
-- HOLA
+## 🔖 참고문헌
+- https://holaworld.io/
+- https://github.com/githiro/drawDoughnutChart
+- https://code.highcharts.com/highcharts-more.js
+- https://code.highcharts.com/highcharts.js 
