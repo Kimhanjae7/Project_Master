@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="signup_in.css">
+</head>
+<body>
+	<div id="container" class="container">
+		<!-- FORM SECTION -->
+		<div class="row">
+		  <!-- SIGN UP -->
+		  <div class="col align-items-center flex-col sign-up">
+			<div class="form-wrapper align-items-center">
+			  <div class="form sign-up">
+				<form>
+					<div class="input-group">
+						<i class='bx bxs-user'></i>
+						<input type="text" class="input" placeholder="ID" id="user_id" name="user_id" required />
+					</div>
+					<div class="input-group">
+						<i class='bx bxs-user'></i>
+						<input type="password" class="input" placeholder="Password" id="user_pw" name="user_pw" required/>
+					</div>
+					<div class="input-group">
+						<i class='bx bxs-user'></i>
+						<input type="text" class="input" placeholder="Name" id="user_name" name="user_name" required/>
+					</div>
+					<div class="input-group">
+						<i class='bx bxs-user'></i>
+						<input type="number" class="input" placeholder="Phone number" id="user_phone" name="user_phone" required/>
+					</div>
+					<div class="input-group">
+						<i class="bx bxs-user"></i>
+						<input type="text" class="input" placeholder="Nickname" id="nickname" name="nickname" required/>	
+					</div>
+					<button>
+						Sign up
+					</button>
+				</form>
+				<p>
+				  <span>
+					Already have an account?
+				  </span>
+				  <b onclick="toggle()" class="pointer">
+					Sign in here
+				  </b>
+				</p>
+			  </div>
+			</div>
+		  </div>
+		  <!-- END SIGN UP -->
+		  <!-- SIGN IN -->
+		  <div class="col align-items-center flex-col sign-in">
+			<div class="form-wrapper align-items-center">
+			  <div class="form sign-in">
+				<form>
+					<div class="input-group">
+					<i class='bx bxs-user'></i>
+					<input type="text" class="input" placeholder="ID"/>
+					</div>
+					<div class="input-group">
+					<i class='bx bxs-user'></i>
+					<input type="password" class="input" placeholder="Password" />
+					</div>
+					<button>
+						Sign in
+					</button>
+				</form>
+				<p>
+				</p>
+				<p>
+				  <span>
+					Don't have an account?
+				  </span>
+				  <b onclick="toggle()" class="pointer">
+					Sign up here
+				  </b>
+				</p>
+			  </div>
+			</div>
+			<div class="form-wrapper">
+			</div>
+		  </div>
+		  <!-- END SIGN IN -->
+		</div>
+		<!-- END FORM SECTION -->
+		<!-- CONTENT SECTION -->
+		<div class="row content-row">
+		  <!-- SIGN IN CONTENT -->
+		  <div class="col align-items-center flex-col">
+			<div class="text sign-in">
+			  <h2>
+				Once you log in, <br>
+				You will have access <br>
+				to many features
+			  </h2>
+			</div>
+			<div class="img sign-in">
+			</div>
+		  </div>
+		  <!-- END SIGN IN CONTENT -->
+		  <!-- SIGN UP CONTENT -->
+		  <div class="col align-items-center flex-col">
+			<div class="img sign-up">
+			</div>
+			<div class="text sign-up">
+				<h2>
+					<br><br><br>This is the process<br>&nbsp;to start the project
+				</h2><br>
+				<span>
+					Once you complete this step, you will be fully prepared.<br>
+					You can bring your ideas to life<br> and collaborate with others to create an impressive portfolio.<br>
+					We provide you with an excellent environment to form your team.
+				</span>
+			</div>
+		  </div>
+		  <!-- END SIGN UP CONTENT -->
+		</div>
+		<!-- END CONTENT SECTION -->
+	  </div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			let container = document.getElementById('container');
+
+			function toggle() {
+				container.classList.toggle('sign-in');
+				container.classList.toggle('sign-up');
+			}
+
+			window.toggle = toggle;
+
+			setTimeout(() => {
+				container.classList.add('sign-up');
+			}, 200); // 애니메이션을 트리거하기 위해 약간의 지연 시간을 둡니다.
+		});
+	</script>
+</body>
+</html>

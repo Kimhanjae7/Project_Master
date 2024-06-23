@@ -1,0 +1,203 @@
+/* 별점 */
+
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+    justify-content: space-around;
+    padding: 0 0.2em;
+    text-align: center;
+    width: 5em;
+    margin-bottom: 12px ;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    -webkit-text-fill-color: transparent; /* Will override color (regardless of order) */
+    -webkit-text-stroke-width: 2.3px;
+    -webkit-text-stroke-color: #2b2a29;
+    cursor: pointer;
+}
+
+.star-rating input:checked ~ label {
+    -webkit-text-fill-color: gold;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+    -webkit-text-fill-color: #fff58c;
+}
+
+/*로고*/
+.logo_home{
+    height: 100px;
+    width: 100px;
+    background-color: #e6e6e6;
+    margin-left: 130px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.8);
+}
+.logo_home img{
+    height: 100px;
+    width: 100px;
+    margin-left: -5px;
+}
+/*최외곽*/
+.ratePage_wrap {
+    width: 1200px;
+    height: 2400px;
+    background-color: #2e2e2e;
+    margin: 0 auto; /* 수평 중앙 정렬 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.8);
+}
+
+.ratePage_bg {
+    background-image: url('clipboard.png');
+    background-size: contain; /* 배경 이미지를 컨테이너 크기에 맞게 조정 */
+    background-position: center; /* 배경 이미지를 중앙에 위치 */
+    background-repeat: no-repeat; /* 배경 이미지 반복 안함 */
+    width: 90%;
+    height: 100%;
+    margin-top: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.ratePage{
+    width: 90%;
+    height: 65%;
+    margin-top: 80px;
+}
+.page_section {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    flex: 1;
+    margin: 10px 0;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
+    height: 170px;
+}
+.page_section_top{
+    flex: 1;
+    height: 90px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+.page_section_bottom{
+    flex: 1;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.page_title{
+    flex:0.3;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px 0;
+    height: 50px;
+}
+.page_title{
+    text-align: center;
+}
+
+.page_button{
+    flex:0.3;
+    padding: 10px;
+    margin: 200px 0;
+    height: 50px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btPage_style{
+    width:200px;
+    height: 60px;
+    background-color: #2e2e2e;
+    border-radius: 30px;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.8);
+    color: #F2F2F2;
+    font-size: 15px;
+    font-weight: bold;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    margin: auto;
+    display: block;
+    position: relative;
+}
+.btnFloat {
+    background: none;
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.5);
+}
+.btnFloat:before {
+    content: '제출하기';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 30px;
+    background-color: #2e2e2e;
+    color: #F2F2F2;
+    transition: all 0.2s ;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.8);
+}
+.btnFloat:before {
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.4);
+}
+.btnFloat:hover:before {
+    margin-top: -2px;
+    margin-left: 0px;
+    transform: scale(0.9,0.9);
+    -ms-transform: scale(0.9,0.9);
+    -webkit-transform: scale(0.9,0.9);
+    box-shadow: 0px 5px 5px -2px rgba(0, 0, 0, 0.5);
+}
+
+
+
+/*폰트 스타일*/
+.page_title_text{
+    font-size: 20px;
+    font-weight: lighter;
+    background-color: #2e2e2e;
+    border-radius: 20px;
+    padding:8px 20px 8px 20px; 
+    color: #f2f2f2;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.8);
+}
+
+.rate_font_style{
+    font-size: 18px;
+    font-weight: bold;
+}
+.rate_font_style2{
+    font-size: 20px;
+    font-weight: bold;
+}

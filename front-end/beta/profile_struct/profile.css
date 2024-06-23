@@ -1,0 +1,400 @@
+@charset "EUC-KR";
+*{
+	list-style: none;
+	text-decoration: none;
+	border-collapse: collapse;
+	margin:0px;
+	padding:0px;
+	color:#000;
+}
+.nanum-pen-script-regular {
+    font-family: "Nanum Pen Script", cursive;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.profile_wrap{background-color:#f2f2f2;}
+.profile_top{
+    background-color: #f2f2f2;
+	width:100%;
+	height:280px;
+}
+.profile_logo{
+    text-align: center;
+}
+.profile_logo img{
+    margin-top:10px;
+	width:100px;
+	height:100px;
+	cursor:pointer;
+}
+.profile_logo span{
+    font-size:40px;
+    font-weight:bold;
+    font-family: "Nanum Pen Script", cursive;
+}
+.menubar{
+    display: flex;
+	justify-content: end;
+	width:1500px;
+	margin:auto;
+	height:75px;
+	background-color:#2E2E2E;
+	border-radius:10px;
+}
+.nav{
+	display: flex; /*가로정렬*/
+	justify-content: end;
+	margin-right: 120px;
+	line-height:75px;
+	width:calc(100% - 500px);
+}
+.nav > li{
+	margin-left:60px;
+}
+.nav > li > a{
+	color:#F2F2F2;
+	font-weight:bold;
+	font-size: 20px;
+}
+.nav > li > a:hover{color:#ff5a20}
+
+/* ------------------------ 상단 ---------------------------*/
+
+.profile_bottom{
+    background-color: #f2f2f2;
+    width: 92%;
+    height: 2100px;
+	margin: auto;
+	border-radius: 10px;
+	border-width:10px;
+	border-style:solid;
+	border-color: #2E2E2E;
+}
+.modify_info{
+	width:100%;
+	height: 47%;
+	background-color: #f2f2f2;
+}
+.modify_info > h2{
+	width: 90%;
+	font-size: 28px;
+	margin:auto;
+}
+.profile_submit{
+	width:100%;
+	height: 10%;
+	background-color: #f2f2f2;
+}
+.addImage {
+	width: 300px;
+	height: 300px;
+	background-color: #f2f2f2;
+	border-radius: 20px;
+	border-width: 3px;
+	border-style: solid;
+	border-color: #2E2E2E;
+	overflow: hidden;
+	margin: 130px auto auto 60px;
+}
+.change_info{
+	height: 68%;
+	background-color: #f2f2f2;
+	display: flex;
+}
+.change_myinfo{
+	background-color: #f2f2f2;
+	flex:2;
+}
+.change_myinfo_margin{
+	width: 86%;
+	height: 80%;
+	margin:15px auto auto auto;
+	background-color: #f2f2f2;
+}
+.change_myimg{
+	background-color: #f2f2f2;
+	flex:1;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+}
+.change_myimg input{
+	margin:10px auto auto auto;
+}
+.change_introduce{
+	height: 22%;
+	background-color: #f2f2f2;
+}
+.profile_title{
+	background-color: beige;
+	text-align: center;
+	margin:auto auto 20px auto;
+}
+.profile_title > span{
+	font-size: 28px;
+	font-weight: bold;
+}
+.input-group {
+	position: relative;
+	width: 100%;
+	margin: 1rem 0;
+  }
+  
+  .input-group i {
+	position: absolute;
+	top: 50%;
+	left: 1rem;
+	transform: translateY(-50%);
+	font-size: 1.4rem;
+	color: var(--gray-2);
+  }
+  
+  .input-group input {
+	width: 70%;
+	padding: 1rem 2rem;
+	font-size: 1rem;
+	background-color: #E6E6E6;
+	border-radius: 10px;
+	border-width: 3px;
+	border-style: solid;
+	border-color: #2e2e2e;
+	outline: none;
+	margin-top:4px;
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+  }
+  .input-group select{
+	width: 50%;
+	padding: 1rem 2rem;
+	font-size: 1rem;
+	background-color: #E6E6E6;
+	border-radius: 10px;
+	border-width: 3px;
+	border-style: solid;
+	border-color: #2e2e2e;
+	outline: none;
+	margin-top:4px;
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+  }
+  .input-group input:focus {
+	border-color: lightgray;
+	background-color: #f2f2f2;
+  }
+  .input-group select:focus {
+	border-color: lightgray;
+	background-color: #f2f2f2;
+  }
+
+.change_introduce_margin{
+	width: 90.5%;
+	height: 80%;
+	background-color: #f2f2f2;
+	margin:-10px auto auto auto;
+}
+.change_myinfo_span{
+	font-size: 18px;
+	font-weight: bold;
+}
+.introduce_text{
+	width:90%;
+	padding: 1rem 2rem;
+	font-size: 1rem;
+	height: 6.25em;
+	border-radius: 10px;
+	border-width: 3px;
+	background-color: #E6E6E6;
+	border-style: solid;
+	border-color: #2e2e2e;
+	resize: none;
+	margin-top: 4px;
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+}
+.introduce_text:focus{
+	border-color: lightgray;
+	background-color: #f2f2f2;
+}
+.myscore{
+	width:100%;
+	height: 44%;
+	background-color: pink;
+}
+.myscore_margin{
+	width: 90%;
+	height: 90%;
+	background-color: aquamarine;
+	margin:50px auto auto auto;
+}
+.myscore_margin > h2{
+	font-size: 28px;
+}
+.myscore_div{
+	background-color: skyblue;
+	width: 100%;
+	display: flex;
+	height: 10%;
+	line-height: 80px;
+}
+.myscore_job{
+	background-color: aquamarine;
+	flex:1
+}
+.myscore_job span{
+	font-size:20px;
+	font-weight: bold;
+}
+.job_score{
+	background-color: aqua;
+	flex:1
+}
+.job_score span{
+	font-size:20px;
+	font-weight: bold;
+}
+.job_count{
+	background-color: pink;
+	flex:1;
+}
+.job_count span{
+	font-size:20px;
+	font-weight: bold;
+}
+.hr_design{
+	width: 90%;
+	margin: auto;
+	height: 1px;
+	background-color: lightgrey;
+	box-shadow: 0px 0px 2px rgba(0,0,0,0.3);
+}
+/*---------------------------- 중간 --------------------------*/
+
+.profile_submit{
+	width: 100%;
+	margin:auto;
+	height: 6.4%;
+	display: flex;
+	text-align: center;
+}
+.profile_submit button{
+	margin-top: 45px;
+}
+.bt_profile_div{
+	flex:1;
+	background-color: #f2f2f2;
+
+}
+.bt_exit_div{
+	flex:1;
+	background-color: #f2f2f2;
+}
+
+.bt_profile{
+	width: 150px;
+	height: 60px;
+	border-radius: 40px;
+	font-size: 18px;
+	font-weight: bold;
+	border-width: 3px;
+	border-color: #2e2e2e;
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+	cursor: pointer;
+	margin-left: 300px;
+}
+.bt_exit{
+	width: 150px;
+	height: 60px;
+	border-radius: 40px;
+	font-size: 18px;
+	font-weight: bold;
+	border-width: 3px;
+	border-color: #2e2e2e;
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+	cursor: pointer;
+	margin-right: 300px;
+}
+
+/*-----------------------하단---------------------*/
+
+#container{
+	border: 1px solid #999;
+	box-shadow: 0px 0px 8px 0px #999;
+	width: 600px;
+	height: 450px;
+	margin: 0 auto;
+	border-radius: 20px;
+	border-width: 3px;
+	border-color: #2E2E2E;
+}
+.newTip{
+	min-width: 8em;
+	text-align: center;
+}
+.newTip big {
+	font-size: 10pt;
+	font-weight: bold;
+}
+
+@import url(//fonts.googleapis.com/css?family=Oswald:400);
+.chart {
+	position: absolute;
+	font-family: "Oswald", sans-serif;
+	width: 400px;  /* 차트의 너비 조정 */
+	height: 400px; /* 차트의 높이 조정 */
+	margin: 0 auto; /* 페이지 가운데 정렬 */
+	padding: 20px; /* 차트 주위에 패딩 추가 */
+	box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+.doughnutTip {
+  position: absolute;
+  min-width: 30px;
+  max-width: 300px;
+  padding: 5px 15px;
+  border-radius: 1px;
+  background: rgba(0,0,0,.8);
+  color: #ddd;
+  font-size: 17px;
+  text-shadow: 0 1px 0 #000;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.3;
+  letter-spacing: .06em;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  pointer-events: none;
+  &::after {
+      position: absolute;
+      left: 50%;
+      bottom: -6px;
+      content: "";
+      height: 0;
+      margin: 0 0 0 -6px;
+      border-right: 5px solid transparent;
+      border-left: 5px solid transparent;
+      border-top: 6px solid rgba(0,0,0,.7);
+      line-height: 0;
+  }
+}
+.doughnutSummary {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: #d5d5d5;
+  text-align: center;
+  text-shadow: 0 -1px 0 #111;
+  cursor: default;
+}
+.doughnutSummaryTitle {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  margin-top: -27%;
+  font-size: 22px;
+  letter-spacing: .06em;
+}
+.doughnutSummaryNumber {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  margin-top: -15%;
+  font-size: 55px;
+}
+.chart path:hover { opacity: 0.65; }
+
