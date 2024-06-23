@@ -1,0 +1,579 @@
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<%- include('header') %>
+
+<div class="main_text1">
+    <div class="top_project">
+        <!--------------추천 html------------------->
+        <span>추천 프로젝트</span> 
+        <div class="turn_project">
+            <img src="/images/좌측화살표.png" id="left-arrow">  
+            <img src="/images/우측화살표.png" id="right-arrow">
+        </div>
+    </div>
+    <ul class="icons" id="recommendations">
+        <% recommendations.forEach(project => { %>
+            <li>
+                <div class="project_preview">
+                    <div class="project_preview_top">
+                        <img src="/images/default_profile.png">
+                        <span class="font_style"><%= project.nickname %></span>
+                        <span class="font_style2"><%= project.category %></span>
+                        <button class="bt_mark"><img src="/images/bookmark.png"></button>
+                    </div>	
+                    <div class="project_preview_middle">
+                        <hr class="hr_style">
+                        <div class="middle_top">
+                            <span class="font_style3"><%= project.post_title %></span>
+                        </div>
+                        <span class="font_style4_1"><%= project.position%></span>
+                        <span class="font_style4_1">백엔드</span>
+                        <span class="font_style4_1">UI/UX</span>
+                        <div class="middle_bottom">
+                            <div class="img_design2"><img src="/images/c.png"></div>
+                            <div class="img_design"><img src="/images/cc.png"></div>
+                            <div class="img_design"><img src="/images/c++.png"></div>
+                        </div>
+                    </div>
+                    <div class="project_preview_bottom">
+                        <hr class="hr_style2">
+                        <div class="bottom_sort">
+                            <span class="font_style4">마감일 | <%= project.deadline %></span>
+                            <img class="plus_margin_left" src="/images/see.png">
+                            <span class="font_style5"><%= project.view %></span>
+                            <img class="plus_margin_left2" src="/images/comments.png">
+                            <span class="font_style5">0</span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        <% }); %>
+    </ul>
+    <!-------------- 여기까지 추천 html------------------->
+    
+    <!---------------카테고리 및 인기순 최신순 ------------------>
+    <div class="middle_project">
+        <button id="all_button">전체</button>&emsp;
+        <button id="popular_button">인기순</button>&emsp;
+        <button id="recent_button">최신순</button>
+    </div>
+    <div class="select_search">
+        <div class="select_category">
+            <select name="category" id="category">
+                <option selected disabled hidden>카테고리</option>
+                <option value="카테고리">카테고리</option>
+                <option value="프로젝트">프로젝트</option>
+                <option value="스터디">스터디</option>
+            </select>
+        </div>
+        <div class="select_skill">
+            <select name="skill_stack" id="skill_stack">
+                <option value="기술스택">기술스택</option>
+                <optgroup label="프론트엔드">
+                    <option selected disabled hidden>기술스택</option>
+                    <option value="JavaScript">JavaScript</option>
+                    <option value="TypeScript">TypeScript</option>
+                    <option value="React">React</option>
+                    <option value="Vue">Vue</option>
+                    <option value="Svelte">Svelte</option>
+                    <option value="Nextjs">Nextjs</option>
+                </optgroup>
+                <optgroup label="백엔드">
+                    <option value="Nodejs">Nodejs</option>
+                    <option value="Java">Java</option>
+                    <option value="Spring">Spring</option>
+                    <option value="Go">Go</option>
+                    <option value="Nestjs">Nestjs</option>
+                    <option value="Kotlin">Kotlin</option>
+                    <option value="Express">Express</option>
+                    <option value="MySQL">MySQL</option>
+                    <option value="MonggoDB">MonggoDB</option>
+                    <option value="Python">Python</option>
+                    <option value="Django">Django</option>
+                    <option value="php">php</option>
+                    <option value="GraphQL">GraphQL</option>
+                    <option value="Firebase">Firebase</option>
+                </optgroup>
+                <optgroup label="모바일">
+                    <option value="Flutter">Flutter</option>
+                    <option value="Swift">Swift</option>
+                    <option value="ReactNative">ReactNative</option>
+                    <option value="Unity">Unity</option>
+                </optgroup>
+                <optgroup label="기타">						
+                    <option value="AWS">AWS</option>
+                    <option value="Kubernetes">Kubernetes</option>
+                    <option value="Docker">Docker</option>
+                    <option value="Git">Git</option>
+                    <option value="Figma">Figma</option>
+                    <option value="Zeplin">Zeplin</option>
+                    <option value="Jest">Jest</option>
+                </optgroup>
+            </select>
+        </div>
+        <div class="select_roll">
+            <select name="roll" id="roll">
+                <option selected disabled hidden>직무</option>
+                <option value="직무">직무</option>
+                <option value="backend">백엔드</option>
+                <option value="frontend">프론트엔드</option>
+                <option value="designer">디자이너</option>
+                <option value="IOS">IOS</option>
+                <option value="android">안드로이드</option>
+                <option value="dev">데브옵스</option>
+                <option value="PM">PM</option>
+                <option value="planner">기획자</option>	
+                <option value="marketer">마케터</option>
+            </select>
+        </div>
+        <div class="select_button">
+            <button id="filter_button">
+                <img src="/images/돋보기.png">
+            </button>
+        </div>
+        <div class="search_area">
+            <input type="search" id="search_keyword" placeholder="프로젝트 키워드 입력">
+            <button id="search_button">검색</button>
+        </div>
+    </div>
+    
+    <!---------------여기까지 카테고리 및 인기순 최신순 검색------------------>
+
+    <div class="projectList_grid">
+        <ul class="icons" id="projectList">
+            <% projects.forEach(project => { %>
+                <li>
+                    <div class="project_preview">
+                        <div class="project_preview_top">
+                            <img src="/images/default_profile.png">
+                            <span class="font_style"><%= project.nickname %></span>
+                            <span class="font_style2"><%= project.category %></span>
+                            <button class="bt_mark"><img src="/images/bookmark.png"></button>
+                        </div>	
+                        <div class="project_preview_middle">
+                            <hr class="hr_style">
+                            <div class="middle_top">
+                                <span class="font_style3"><%= project.introduce_title %></span>
+                            </div>
+                            <span class="font_style4_1">프론트엔드</span>
+                            <span class="font_style4_1">백엔드</span>
+                            <span class="font_style4_1">UI/UX</span>
+                            <div class="middle_bottom">
+                                <div class="img_design2"><img src="/images/c.png"></div>
+                                <div class="img_design"><img src="/images/cc.png"></div>
+                                <div class="img_design"><img src="/images/c++.png"></div>
+                            </div>
+                        </div>
+                        <div class="project_preview_bottom">
+                            <hr class="hr_style2">
+                            <div class="bottom_sort">
+                                <span class="font_style4">마감일 | <%= project.deadline %></span>
+                                <img class="plus_margin_left" src="/images/see.png">
+                                <span class="font_style5"><%= project.view_count %></span>
+                                <img class="plus_margin_left2" src="/images/comments.png">
+                                <span class="font_style5">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            <% }); %>
+        </ul>
+    </div>
+
+    <div>
+        <ol class="paging">
+            <li class="first"><a href="javascript:void(0)">첫페이지</a></li>
+            <li class="prev"><a href="javascript:void(0)">이전페이지</a></li>
+            <% if (totalPages >= 1) { %>
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <% if (i === currentPage) { %>
+                        <li><button id="page<%= i %>"><%= i %></button></li>
+                    <% } else { %>
+                        <li><button id="page<%= i %>"><%= i %></button></a></li>
+                    <% } %>
+                <% } %>
+            <% } %>
+            <li class="next"><a href="javascript:void(0)">다음페이지</a></li>
+            <li class="last"><a href="javascript:void(0)">마지막페이지</a></li>
+        </ol>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        //----------------추천 javascript--------------------//
+        let currentSlide = 0;
+        const recommendations = <%- JSON.stringify(recommendations) %>;
+        function showRecommendations(slideIndex) {
+            // Check if recommendations exist and slice accordingly
+            if (recommendations && recommendations.length > 0) {
+                const start = slideIndex * 3;
+                const end = start + 3;
+                visibleRecommendations = recommendations.slice(start, end);
+            } else {
+                // If recommendations array is empty or undefined, show message
+                document.getElementById('recommendationContainer').innerHTML = '';
+                return;
+            }
+            // Add empty placeholders if less than 3 recommendations are available
+            while (visibleRecommendations.length < 3) {
+                visibleRecommendations.push({});
+            }
+
+            const recommendationList = visibleRecommendations.map(project => {
+        if (Object.keys(project).length === 0) {
+            // If project object is empty (placeholder), return an empty <li>
+            return '<li></li>';
+        }
+
+        // Otherwise, construct the HTML for each recommendation
+        return `
+            <li>
+                <div class="project_preview">
+                    <div class="project_preview_top">
+                        <img src="/images/default_profile.png">
+                        <span class="font_style">닉네임</span>
+                        <span class="font_style2">${project.category || ''}</span>
+                        <button class="bt_mark"><img src="/images/bookmark.png"></button>
+                    </div>	
+                    <div class="project_preview_middle">
+                        <hr class="hr_style">
+                        <div class="middle_top">
+                            <span class="font_style3">${project.post_title || ''}</span>
+                        </div>
+                        <span class="font_style4_1">${project.position || ''}</span>
+                        <span class="font_style4_1">백엔드</span>
+                        <span class="font_style4_1">UI/UX</span>
+                        <div class="middle_bottom">
+                            <div class="img_design2"><img src="/images/c.png"></div>
+                            <div class="img_design"><img src="/images/cc.png"></div>
+                            <div class="img_design"><img src="/images/c++.png"></div>
+                        </div>
+                    </div>
+                    <div class="project_preview_bottom">
+                        <hr class="hr_style2">
+                        <div class="bottom_sort">
+                            <span class="font_style4">마감일 | ${project.deadline || ''}</span>
+                            <img class="plus_margin_left" src="/images/see.png">
+                            <span class="font_style5">${project.view || '0'}</span>
+                            <img class="plus_margin_left2" src="/images/comments.png">
+                            <span class="font_style5">0</span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        `;
+    }).join('');
+
+            document.getElementById('recommendations').innerHTML = recommendationList;
+        }
+        document.getElementById('left-arrow').addEventListener('click', () => {
+            currentSlide = (currentSlide - 1 + Math.ceil(recommendations.length / 3)) % Math.ceil(recommendations.length / 3);
+            showRecommendations(currentSlide);
+        });
+        document.getElementById('right-arrow').addEventListener('click', () => {
+            currentSlide = (currentSlide + 1) % Math.ceil(recommendations.length / 3);
+            showRecommendations(currentSlide);
+        });
+        showRecommendations(currentSlide);
+         //----------------------------여기까지 추천 -------------------------------//
+
+         //----------------------------카테고리 javascript -------------------------------//
+        document.querySelectorAll(".paging button").forEach(button => {
+            button.addEventListener("click", function() {
+                const page = parseInt(this.innerText); // 클릭된 버튼의 페이지 번호 가져오기
+                // 필터링에 사용될 값 가져오기
+                const category = document.getElementById('category').value || '';
+                const skill_stack = document.getElementById('skill_stack').value || '';
+                const role = document.getElementById('roll').value || '';
+                const keyword = document.getElementById('search_keyword').value || '';
+                
+                console.log(`Filtering with: category=${category}, skill_stack=${skill_stack}, role=${role}, keyword=${keyword}, page=${page}`); // 필터링 정보 확인용 로그
+
+                fetch(`/filter_projects?category=${category}&skill_stack=${skill_stack}&role=${role}&keyword=${keyword}&page=${page}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Filtered Data:', data); // 필터링된 데이터 확인용 로그
+                        const projectList = data.results.map(project => `
+                        <li>
+                            <div class="project_preview">
+                                <div class="project_preview_top">
+                                    <img src="/images/default_profile.png">
+                                    <span class="font_style">닉네임</span>
+                                    <span class="font_style2">${project.category}</span>
+                                    <button class="bt_mark"><img src="/images/bookmark.png"></button>
+                                </div>	
+                                <div class="project_preview_middle">
+                                    <hr class="hr_style">
+                                    <div class="middle_top">
+                                        <span class="font_style3">${project.introduce_title}</span>
+                                    </div>
+                                    <span class="font_style4_1">프론트엔드</span>
+                                    <span class="font_style4_1">백엔드</span>
+                                    <span class="font_style4_1">UI/UX</span>
+                                    <div class="middle_bottom">
+                                        <div class="img_design2"><img src="/images/c.png"></div>
+                                        <div class="img_design"><img src="/images/cc.png"></div>
+                                        <div class="img_design"><img src="/images/c++.png"></div>
+                                    </div>
+                                </div>
+                                <div class="project_preview_bottom">
+                                    <hr class="hr_style2">
+                                    <div class="bottom_sort">
+                                        <span class="font_style4">마감일 | ${project.deadline}</span>
+                                        <img class="plus_margin_left" src="/images/see.png">
+                                        <span class="font_style5">0</span>
+                                        <img class="plus_margin_left2" src="/images/comments.png">
+                                        <span class="font_style5">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        `).join('');
+
+                        document.getElementById('projectList').innerHTML = projectList;
+                        // 전체 페이지 수를 사용하여 페이지네이션을 갱신
+                        const totalPages = data.totalPages;
+                        console.log('Total Pages:', totalPages);
+                        // 페이지네이션을 업데이트하는 코드 작성
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        });
+
+        document.getElementById('filter_button').addEventListener('click', () => {
+        const category = document.getElementById('category').value || '';
+        const skill_stack = document.getElementById('skill_stack').value || '';
+        const role = document.getElementById('roll').value || '';
+        const keyword = document.getElementById('search_keyword').value || '';
+        const page = 1; // 필터링 시 페이지 번호를 1로 설정합니다.
+        
+        console.log(`Filtering with: category=${category}, skill_stack=${skill_stack}, role=${role}, keyword=${keyword}, page=${page}`); // 필터링 정보 확인용 로그
+
+        fetch(`/filter_projects?category=${category}&skill_stack=${skill_stack}&role=${role}&keyword=${keyword}&page=${page}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Filtered Data:', data); // 필터링된 데이터 확인용 로그
+                const projectList = data.results.map(project => `
+                    <li>
+                        <div class="project_preview">
+                            <div class="project_preview_top">
+                                <img src="/images/default_profile.png">
+                                <span class="font_style">닉네임</span>
+                                <span class="font_style2">${project.category}</span>
+                                <button class="bt_mark"><img src="/images/bookmark.png"></button>
+                            </div>	
+                            <div class="project_preview_middle">
+                                <hr class="hr_style">
+                                <div class="middle_top">
+                                    <span class="font_style3">${project.introduce_title}</span>
+                                </div>
+                                <span class="font_style4_1">프론트엔드</span>
+                                <span class="font_style4_1">백엔드</span>
+                                <span class="font_style4_1">UI/UX</span>
+                                <div class="middle_bottom">
+                                    <div class="img_design2"><img src="/images/c.png"></div>
+                                    <div class="img_design"><img src="/images/cc.png"></div>
+                                    <div class="img_design"><img src="/images/c++.png"></div>
+                                </div>
+                            </div>
+                            <div class="project_preview_bottom">
+                                <hr class="hr_style2">
+                                <div class="bottom_sort">
+                                    <span class="font_style4">마감일 | ${project.deadline}</span>
+                                    <img class="plus_margin_left" src="/images/see.png">
+                                    <span class="font_style5">0</span>
+                                    <img class="plus_margin_left2" src="/images/comments.png">
+                                    <span class="font_style5">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                `).join('');
+
+                document.getElementById('projectList').innerHTML = projectList;
+                        // 전체 페이지 수를 사용하여 페이지네이션을 갱신
+                        const totalPages = data.totalPages;
+                        console.log('Total Pages:', totalPages);
+                        // 페이지네이션을 업데이트하는 코드 작성
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    document.getElementById('search_button').addEventListener('click', () => {
+        const category = document.getElementById('category').value || '';
+        const skill_stack = document.getElementById('skill_stack').value || '';
+        const role = document.getElementById('roll').value || '';
+        const keyword = document.getElementById('search_keyword').value || '';
+        const page = 1; // 필터링 시 페이지 번호를 1로 설정합니다.
+        
+        console.log(`Filtering with: category=${category}, skill_stack=${skill_stack}, role=${role}, keyword=${keyword}, page=${page}`); // 필터링 정보 확인용 로그
+
+        fetch(`/filter_projects?category=${category}&skill_stack=${skill_stack}&role=${role}&keyword=${keyword}&page=${page}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Filtered Data:', data); // 필터링된 데이터 확인용 로그
+                const projectList = data.results.map(project => `
+                    <li>
+                        <div class="project_preview">
+                            <div class="project_preview_top">
+                                <img src="/images/default_profile.png">
+                                <span class="font_style">닉네임</span>
+                                <span class="font_style2">${project.category}</span>
+                                <button class="bt_mark"><img src="/images/bookmark.png"></button>
+                            </div>	
+                            <div class="project_preview_middle">
+                                <hr class="hr_style">
+                                <div class="middle_top">
+                                    <span class="font_style3">${project.introduce_title}</span>
+                                </div>
+                                <span class="font_style4_1">프론트엔드</span>
+                                <span class="font_style4_1">백엔드</span>
+                                <span class="font_style4_1">UI/UX</span>
+                                <div class="middle_bottom">
+                                    <div class="img_design2"><img src="/images/c.png"></div>
+                                    <div class="img_design"><img src="/images/cc.png"></div>
+                                    <div class="img_design"><img src="/images/c++.png"></div>
+                                </div>
+                            </div>
+                            <div class="project_preview_bottom">
+                                <hr class="hr_style2">
+                                <div class="bottom_sort">
+                                    <span class="font_style4">마감일 | ${project.deadline}</span>
+                                    <img class="plus_margin_left" src="/images/see.png">
+                                    <span class="font_style5">0</span>
+                                    <img class="plus_margin_left2" src="/images/comments.png">
+                                    <span class="font_style5">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                `).join('');
+
+                document.getElementById('projectList').innerHTML = projectList;
+                        // 전체 페이지 수를 사용하여 페이지네이션을 갱신
+                        const totalPages = data.totalPages;
+                        console.log('Total Pages:', totalPages);
+                        // 페이지네이션을 업데이트하는 코드 작성
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    //----------------------------카테고리 javascript -------------------------------//
+    //------------------------------------------ 최신순 javascript-------------------------------------------//
+    // ----------------------------------------------------//
+    document.getElementById('recent_button').addEventListener('click', () => {
+        fetchRecentProjects(1); // 1페이지부터 시작
+    });
+
+    function fetchRecentProjects(page) {
+        fetch('/get_recent_projects?page=' + page)
+        .then(response => response.json())
+        .then(data => {
+            const projectList = data.projects.map(project => `
+                <li>
+                    <div class="project_preview">
+                        <div class="project_preview_top">
+                            <img src="/images/default_profile.png">
+                            <span class="font_style">닉네임</span>
+                            <span class="font_style2">${project.category}</span>
+                            <button class="bt_mark"><img src="/images/bookmark.png"></button>
+                        </div>	
+                        <div class="project_preview_middle">
+                            <hr class="hr_style">
+                            <div class="middle_top">
+                                <span class="font_style3">${project.introduce_title}</span>
+                            </div>
+                            <span class="font_style4_1">프론트엔드</span>
+                            <span class="font_style4_1">백엔드</span>
+                            <span class="font_style4_1">UI/UX</span>
+                            <div class="middle_bottom">
+                                <div class="img_design2"><img src="/images/c.png"></div>
+                                <div class="img_design"><img src="/images/cc.png"></div>
+                                <div class="img_design"><img src="/images/c++.png"></div>
+                            </div>
+                        </div>
+                        <div class="project_preview_bottom">
+                            <hr class="hr_style2">
+                            <div class="bottom_sort">
+                                <span class="font_style4">마감일 | ${project.deadline}</span>
+                                <img class="plus_margin_left" src="/images/see.png">
+                                <span class="font_style5">0</span>
+                                <img class="plus_margin_left2" src="/images/comments.png">
+                                <span class="font_style5">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            `).join('');
+
+            document.getElementById('projectList').innerHTML = projectList;
+
+            // 페이징 업데이트
+            updatePagination(data.totalPages, data.currentPage, fetchRecentProjects);
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    //------------------------------------------ 인기순 javascript-------------------------------------------//
+    document.getElementById('popular_button').addEventListener('click', () => {
+        fetchPopularProjects(1); // 1페이지부터 시작
+    });
+
+    function fetchPopularProjects(page) {
+        fetch('/get_popular_projects?page=' + page)
+        .then(response => response.json())
+        .then(data => {
+            const projectList = data.projects.map(project => `
+                <li>
+                    <div class="project_preview">
+                        <div class="project_preview_top">
+                            <img src="/images/default_profile.png">
+                            <span class="font_style">닉네임</span>
+                            <span class="font_style2">${project.category}</span>
+                            <button class="bt_mark"><img src="/images/bookmark.png"></button>
+                        </div>	
+                        <div class="project_preview_middle">
+                            <hr class="hr_style">
+                            <div class="middle_top">
+                                <span class="font_style3">${project.introduce_title}</span>
+                            </div>
+                            <span class="font_style4_1">프론트엔드</span>
+                            <span class="font_style4_1">백엔드</span>
+                            <span class="font_style4_1">UI/UX</span>
+                            <div class="middle_bottom">
+                                <div class="img_design2"><img src="/images/c.png"></div>
+                                <div class="img_design"><img src="/images/cc.png"></div>
+                                <div class="img_design"><img src="/images/c++.png"></div>
+                            </div>
+                        </div>
+                        <div class="project_preview_bottom">
+                            <hr class="hr_style2">
+                            <div class="bottom_sort">
+                                <span class="font_style4">마감일 | ${project.deadline}</span>
+                                <img class="plus_margin_left" src="/images/see.png">
+                                <span class="font_style5">0</span>
+                                <img class="plus_margin_left2" src="/images/comments.png">
+                                <span class="font_style5">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            `).join('');
+
+            document.getElementById('projectList').innerHTML = projectList;
+
+            // 페이징 업데이트
+            updatePagination(data.totalPages, data.currentPage, fetchPopularProjects);
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    // ----------------------------------------------------//
+});
+
+
+</script>
+
+<%- include('footer') %>
