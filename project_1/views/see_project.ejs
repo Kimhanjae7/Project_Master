@@ -84,68 +84,76 @@
                     <script>
                         let currentSlide = 0;
                         const posts = <%- JSON.stringify(posts) %>;
-                    
+
                         function showPosts(slideIndex) {
                             const start = slideIndex * 3;
                             const end = start + 3;
                             const visiblePosts = posts.slice(start, end);
-                    
+
                             // 포스트가 3개가 안될 경우 빈 칸 추가
                             while (visiblePosts.length < 3) {
-                                visiblePosts.push({});
+                                visiblePosts.push(null); // 빈 객체 대신 null 추가
                             }
-                    
-                            const postsList = visiblePosts.map(post => `
-                                <li class="${post.introduce_title ? '' : 'empty'}">
-                                    <div class="project_preview">
-                                        <div class="project_preview_top">
-                                            <img src="${post.introduce_title ? '/images/default_profile.png' : ''}">
-                                            <span class="font_style">${post.introduce_title ? '<%= nickname %>' : ''}</span>
-                                            <span class="font_style2">${post.category || ''}</span>
-                                            <button class="bt_mark">${post.introduce_title ? '<img src="/images/bookmark.png">' : ''}</button>
-                                        </div>    
-                                        <div class="project_preview_middle">
-                                            <hr class="hr_style">
-                                            <div class="middle_top">
-                                                <span class="font_style3">${post.introduce_title || ''}</span>
+
+                            const postsList = visiblePosts.map(post => {
+                                if (!post) {
+                                    return `<li class="empty"></li>`; // 빈 객체인 경우 빈 li 태그 반환
+                                }
+                                return `
+                                    <li>
+                                        <a href="/project/${post.project_seq}" class="project-link">
+                                            <div class="project_preview">
+                                                <div class="project_preview_top">
+                                                    <img src="/images/default_profile.png">
+                                                    <span class="font_style"><%= nickname %></span>
+                                                    <span class="font_style2">${post.category}</span>
+                                                    <button class="bt_mark"><img src="/images/bookmark.png"></button>
+                                                </div>    
+                                                <div class="project_preview_middle">
+                                                    <hr class="hr_style">
+                                                    <div class="middle_top">
+                                                        <span class="font_style3">${post.introduce_title}</span>
+                                                    </div>
+                                                    <span class="font_style4_1">프론트엔드</span>
+                                                    <span class="font_style4_1">백엔드</span>
+                                                    <span class="font_style4_1">UI/UX</span>
+                                                    <div class="middle_bottom">
+                                                        <div class="img_design2"><img src="/images/c.png"></div>
+                                                        <div class="img_design"><img src="/images/cc.png"></div>
+                                                        <div class="img_design"><img src="/images/c++.png"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="project_preview_bottom">
+                                                    <hr class="hr_style2">
+                                                    <div class="bottom_sort">
+                                                        <span class="font_style4">마감일 | ${post.deadline}</span>
+                                                        <img src="/images/see.png" class="plus_margin_left">
+                                                        <span class="font_style5">0</span>
+                                                        <img class="plus_margin_left2" src="/images/comments.png">
+                                                        <span class="font_style5">0</span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <span class="font_style4_1">프론트엔드</span>
-                                            <span class="font_style4_1">백엔드</span>
-                                            <span class="font_style4_1">UI/UX</span>
-                                            <div class="middle_bottom">
-                                                <div class="img_design2">${post.introduce_title ? '<img src="/images/c.png">' : ''}</div>
-                                                <div class="img_design">${post.introduce_title ? '<img src="/images/cc.png">' : ''}</div>
-                                                <div class="img_design">${post.introduce_title ? '<img src="/images/c++.png">' : ''}</div>
-                                            </div>
-                                        </div>
-                                        <div class="project_preview_bottom">
-                                            <hr class="hr_style2">
-                                            <div class="bottom_sort">
-                                                <span class="font_style4">마감일 | ${post.deadline || ''}</span>
-                                                <img src="${post.introduce_title ? '/images/see.png' : ''}" class="plus_margin_left">
-                                                <span class="font_style5">0</span>
-                                                <img class="plus_margin_left2" src="${post.introduce_title ? '/images/comments.png' : ''}">
-                                                <span class="font_style5">0</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            `).join('');
-                    
+                                        </a>
+                                    </li>
+                                `;
+                            }).join('');
+
                             document.getElementById('posts').innerHTML = postsList;
                         }
-                    
+
                         document.getElementById('left-arrow').addEventListener('click', () => {
                             currentSlide = (currentSlide - 1 + Math.ceil(posts.length / 3)) % Math.ceil(posts.length / 3);
                             showPosts(currentSlide);
                         });
-                    
+
                         document.getElementById('right-arrow').addEventListener('click', () => {
                             currentSlide = (currentSlide + 1) % Math.ceil(posts.length / 3);
                             showPosts(currentSlide);
                         });
-                    
+
                         showPosts(currentSlide);
+
                     </script>
                     
                     <div class="section">
@@ -154,6 +162,7 @@
                             <ul class="icons">
                                 <li>
                                     <div class="project_preview">
+                                        <!--
                                         <div class="project_preview_top">
                                             <img src="/images/default_profile.png">
                                             <span class="font_style">닉네임</span>
@@ -184,10 +193,12 @@
                                                 <span class="font_style5">0</span>
                                             </div>
                                         </div>
+                                    -->
                                     </div>
                                 </li>
                                 <li>
                                     <div class="project_preview">
+                                        <!--
                                         <div class="project_preview_top">
                                             <img src="/images/default_profile.png">
                                             <span class="font_style">닉네임</span>
@@ -218,10 +229,12 @@
                                                 <span class="font_style5">0</span>
                                             </div>
                                         </div>
+                                    -->
                                     </div>
                                 </li>
                                 <li>
                                     <div class="project_preview">
+                                        <!--
                                         <div class="project_preview_top">
                                             <img src="/images/default_profile.png">
                                             <span class="font_style">닉네임</span>
@@ -252,6 +265,7 @@
                                                 <span class="font_style5">0</span>
                                             </div>
                                         </div>
+                                    -->
                                     </div>
                                 </li>
                             </ul>
