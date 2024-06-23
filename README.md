@@ -29,6 +29,7 @@
 |BackEnd|Node.js, Flask|
 |DataBase|MySQL|
 |TOOL|vsCode, Python|
+|Version Management|GitHub|
 
 <br/>
 
