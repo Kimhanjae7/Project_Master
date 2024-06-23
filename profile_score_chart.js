@@ -1,3 +1,4 @@
+/* 평점 차트 */
 $(function () {
     
   $('#container').highcharts({
