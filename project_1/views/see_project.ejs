@@ -280,40 +280,43 @@
                             <ul class="icons" id="applied-projects">
                                 <% appliedProjects.forEach(project => { %>
                                     <li>
-                                        <div class="project_preview">
-                                            <div class="project_preview_top">
-                                                <img src="/images/default_profile.png">
-                                                <span class="font_style"><%= project.nickname %></span>
-                                                <span class="font_style2"><%= project.category %></span>
-                                                <button class="bt_mark"><img src="/images/bookmark.png"></button>
-                                            </div>    
-                                            <div class="project_preview_middle">
-                                                <hr class="hr_style">
-                                                <div class="middle_top">
-                                                    <span class="font_style3"><%= project.introduce_title %></span>
+                                        <a href="/project/<%= project.project_seq %>" class="project-link">
+                                            <div class="project_preview">
+                                                <div class="project_preview_top">
+                                                    <img src="/images/default_profile.png">
+                                                    <span class="font_style"><%= project.nickname %></span>
+                                                    <span class="font_style2"><%= project.category %></span>
+                                                    <button class="bt_mark"><img src="/images/bookmark.png"></button>
+                                                </div>    
+                                                <div class="project_preview_middle">
+                                                    <hr class="hr_style">
+                                                    <div class="middle_top">
+                                                        <span class="font_style3"><%= project.introduce_title %></span>
+                                                    </div>
+                                                    <span class="font_style4_1">프론트엔드</span>
+                                                    <span class="font_style4_1">백엔드</span>
+                                                    <span class="font_style4_1">UI/UX</span>
+                                                    <div class="middle_bottom">
+                                                        <div class="img_design2"><img src="/images/c.png"></div>
+                                                        <div class="img_design"><img src="/images/cc.png"></div>
+                                                        <div class="img_design"><img src="/images/c++.png"></div>
+                                                    </div>
                                                 </div>
-                                                <span class="font_style4_1">프론트엔드</span>
-                                                <span class="font_style4_1">백엔드</span>
-                                                <span class="font_style4_1">UI/UX</span>
-                                                <div class="middle_bottom">
-                                                    <div class="img_design2"><img src="/images/c.png"></div>
-                                                    <div class="img_design"><img src="/images/cc.png"></div>
-                                                    <div class="img_design"><img src="/images/c++.png"></div>
+                                                <div class="project_preview_bottom">
+                                                    <hr class="hr_style2">
+                                                    <div class="bottom_sort">
+                                                        <span class="font_style4">마감일 | <%= project.deadline %></span>
+                                                        <img src="/images/see.png" class="plus_margin_left">
+                                                        <span class="font_style5">0</span>
+                                                        <img class="plus_margin_left2" src="/images/comments.png">
+                                                        <span class="font_style5">0</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="project_preview_bottom">
-                                                <hr class="hr_style2">
-                                                <div class="bottom_sort">
-                                                    <span class="font_style4">마감일 | <%= project.deadline %></span>
-                                                    <img src="/images/see.png" class="plus_margin_left">
-                                                    <span class="font_style5">0</span>
-                                                    <img class="plus_margin_left2" src="/images/comments.png">
-                                                    <span class="font_style5">0</span>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        </a>
                                     </li>
                                 <% }); %>
+                                
                             </ul>
                             <button id="applied-right-arrow" class="project_sort_arrow right_arrow"> <!-- 오른쪽 화살표 -->
                             </button>
@@ -395,38 +398,40 @@
                             <ul class="icons" id="participant-projects">
                                 <% participantProjects.forEach(project => { %>
                                     <li>
-                                        <div class="project_preview">
-                                            <div class="project_preview_top">
-                                                <img src="/images/default_profile.png">
-                                                <span class="font_style"><%= project.nickname %></span>
-                                                <span class="font_style2"><%= project.category %></span>
-                                                <button class="bt_mark"><img src="/images/bookmark.png"></button>
-                                            </div>    
-                                            <div class="project_preview_middle">
-                                                <hr class="hr_style">
-                                                <div class="middle_top">
-                                                    <span class="font_style3"><%= project.introduce_title %></span>
+                                        <a href="/project/<%= project.project_seq %>" class="project-link"></a>
+                                            <div class="project_preview">
+                                                <div class="project_preview_top">
+                                                    <img src="/images/default_profile.png">
+                                                    <span class="font_style"><%= project.nickname %></span>
+                                                    <span class="font_style2"><%= project.category %></span>
+                                                    <button class="bt_mark"><img src="/images/bookmark.png"></button>
+                                                </div>    
+                                                <div class="project_preview_middle">
+                                                    <hr class="hr_style">
+                                                    <div class="middle_top">
+                                                        <span class="font_style3"><%= project.introduce_title %></span>
+                                                    </div>
+                                                    <span class="font_style4_1">프론트엔드</span>
+                                                    <span class="font_style4_1">백엔드</span>
+                                                    <span class="font_style4_1">UI/UX</span>
+                                                    <div class="middle_bottom">
+                                                        <div class="img_design2"><img src="/images/c.png"></div>
+                                                        <div class="img_design"><img src="/images/cc.png"></div>
+                                                        <div class="img_design"><img src="/images/c++.png"></div>
+                                                    </div>
                                                 </div>
-                                                <span class="font_style4_1">프론트엔드</span>
-                                                <span class="font_style4_1">백엔드</span>
-                                                <span class="font_style4_1">UI/UX</span>
-                                                <div class="middle_bottom">
-                                                    <div class="img_design2"><img src="/images/c.png"></div>
-                                                    <div class="img_design"><img src="/images/cc.png"></div>
-                                                    <div class="img_design"><img src="/images/c++.png"></div>
+                                                <div class="project_preview_bottom">
+                                                    <hr class="hr_style2">
+                                                    <div class="bottom_sort">
+                                                        <span class="font_style4">마감일 | <%= project.deadline %></span>
+                                                        <img src="/images/see.png" class="plus_margin_left">
+                                                        <span class="font_style5">0</span>
+                                                        <img class="plus_margin_left2" src="/images/comments.png">
+                                                        <span class="font_style5">0</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="project_preview_bottom">
-                                                <hr class="hr_style2">
-                                                <div class="bottom_sort">
-                                                    <span class="font_style4">마감일 | <%= project.deadline %></span>
-                                                    <img src="/images/see.png" class="plus_margin_left">
-                                                    <span class="font_style5">0</span>
-                                                    <img class="plus_margin_left2" src="/images/comments.png">
-                                                    <span class="font_style5">0</span>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        </a>
                                     </li>
                                 <% }); %>
                             </ul>
