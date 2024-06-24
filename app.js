@@ -1,3 +1,4 @@
+// app.js
 require('dotenv').config();  // 가장 위에 위치
 const express = require('express');
 const ejs = require('ejs');
