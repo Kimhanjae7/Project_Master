@@ -1,0 +1,350 @@
+-- DB정리
+DROP DATABASE IF EXISTS project;
+CREATE DATABASE project;
+USE project;
+
+-- Step 1: Create tables
+
+DROP TABLE IF EXISTS member;
+CREATE TABLE member (
+    user_id VARCHAR(50) NOT NULL PRIMARY KEY,
+    user_pw VARCHAR(50) NOT NULL,
+    user_name VARCHAR(100) NOT NULL,
+    user_phone VARCHAR(20),
+    nickname VARCHAR(50) UNIQUE, 
+    job VARCHAR(50),
+    affiliation VARCHAR(100),
+    career VARCHAR(50),
+    introduce TEXT,
+    interest_stack VARCHAR(255),
+    profile_pic blob
+);
+
+DROP TABLE IF EXISTS project_info;
+CREATE TABLE project_info (
+    project_seq INT AUTO_INCREMENT PRIMARY KEY,
+    category VARCHAR(50),
+    mem_number VARCHAR(50),
+    way VARCHAR(50),
+    period VARCHAR(50),
+    teck_stack VARCHAR(50),
+    deadline VARCHAR(50),
+    position VARCHAR(50),
+    contact VARCHAR(50),
+    introduce_title VARCHAR(100),
+    introduce_detail TEXT,
+    date DATE,
+    user_id VARCHAR(50),
+    status varchar(10),
+	view_count INT DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES member(user_id) on update cascade on delete cascade
+);
+
+DROP TABLE IF EXISTS project_participants;
+CREATE TABLE project_participants (
+    project_seq INT not null,
+    user_id VARCHAR(50) not null,
+    status VARCHAR(50) not null,
+    position VARCHAR(50),
+    check_writer char(15) not null,
+    FOREIGN KEY (project_seq) REFERENCES project_info(project_seq) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES member(user_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+DROP TABLE IF EXISTS grade;
+CREATE TABLE grade (
+  user_id VARCHAR(45) NOT NULL,
+  Front_end_count INT default 0,
+  Front_end_rating_count INT NOT NULL DEFAULT 0,
+  Front_end_total_rating FLOAT NOT NULL DEFAULT 0,
+  Front_end_average_rating FLOAT NOT NULL DEFAULT 0,
+  Back_end_count INT default 0, 
+  Back_end_rating_count INT NOT NULL DEFAULT 0,
+  Back_end_total_rating FLOAT NOT NULL DEFAULT 0,
+  Back_end_average_rating FLOAT NOT NULL DEFAULT 0,
+  Designer_count INT default 0, 
+  Designer_rating_count INT NOT NULL DEFAULT 0,
+  Designer_total_rating FLOAT NOT NULL DEFAULT 0,
+  Designer_average_rating FLOAT NOT NULL DEFAULT 0,
+  IOS_count INT default 0, 
+  IOS_rating_count INT NOT NULL DEFAULT 0,
+  IOS_total_rating FLOAT NOT NULL DEFAULT 0,
+  IOS_average_rating FLOAT NOT NULL DEFAULT 0,
+  Android_count INT default 0, 
+  Android_rating_count INT NOT NULL DEFAULT 0,
+  Android_total_rating FLOAT NOT NULL DEFAULT 0,
+  Android_average_rating FLOAT NOT NULL DEFAULT 0,
+  DevOps_count INT default 0,
+  DevOps_rating_count INT NOT NULL DEFAULT 0,
+  DevOps_total_rating FLOAT NOT NULL DEFAULT 0,
+  DevOps_average_rating FLOAT NOT NULL DEFAULT 0,
+  PM_count INT default 0,
+  PM_rating_count INT NOT NULL DEFAULT 0,
+  PM_total_rating FLOAT NOT NULL DEFAULT 0,
+  PM_average_rating FLOAT NOT NULL DEFAULT 0,
+  Planner_count INT default 0,
+  Planner_rating_count INT NOT NULL DEFAULT 0,
+  Planner_total_rating FLOAT NOT NULL DEFAULT 0,
+  Planner_average_rating FLOAT NOT NULL DEFAULT 0,
+  Marketer_count INT default 0,
+  Marketer_rating_count INT NOT NULL DEFAULT 0,
+  Marketer_total_rating FLOAT NOT NULL DEFAULT 0,
+  Marketer_average_rating FLOAT NOT NULL DEFAULT 0,
+  CONSTRAINT fk_grade_member FOREIGN KEY (user_id) REFERENCES member (user_id) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DELIMITER $$
+CREATE PROCEDURE update_role_counts(IN p_user_id VARCHAR(45), IN p_role VARCHAR(20))
+BEGIN
+    CASE p_role
+        WHEN 'Front_end' THEN
+            UPDATE grade SET Front_end_count = Front_end_count + 1 WHERE user_id = p_user_id;
+        WHEN 'Back_end' THEN
+            UPDATE grade SET Back_end_count = Back_end_count + 1 WHERE user_id = p_user_id;
+        WHEN 'Designer' THEN
+            UPDATE grade SET Designer_count = Designer_count + 1 WHERE user_id = p_user_id;
+        WHEN 'IOS' THEN
+            UPDATE grade SET IOS_count = IOS_count + 1 WHERE user_id = p_user_id;
+        WHEN 'Android' THEN
+            UPDATE grade SET Android_count = Android_count + 1 WHERE user_id = p_user_id;
+        WHEN 'DevOps' THEN
+            UPDATE grade SET DevOps_count = DevOps_count + 1 WHERE user_id = p_user_id;
+        WHEN 'PM' THEN
+            UPDATE grade SET PM_count = PM_count + 1 WHERE user_id = p_user_id;
+        WHEN 'Planner' THEN
+            UPDATE grade SET Planner_count = Planner_count + 1 WHERE user_id = p_user_id;
+        WHEN 'Marketer' THEN
+            UPDATE grade SET Marketer_count = Marketer_count + 1 WHERE user_id = p_user_id;
+    END CASE;
+END $$
+DELIMITER ;
+
+
+DROP TABLE IF EXISTS alarms;
+CREATE TABLE alarms (
+  user_id VARCHAR(50) NOT NULL,
+  message TEXT NOT NULL,
+  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  project_seq int,
+  FOREIGN KEY (user_id) REFERENCES member(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (project_seq) REFERENCES project_info(project_seq) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+DROP PROCEDURE IF EXISTS grade_proc;
+DELIMITER $$
+CREATE PROCEDURE grade_proc(
+    IN input_user_id CHAR(45), 
+    IN input_job_role CHAR(20),
+    IN input_grade FLOAT, 
+    OUT output_grade FLOAT)
+BEGIN
+    IF input_job_role = 'Front_end' THEN
+        UPDATE grade 
+        SET Front_end_rating_count = Front_end_rating_count + 1,
+            Front_end_total_rating = Front_end_total_rating + input_grade,
+            Front_end_average_rating = Front_end_total_rating / Front_end_rating_count
+        WHERE user_id = input_user_id;
+        
+        SELECT Front_end_average_rating 
+        INTO output_grade 
+        FROM grade 
+        WHERE user_id = input_user_id
+        LIMIT 1;
+    ELSEIF input_job_role = 'Back_end' THEN
+        UPDATE grade 
+        SET Back_end_rating_count = Back_end_rating_count + 1,
+            Back_end_total_rating = Back_end_total_rating + input_grade,
+            Back_end_average_rating = Back_end_total_rating / Back_end_rating_count
+        WHERE user_id = input_user_id;
+        
+        SELECT Back_end_average_rating 
+        INTO output_grade 
+        FROM grade 
+        WHERE user_id = input_user_id
+        LIMIT 1;
+    ELSEIF input_job_role = 'Designer' THEN
+        UPDATE grade 
+        SET Designer_rating_count = Designer_rating_count + 1,
+            Designer_total_rating = Designer_total_rating + input_grade,
+            Designer_average_rating = Designer_total_rating / Designer_rating_count
+        WHERE user_id = input_user_id;
+        
+        SELECT Designer_average_rating 
+        INTO output_grade 
+        FROM grade 
+        WHERE user_id = input_user_id
+        LIMIT 1;
+    ELSEIF input_job_role = 'IOS' THEN
+        UPDATE grade 
+        SET IOS_rating_count = IOS_rating_count + 1,
+            IOS_total_rating = IOS_total_rating + input_grade,
+            IOS_average_rating = IOS_total_rating / IOS_rating_count
+        WHERE user_id = input_user_id;
+        
+        SELECT IOS_average_rating 
+        INTO output_grade 
+        FROM grade 
+        WHERE user_id = input_user_id
+        LIMIT 1;
+    ELSEIF input_job_role = 'Android' THEN
+        UPDATE grade 
+        SET Android_rating_count = Android_rating_count + 1,
+            Android_total_rating = Android_total_rating + input_grade,
+            Android_average_rating = Android_total_rating / Android_rating_count
+        WHERE user_id = input_user_id;
+        
+        SELECT Android_average_rating 
+        INTO output_grade 
+        FROM grade 
+        WHERE user_id = input_user_id
+        LIMIT 1;
+    ELSEIF input_job_role = 'DevOps' THEN
+        UPDATE grade 
+        SET DevOps_rating_count = DevOps_rating_count + 1,
+            DevOps_total_rating = DevOps_total_rating + input_grade,
+            DevOps_average_rating = DevOps_total_rating / DevOps_rating_count
+        WHERE user_id = input_user_id;
+        
+        SELECT DevOps_average_rating 
+        INTO output_grade 
+        FROM grade 
+        WHERE user_id = input_user_id
+        LIMIT 1;
+    ELSEIF input_job_role = 'PM' THEN
+        UPDATE grade 
+        SET PM_rating_count = PM_rating_count + 1,
+            PM_total_rating = PM_total_rating + input_grade,
+            PM_average_rating = PM_total_rating / PM_rating_count
+        WHERE user_id = input_user_id;
+        
+        SELECT PM_average_rating 
+        INTO output_grade 
+        FROM grade 
+        WHERE user_id = input_user_id
+        LIMIT 1;
+        
+    ELSEIF input_job_role = 'Planner' THEN
+        UPDATE grade 
+        SET Planner_rating_count = Planner_rating_count + 1,
+            Planner_total_rating = Planner_total_rating + input_grade,
+            Planner_average_rating = Planner_total_rating / Planner_rating_count
+        WHERE user_id = input_user_id;
+        
+        SELECT Planner_average_rating 
+        INTO output_grade 
+        FROM grade 
+        WHERE user_id = input_user_id
+        LIMIT 1;
+    
+    ELSEIF input_job_role = 'Marketer' THEN
+        UPDATE grade 
+        SET Marketer_rating_count = Marketer_rating_count + 1,
+            Marketer_total_rating = Marketer_total_rating + input_grade,
+            Marketer_average_rating = Marketer_total_rating / Marketer_rating_count
+        WHERE user_id = input_user_id;
+        
+        SELECT Marketer_average_rating 
+        INTO output_grade 
+        FROM grade 
+        WHERE user_id = input_user_id
+        LIMIT 1;
+    END IF;
+END $$
+DELIMITER ;
+
+
+-- Dummy Data - member
+INSERT INTO member (user_id, user_pw, user_name, user_phone, nickname, job, affiliation, career, introduce, interest_stack) VALUES
+('user01', 'pass01', 'John Doe', '010-1234-5678', 'johnny', '백엔드', 'Company A', '5 years at Company A', 'Hello, I am John.', 'Java, Spring, MySQL'),
+('user02', 'pass02', 'Jane Smith', '010-2345-6789', 'janes', '디자이너', 'Company B', '3 years at Company B', 'Hi, I am Jane.', 'Figma, Zeplin, React'),
+('user03', 'pass03', 'Michael Brown', '010-3456-7890', 'mikeb', 'PM', 'Company C', '10 years at Company C', 'Hey, I am Michael.', 'Git, AWS, Kubernetes'),
+('user04', 'pass04', 'Emily Davis', '010-4567-8901', 'emilyd', 'IOS', 'Company D', '2 years at Company D', 'Hello, I am Emily.', 'Python, Django, MySQL'),
+('user05', 'pass05', 'Chris Johnson', '010-5678-9012', 'chrisj', '기획자', 'Company E', '4 years at Company E', 'Hi, I am Chris.', 'GraphQL, NodeJs, Express'),
+('user06', 'pass06', 'Jessica Williams', '010-6789-0123', 'jessw', '프론트엔드', 'School A', '7 years at School A', 'Hello, I am Jessica.', 'JavaScript, React, NextJs'),
+('user07', 'pass07', 'David Jones', '010-7890-1234', 'davidj', '디자이너', 'Company F', '6 years at Company F', 'Hi, I am David.', 'Java, Spring, MySQL'),
+('user08', 'pass08', 'Sarah Miller', '010-8901-2345', 'sarahm', '데브옵스', 'Lab A', '8 years at Lab A', 'Hello, I am Sarah.', 'Python, Go, MongoDB'),
+('user09', 'pass09', 'Daniel Wilson', '010-9012-3456', 'danielw', '안드로이드', 'Firm A', '9 years at Firm A', 'Hi, I am Daniel.', 'PHP, MySQL, FireBase'),
+('user10', 'pass10', 'Laura Moore', '010-0123-4567', 'lauram', 'IOS', 'Hospital A', '5 years at Hospital A', 'Hello, I am Laura.', 'Swift, Kotlin, ReactNative'),
+('user11', 'pass11', 'James Taylor', '010-1234-5679', 'jamest', '프론트엔드', 'Publisher A', '3 years at Publisher A', 'Hi, I am James.', 'JavaScript, TypeScript, Vue'),
+('user12', 'pass12', 'Olivia Anderson', '010-2345-6780', 'oliviaa', '디자이너', 'Studio A', '4 years at Studio A', 'Hello, I am Olivia.', 'Figma, Zeplin, ReactNative'),
+('user13', 'pass13', 'Lucas Thomas', '010-3456-7891', 'lucast', '백엔드', 'Band A', '10 years at Band A', 'Hi, I am Lucas.', 'Java, Spring, MySQL'),
+('user14', 'pass14', 'Ava Martinez', '010-4567-8902', 'avam', '데브옵스', 'Restaurant A', '6 years at Restaurant A', 'Hello, I am Ava.', 'Go, Kubernetes, Docker'),
+('user15', 'pass15', 'Ethan Hernandez', '010-5678-9013', 'ethanh', '백엔드', 'Company G', '5 years at Company G', 'Hi, I am Ethan.', 'AWS, Kubernetes, Docker'),
+('user16', 'pass16', 'Sophia Lee', '010-6789-0124', 'sophial', '프론트엔드', 'Hospital B', '8 years at Hospital B', 'Hello, I am Sophia.', 'JavaScript, React, NextJs'),
+('user17', 'pass17', 'Mason White', '010-7890-1235', 'masonw', '프론트엔드', 'Airline A', '7 years at Airline A', 'Hi, I am Mason.', 'JavaScript, NodeJs, Express'),
+('user18', 'pass18', 'Isabella Harris', '010-8901-2346', 'isabellah', '기획자', 'Startup A', '5 years at Startup A', 'Hello, I am Isabella.', 'TypeScript, NextJs, NestJs'),
+('user19', 'pass19', 'Logan Clark', '010-9012-3457', 'loganc', '백엔드', 'Garage A', '6 years at Garage A', 'Hi, I am Logan.', 'Python, Django, MySQL'),
+('user20', 'pass20', 'Mia Robinson', '010-0123-4568', 'miar', '디자이너', 'Gallery A', '4 years at Gallery A', 'Hello, I am Mia.', 'JavaScript, React, Figma'),
+('user21', 'pass21', 'Alexander Lewis', '010-1234-5680', 'alexl', '기획자', 'Company H', '3 years at Company H', 'Hi, I am Alexander.', 'SQL, MySQL, MongoDB'),
+('user22', 'pass22', 'Amelia Walker', '010-2345-6791', 'ameliaw', 'PM', 'Company I', '5 years at Company I', 'Hello, I am Amelia.', 'PHP, MySQL, FireBase'),
+('user23', 'pass23', 'Benjamin Young', '010-3456-7802', 'beny', '데브옵스', 'Company J', '6 years at Company J', 'Hi, I am Benjamin.', 'NodeJs, Express, MongoDB'),
+('user24', 'pass24', 'Charlotte Hall', '010-4567-8913', 'charlotteh', 'PM', 'Company K', '4 years at Company K', 'Hello, I am Charlotte.', 'JavaScript, TypeScript, React'),
+('user25', 'pass25', 'Henry Allen', '010-5678-9024', 'henrya', '백엔드', 'Lab B', '5 years at Lab B', 'Hi, I am Henry.', 'GraphQL, NodeJs, Express'),
+('user26', 'pass26', 'Ella Scott', '010-6789-0135', 'ellasc', '기획자', 'Company L', '6 years at Company L', 'Hello, I am Ella.', 'Java, Spring, MySQL'),
+('user27', 'pass27', 'Jack King', '010-7890-1246', 'jackk', 'IOS', 'Company M', '7 years at Company M', 'Hi, I am Jack.', 'Java, Kotlin, Spring'),
+('user28', 'pass28', 'Grace Wright', '010-8901-2357', 'gracew', '백엔드', 'Media A', '5 years at Media A', 'Hello, I am Grace.', 'PHP, MySQL, FireBase'),
+('user29', 'pass29', 'Samuel Green', '010-9012-3468', 'samuelg', '프론트엔드', 'Company N', '4 years at Company N', 'Hi, I am Samuel.', 'React, NextJs, GraphQL'),
+('user30', 'pass30', 'Victoria Adams', '010-0123-4579', 'victoriaa', '디자이너', 'Company O', '5 years at Company O', 'Hello, I am Victoria.', 'Figma, Zeplin, ReactNative'),
+('user31', 'pass31', 'Hyeokjin', '010-4585-2703', 'checkjin', '백엔드', 'Samsung', '4 years at Company N', 'Hi, I am Checkjin.', 'React, NextJs, GraphQL'),
+('user32', 'pass32', 'Hanjae', '010-4585-2703', 'KHJ', '프론트엔드', 'KAKAO', '4 years at Company N', 'Hi, I am KHJ.', 'JavaScript, React, Redux'),
+('user33', 'pass33', 'Yesung', '010-4585-2703', 'WYS', '백엔드', 'CJ', '4 years at Company N', 'Hi, I am WYS.', 'JavaScript, React, AWS');
+
+-- Dummy Data - project_info
+INSERT INTO project_info 
+    (user_id, category, mem_number, way, period, teck_stack, deadline, position, contact, introduce_title, introduce_detail, date) 
+VALUES
+('user01', '스터디', '5', '온라인', '3개월', 'JavaScript, React, NodeJs', '2024-06-01', '프론트엔드', '카카오톡 오픈채팅', 'React 스터디 모집', 'React를 배우고 싶으신 분들을 모집합니다.', '2024-02-10'),
+('user02', '프로젝트', '4', '오프라인', '2개월', 'Python, Django, MySQL', '2024-06-05', '백엔드', '이메일', 'Django 프로젝트 팀원 모집', 'Python과 Django를 활용한 프로젝트를 진행합니다.', '2024-02-15'),
+('user03', '스터디', '6', '온오프라인', '1개월', 'Java, Spring', '2024-06-10', '백엔드', '구글 폼', 'Spring Boot 스터디 모집', 'Spring Boot를 함께 공부할 팀원을 찾습니다.', '2024-02-20'),
+('user04', '프로젝트', '3', '온라인', '기간미정', 'Kotlin, Android', '2024-06-15', '안드로이드', '이메일', '안드로이드 개발 프로젝트', 'Kotlin을 활용한 안드로이드 앱 개발 프로젝트입니다.', '2024-02-25'),
+('user05', '스터디', '10명이상', '전체', '6개월이상', 'JavaScript, TypeScript', '2024-06-20', '프론트엔드', '카카오톡 오픈채팅', 'JavaScript 심화 스터디', '심화된 JavaScript와 TypeScript를 공부합니다.', '2024-03-01'),
+('user06', '프로젝트', '5', '오프라인', '4개월', 'Go, Docker, Kubernetes', '2024-06-25', '데브옵스', '구글 폼', 'DevOps 프로젝트 모집', 'Go와 Kubernetes를 사용한 DevOps 프로젝트입니다.', '2024-03-05'),
+('user07', '스터디', '7', '온라인', '2개월', 'Vue, Firebase', '2024-06-30', '프론트엔드', '이메일', 'Vue.js 스터디 모집', 'Vue.js를 배우고자 하는 분들을 모집합니다.', '2024-03-10'),
+('user08', '프로젝트', '8', '온오프라인', '5개월', 'Swift, iOS', '2024-07-01', 'IOS', '카카오톡 오픈채팅', 'iOS 앱 개발 프로젝트', 'Swift를 이용한 iOS 앱 개발 프로젝트입니다.', '2024-03-15'),
+('user09', '스터디', '9', '전체', '3개월', 'React, NextJs', '2024-07-05', '프론트엔드', '구글 폼', 'Next.js 스터디 모집', 'Next.js를 심도있게 공부할 팀원을 모집합니다.', '2024-03-20'),
+('user10', '프로젝트', '2', '온라인', '기간미정', 'NodeJs, Express, MongoDB', '2024-07-10', '백엔드', '이메일', 'Node.js 프로젝트 팀원 모집', 'Node.js와 Express를 사용한 프로젝트입니다.', '2024-03-25'),
+('user11', '스터디', '4', '오프라인', '1개월', 'Python, Flask', '2024-07-15', '백엔드', '카카오톡 오픈채팅', 'Flask 스터디 모집', 'Flask를 배우고자 하는 분들을 모집합니다.', '2024-03-30'),
+('user12', '프로젝트', '6', '온오프라인', '3개월', 'Java, Spring, MySQL', '2024-07-20', '백엔드', '구글 폼', 'Spring 프로젝트 팀원 모집', 'Java와 Spring을 사용한 프로젝트입니다.', '2024-04-05'),
+('user13', '스터디', '3', '온라인', '4개월', 'ReactNative, GraphQL', '2024-07-25', '프론트엔드', '이메일', 'React Native 스터디', 'React Native와 GraphQL을 공부할 팀원을 찾습니다.', '2024-04-10'),
+('user14', '프로젝트', '5', '오프라인', '6개월이상', 'JavaScript, React, AWS', '2024-07-30', '프론트엔드', '카카오톡 오픈채팅', 'React 프로젝트 모집', 'React와 AWS를 사용한 대규모 프로젝트입니다.', '2024-04-15'),
+('user15', '스터디', '10명이상', '전체', '2개월', 'TypeScript, NextJs', '2024-08-01', '프론트엔드', '구글 폼', 'TypeScript 스터디 모집', 'TypeScript를 심도있게 배우고자 하는 분들을 모집합니다.', '2024-04-20'),
+('user16', '프로젝트', '4', '온라인', '3개월', 'Python, Django, PostgreSQL', '2024-08-05', '백엔드', '이메일', 'Django 프로젝트 팀원 모집', 'Python과 Django를 활용한 백엔드 프로젝트입니다.', '2024-04-25'),
+('user17', '스터디', '6', '온오프라인', '1개월', 'Java, Spring Boot', '2024-08-10', '백엔드', '카카오톡 오픈채팅', 'Spring Boot 스터디 모집', 'Spring Boot를 배우고자 하는 분들을 모집합니다.', '2024-04-30'),
+('user18', '프로젝트', '7', '오프라인', '기간미정', 'Kotlin, Android, Firebase', '2024-08-15', '안드로이드', '구글 폼', '안드로이드 앱 프로젝트', 'Kotlin과 Firebase를 활용한 안드로이드 앱 프로젝트입니다.', '2024-05-05'),
+('user19', '스터디', '5', '전체', '6개월이상', 'JavaScript, React, Redux', '2024-08-20', '프론트엔드', '이메일', 'React 심화 스터디', 'React와 Redux를 심도있게 공부합니다.', '2024-05-10'),
+('user20', '프로젝트', '3', '온라인', '4개월', 'Go, Docker, Kubernetes', '2024-08-25', '데브옵스', '카카오톡 오픈채팅', 'DevOps 프로젝트 모집', 'Go와 Kubernetes를 사용한 DevOps 프로젝트입니다.', '2024-05-15'),
+('user21', '스터디', '4', '온오프라인', '2개월', 'Vue, Vuex', '2024-08-30', '프론트엔드', '구글 폼', 'Vue.js 스터디 모집', 'Vue.js와 Vuex를 배우고자 하는 분들을 모집합니다.', '2024-05-20'),
+('user22', '프로젝트', '8', '오프라인', '5개월', 'Swift, iOS, CoreData', '2024-09-01', 'IOS', '이메일', 'iOS 앱 개발 프로젝트', 'Swift와 CoreData를 이용한 iOS 앱 개발 프로젝트입니다.', '2024-05-25'),
+('user23', '스터디', '9', '전체', '3개월', 'React, NextJs, GraphQL', '2024-09-05', '프론트엔드', '카카오톡 오픈채팅', 'Next.js 심화 스터디', 'Next.js와 GraphQL을 심도있게 공부합니다.', '2024-05-30'),
+('user24', '프로젝트', '2', '온라인', '기간미정', 'NodeJs, Express, MongoDB', '2024-09-10', '백엔드', '구글 폼', 'Node.js 프로젝트 팀원 모집', 'Node.js와 Express를 사용한 백엔드 프로젝트입니다.', '2024-06-05'),
+('user25', '스터디', '6', '오프라인', '1개월', 'Python, Flask, SQLAlchemy', '2024-09-15', '백엔드', '이메일', 'Flask 스터디 모집', 'Flask와 SQLAlchemy를 배우고자 하는 분들을 모집합니다.', '2024-06-10'),
+('user26', '프로젝트', '10명이상', '온오프라인', '6개월이상', 'Java, Spring, MySQL', '2024-09-20', '백엔드', '카카오톡 오픈채팅', 'Spring 대규모 프로젝트', 'Java와 Spring을 사용한 대규모 프로젝트입니다.', '2024-06-15'),
+('user27', '스터디', '7', '전체', '2개월', 'ReactNative, GraphQL, TypeScript', '2024-09-25', '프론트엔드', '구글 폼', 'React Native 심화 스터디', 'React Native와 GraphQL을 심도있게 공부합니다.', '2024-06-20'),
+('user28', '프로젝트', '4', '온라인', '3개월', 'JavaScript, React, AWS', '2024-09-30', '프론트엔드', '이메일', 'React 프로젝트 팀원 모집', 'React와 AWS를 사용한 프로젝트입니다.', '2024-06-25'),
+('user29', '스터디', '5', '오프라인', '1개월', 'TypeScript, NextJs, Redux', '2024-10-01', '프론트엔드', '카카오톡 오픈채팅', 'TypeScript 스터디 모집', 'TypeScript와 Redux를 심도있게 배우고자 하는 분들을 모집합니다.', '2024-06-30'),
+('user30', '프로젝트', '3', '온오프라인', '2개월', 'Python, Django, PostgreSQL', '2024-10-05', '백엔드', '구글 폼', 'Django 프로젝트 팀원 모집', 'Python과 Django를 활용한 백엔드 프로젝트입니다.', '2024-07-05');
+
+-- Assuming the project_seq for the above insert is 1
+INSERT INTO project_participants (project_seq, user_id, status, position,check_writer) VALUES
+(1, 'user01','수락','Front_end','Writer'),
+(1, 'user31','수락','Planner','Participant'),
+(1, 'user32','수락','Front_end','Participant'),
+(1, 'user33','수락','Back_end','Participant'),
+(2, 'user02','수락','Front_end','Writer'),
+(2, 'user31','수락','PM','Participant'),
+(2, 'user32','수락','Front_end','Participant'),
+(2, 'user33','수락','Back_end','Participant');
+
+insert into grade(user_id) values
+('user01'),
+('user31'),
+('user32'),
+('user33'),
+('user02');
+
+
+select * from grade; # 평점 잘 계산되는 지 확인
+select * from project_info where user_id = 'user01'; # project 게시글 목록들
+select * from project_participants; # project에 참여하는 인원들의 정보
+select * from member where user_id = 'user31'; # 사용자들 목록
+select * from alarms;

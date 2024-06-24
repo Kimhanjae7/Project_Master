@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Jua&family=Nanum+Pen+Script&family=Noto+Sans+KR&display=swap" rel="stylesheet">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
+	<title>Project Master</title>
+</head>
+<body>
+    <div class="wrap">
+        <div class="homepage_top">
+            <div class="logo">
+                <a href="/"><img src="/images/PM_logo_fin.png"></a><br>
+                <span>Project Master</span><br><br>
+            </div>
+            <div class="header">
+                <ul class="nav">
+                    <li>
+                    </li>
+                    <li><a href="/">HOME</a></li>
+                    <li><a href="/alarms">알림</a></li>
+                    <% if(user_id){ %>
+                    <li><a href="/mypage"><%=user_id%>님</a></li>
+                    <li><a href="/logout">로그아웃</a></li>
+                    <% } else{ %>
+                        <li><a href="/join">회원가입</a></li>
+                        <li><a href="/login">로그인</a></li>
+                    <% } %>
+                </ul>
+            </div>
+            <div class="hompage_top_text">
+                <h4>You can gather</h4>
+                <h2>project team members,<br>
+                collaborate, <br>
+                build your portfolio.</h2>
+                <div class="bg_img">
+                    <img src="/images/개발자.png">
+                </div>
+            </div>
+            <ul class="click_menu">
+                <li>
+                    <div class = "make_team">
+                        <a href="/registration"><img src="/images/handshake2.png"></a>
+                        <div class="hompage_top_contents2"><a href="/registration">팀원모집</a></div>
+                    </div>
+                </li>
+                <li>
+                    <div class = "mypage">
+                        <a href="/mypage"><img src="/images/이력서.png"></a>
+                        <div class="hompage_top_contents2"><a href="/mypage">마이페이지</a></div>
+                    </div>
+                </li>
+                <li>
+                    <div class = "see_project">
+                        <a href="/board"><img src="/images/게시판.png"></a>
+                        <div class="hompage_top_contents2"><a href="/board">내 프로젝트</a></div>
+                    </div>
+                </li>
+            </ul>

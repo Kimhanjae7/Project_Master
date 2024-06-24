@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Grade Input</title>
+    <style>
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            font-size: 2.25rem;
+            line-height: 2.5rem;
+            justify-content: space-around;
+            padding: 0 0.2em;
+            text-align: center;
+            width: 5em;
+        }
+
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            -webkit-text-fill-color: transparent; /* Will override color (regardless of order) */
+            -webkit-text-stroke-width: 2.3px;
+            -webkit-text-stroke-color: #2b2a29;
+            cursor: pointer;
+        }
+
+        .star-rating input:checked ~ label {
+            -webkit-text-fill-color: gold;
+        }
+
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            -webkit-text-fill-color: #fff58c;
+        }
+    </style>
+</head>
+<body>
+    <h1>"<%= introduceTitle %>"project의 참여자들에 대한 리뷰</h1>
+    <form action="/grade" method="POST">
+        <% participants.forEach(participant => { %>
+            <div>
+                <h2> <%= participant.nickname %>님 (직무: <%= participant.position %>)</h2>
+                <input type="hidden" name="user_ids[]" value="<%= participant.user_id %>">
+                <input type="hidden" name="job_roles[]" value="<%= participant.position %>">
+                <label for="grade_<%= participant.user_id %>">평점:</label>
+                <div class="star-rating">
+                    <input type="radio" id="5-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="5"/>
+                    <label for="5-stars-<%= participant.user_id %>" class="star">★</label>
+                    <input type="radio" id="4-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="4"/>
+                    <label for="4-stars-<%= participant.user_id %>" class="star">★</label>
+                    <input type="radio" id="3-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="3"/>
+                    <label for="3-stars-<%= participant.user_id %>" class="star">★</label>
+                    <input type="radio" id="2-stars-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="2"/>
+                    <label for="2-stars-<%= participant.user_id %>" class="star">★</label>
+                    <input type="radio" id="1-star-<%= participant.user_id %>" name="grades[<%= participant.user_id %>]" value="1"/>
+                    <label for="1-star-<%= participant.user_id %>" class="star">★</label>
+                </div>
+            </div>
+        <% }); %>
+        <br>
+        <button type="submit">제출</button>
+    </form>
+</body>
+</html>

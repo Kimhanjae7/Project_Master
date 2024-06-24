@@ -1,0 +1,72 @@
+use project1;
+drop table if exists grade;
+CREATE TABLE `grade` (
+  `user_id` varchar(45) NOT NULL,
+  `Front_end_rating_count` int NOT NULL DEFAULT 0,
+  `Front_end_total_rating` FLOAT NOT NULL DEFAULT 0,
+  `Front_end_average_rating` FLOAT NOT NULL DEFAULT 0,
+  `Back_end_rating_count` int NOT NULL DEFAULT 0,
+  `Back_end_total_rating` FLOAT NOT NULL DEFAULT 0,
+  `Back_end_average_rating` FLOAT NOT NULL DEFAULT 0,
+  `Designer_rating_count` int NOT NULL DEFAULT 0,
+  `Designer_total_rating` FLOAT NOT NULL DEFAULT 0,
+  `Designer_average_rating` FLOAT NOT NULL DEFAULT 0,
+  `IOS_rating_count` int NOT NULL DEFAULT 0,
+  `IOS_total_rating` FLOAT NOT NULL DEFAULT 0,
+  `IOS_average_rating` FLOAT NOT NULL DEFAULT 0,
+  `Android_rating_count` int NOT NULL DEFAULT 0,
+  `Android_total_rating` FLOAT NOT NULL DEFAULT 0,
+  `Android_average_rating` FLOAT NOT NULL DEFAULT 0,
+  `DevOps_rating_count` int NOT NULL DEFAULT 0,
+  `DevOps_total_rating` FLOAT NOT NULL DEFAULT 0,
+  `DevOps_average_rating` FLOAT NOT NULL DEFAULT 0,
+  `PM_rating_count` int NOT NULL DEFAULT 0,
+  `PM_total_rating` FLOAT NOT NULL DEFAULT 0,
+  `PM_average_rating` FLOAT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`user_id`),
+  CONSTRAINT `fk_grade_member` FOREIGN KEY (`user_id`) REFERENCES `member` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `grade` (`user_id`) VALUES
+('user01'),
+('user02'),
+('user03'),
+('user04'),
+('user05'),
+('user06'),
+('user07'),
+('user08'),
+('user09'),
+('user10'),
+('user11'),
+('user12'),
+('user13'),
+('user14'),
+('user15'),
+('user16'),
+('user17'),
+('user18'),
+('user19'),
+('user20'),
+('user21'),
+('user22'),
+('user23'),
+('user24'),
+('user25'),
+('user26'),
+('user27'),
+('user28'),
+('user29'),
+('user30');
+
+update grade set Front_end_rating_count = Front_end_rating_count + 1,
+	Front_end_total_rating = Front_end_total_rating + 4.5,
+    Front_end_average_rating = (Front_end_total_rating)/(Front_end_rating_count)
+    where user_id = 'user01'; 
+    
+update grade set Front_end_rating_count = Front_end_rating_count + 1,
+	Front_end_total_rating = Front_end_total_rating + 0.5,
+    Front_end_average_rating = (Front_end_total_rating)/(Front_end_rating_count)
+    where user_id = 'user01'; 
+    
+select Front_end_rating_count,Front_end_total_rating,Front_end_average_rating from grade where user_id = 'user01';  
