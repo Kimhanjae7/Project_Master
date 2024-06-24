@@ -1,3 +1,4 @@
+-- DB정리
 DROP DATABASE IF EXISTS project;
 CREATE DATABASE project;
 USE project;
