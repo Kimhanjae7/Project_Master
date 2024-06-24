@@ -7,7 +7,7 @@
 //npm install mysql2
 //npm install fs
 //npm install multer
-//app.js
+
 /*
 검색 종류
 
@@ -791,7 +791,7 @@ app.post('/reject', (req, res) => {
     }
     res.render('popup', {
       message: '참가 신청이 거절되었습니다..',
-      redirectPath: '/project' + project_seq 
+      redirectPath: '/project/' + project_seq 
   });
   });
 });
