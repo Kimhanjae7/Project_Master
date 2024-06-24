@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Grades</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Manage Grades</h1>
+        <form class="form-inline my-2 my-lg-0" method="GET" action="/admin/grades">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <% if (grades.length > 0) { %>
+                        <% Object.keys(grades[0]).forEach(column => { %>
+                            <th><%= column %></th>
+                        <% }); %>
+                        <th>Actions</th>
+                    <% } else { %>
+                        <th>No grades found</th>
+                    <% } %>
+                </tr>
+            </thead>
+            <tbody>
+                <% grades.forEach(grade => { %>
+                    <tr>
+                        <% Object.keys(grade).forEach(key => { %>
+                            <td><%= grade[key] %></td>
+                        <% }); %>
+                        <td>
+                            <button class="btn btn-primary" onclick="editGrade('<%= JSON.stringify(grade) %>')">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteGrade('<%= grade.user_id %>')">Delete</button>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Edit Grade Modal -->
+    <div class="modal fade" id="editGradeModal" tabindex="-1" role="dialog" aria-labelledby="editGradeModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editGradeModalLabel">Edit Grade</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editGradeForm">
+                        <input type="hidden" id="editGradeUserId">
+                        <div class="form-group">
+                            <label for="editGradeFrontEndCount">Front End Count</label>
+                            <input type="number" class="form-control" id="editGradeFrontEndCount" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editGradeFrontEndRatingCount">Front End Rating Count</label>
+                            <input type="number" class="form-control" id="editGradeFrontEndRatingCount" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editGradeFrontEndTotalRating">Front End Total Rating</label>
+                            <input type="number" step="0.01" class="form-control" id="editGradeFrontEndTotalRating" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editGradeFrontEndAverageRating">Front End Average Rating</label>
+                            <input type="number" step="0.01" class="form-control" id="editGradeFrontEndAverageRating" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editGradeBackEndCount">Back End Count</label>
+                            <input type="number" class="form-control" id="editGradeBackEndCount" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editGradeBackEndRatingCount">Back End Rating Count</label>
+                            <input type="number" class="form-control" id="editGradeBackEndRatingCount" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editGradeBackEndTotalRating">Back End Total Rating</label>
+                            <input type="number" step="0.01" class="form-control" id="editGradeBackEndTotalRating" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editGradeBackEndAverageRating">Back End Average Rating</label>
+                            <input type="number" step="0.01" class="form-control" id="editGradeBackEndAverageRating" required>
+                        </div>
+                        <!-- Repeat for all other columns -->
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function editGrade(grade) {
+            grade = JSON.parse(grade);
+            $('#editGradeUserId').val(grade.user_id);
+            $('#editGradeFrontEndCount').val(grade.Front_end_count);
+            $('#editGradeFrontEndRatingCount').val(grade.Front_end_rating_count);
+            $('#editGradeFrontEndTotalRating').val(grade.Front_end_total_rating);
+            $('#editGradeFrontEndAverageRating').val(grade.Front_end_average_rating);
+            $('#editGradeBackEndCount').val(grade.Back_end_count);
+            $('#editGradeBackEndRatingCount').val(grade.Back_end_rating_count);
+            $('#editGradeBackEndTotalRating').val(grade.Back_end_total_rating);
+            $('#editGradeBackEndAverageRating').val(grade.Back_end_average_rating);
+            // Repeat for all other columns
+            $('#editGradeModal').modal('show');
+        }
+
+        $('#editGradeForm').submit(function(event) {
+            event.preventDefault();
+            const user_id = $('#editGradeUserId').val();
+            const Front_end_count = $('#editGradeFrontEndCount').val();
+            const Front_end_rating_count = $('#editGradeFrontEndRatingCount').val();
+            const Front_end_total_rating = $('#editGradeFrontEndTotalRating').val();
+            const Front_end_average_rating = $('#editGradeFrontEndAverageRating').val();
+            const Back_end_count = $('#editGradeBackEndCount').val();
+            const Back_end_rating_count = $('#editGradeBackEndRatingCount').val();
+            const Back_end_total_rating = $('#editGradeBackEndTotalRating').val();
+            const Back_end_average_rating = $('#editGradeBackEndAverageRating').val();
+            // Repeat for all other columns
+
+            fetch(`/admin/grades/edit/${user_id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    Front_end_count, Front_end_rating_count, Front_end_total_rating, Front_end_average_rating,
+                    Back_end_count, Back_end_rating_count, Back_end_total_rating, Back_end_average_rating,
+                    // Repeat for all other columns
+                })
+            }).then(response => response.json()).then(data => {
+                if (data.success) {
+                    alert('Grade updated successfully');
+                    location.reload();
+                } else {
+                    alert('Failed to update grade');
+                }
+            }).catch(err => {
+                console.error('Error:', err);
+                alert('Failed to update grade');
+            });
+        });
+
+        function deleteGrade(user_id) {
+            if (confirm('Are you sure you want to delete this grade?')) {
+                fetch(`/admin/grades/delete/${user_id}`, {
+                    method: 'DELETE'
+                }).then(response => response.json()).then(data => {
+                    if (data.success) {
+                        alert('Grade deleted successfully');
+                        location.reload();
+                    } else {
+                        alert('Failed to delete grade');
+                    }
+                }).catch(err => {
+                    console.error('Error:', err);
+                    alert('Failed to delete grade');
+                });
+            }
+        }
+    </script>
+</body>
+</html>
