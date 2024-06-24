@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Website</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007BFF;
+    padding: 10px 20px;
+    color: white;
+}
+
+header h1 {
+    margin: 0;
+}
+
+nav button {
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    padding: 8px 16px; /* 작은 패딩값으로 변경 */
+    font-size: 14px; /* 작은 폰트 크기로 변경 */
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+nav button:hover {
+    background-color: #003f7f;
+}
+
+main {
+    padding: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+.modal {
+    display: none; /* 초기 상태에서 숨김 */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    position: relative;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.error-message {
+    color: red;
+    margin-top: 10px;
+}
+
+</style>
+<body>
+    <header>
+        <h1>My Website</h1>
+        <button id="login-button">로그인</button>
+        <button id="my-page-button">마이페이지</button>
+    </header>
+    <main id="content">
+        <h2>Welcome to My Website</h2>
+        <p>This is a simple website with a login feature.</p>
+        <div id="login-success-message" class="hidden">
+            <h3>Login Successful</h3>
+            <p>Welcome, <span id="username-display"></span>!</p>
+        </div>
+        <div id="board">
+            <h3>Board</h3>
+            <ul>
+                <li>Post 1: This is the first post.</li>
+                <li>Post 2: This is the second post.</li>
+                <li>Post 3: This is the third post.</li>
+            </ul>
+        </div>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Login</h2>
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <p id="error-message" class="error-message"></p>
+        </div>
+    </div>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const loginButton = document.getElementById('login-button');
+    const loginModal = document.getElementById('login-modal');
+    const closeButton = document.querySelector('.close-button');
+    const loginForm = document.getElementById('login-form');
+    const errorMessage = document.getElementById('error-message');
+    const loginSuccessMessage = document.getElementById('login-success-message');
+    const usernameDisplay = document.getElementById('username-display');
+
+    loginButton.addEventListener('click', function() {
+        loginModal.style.display = 'flex';
+    });
+
+    closeButton.addEventListener('click', function() {
+        loginModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target === loginModal) {
+            loginModal.style.display = 'none';
+        }
+    });
+
+    loginForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        if (username === 'admin' && password === 'password') {
+            loginModal.style.display = 'none';
+            loginButton.style.display = 'none';
+            loginSuccessMessage.classList.remove('hidden');
+            usernameDisplay.textContent = username;
+            errorMessage.textContent = '';
+        } else {
+            errorMessage.textContent = 'Invalid username or password.';
+        }
+    });
+});
+
+</script>
+</html>

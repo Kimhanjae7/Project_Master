@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alarms</title>
+    <link rel="stylesheet" type="text/css" href="/css/notification.css">
+    <link rel="stylesheet" type="text/css" href="/css/ratePage.css">
+</head>
+<body>
+    <div class="logo_home">
+        <a href="/"><img src="/images/PM_logo_fin.png"></a><br>
+    </div>
+    <div class="ratePage_wrap">
+        <div class="ratePage_bg">
+            <div class="ratePage">
+                <div class="notification_top_section">
+                    <div class="notification_header"><img src="/images/notification.png"></div>
+                </div>
+                <div class="notification_top_section">
+                    <h1>알림</h1>
+                </div>
+                <ul>
+                    <% if (alarms.length === 0) { %>
+                        <li class="notification_section">
+                            <span class="notification_font">알림이 없습니다.</span>
+                        </li>
+                    <% } else { %>
+                        <% alarms.forEach(function(alarm) { %>
+                            <li class="notification_section">
+                                <span class="notification_font"><%= alarm.message %></span>
+                                <form action="/grade" method="get" style="display:inline;">
+                                    <input type="hidden" name="project_seq" value="<%= alarm.project_seq %>">
+                                    <input type="hidden" name="introduce_title" value="<%= alarm.introduce_title %>"> &nbsp;
+                                    <button type="submit">평점남기기</button>
+                                </form>
+                            </li>
+                        <% }); %>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

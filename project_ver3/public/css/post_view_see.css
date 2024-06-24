@@ -1,0 +1,438 @@
+@charset "UTF-8";
+*{
+	list-style: none;
+	text-decoration: none;
+	border-collapse: collapse;
+	margin:0px;
+	padding:0px;
+	color:#000;
+}
+.nanum-pen-script-regular {
+    font-family: "Nanum Pen Script", cursive;
+    font-weight: 400;
+    font-style: normal;
+}
+.noto-sans-kr{
+    font-family: "Noto Sans KR", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: weight;
+    font-style: normal;
+}
+
+
+.profile_wrap{background-color:#f2f2f2;}
+.profile_top{
+    background-color: #f2f2f2;
+	width:100%;
+	height:280px;
+}
+.profile_logo{
+    text-align: center;
+}
+.profile_logo img{
+    margin-top:10px;
+	width:100px;
+	height:100px;
+	cursor:pointer;
+}
+.profile_logo span{
+    font-size:40px;
+    font-weight:bold;
+    font-family: "Nanum Pen Script", cursive;
+}
+.menubar{
+    display: flex;
+	justify-content: end;
+	width:1500px;
+	margin:auto;
+	height:75px;
+	background-color:#2E2E2E;
+	border-radius:10px;
+}
+.nav{
+	display: flex; /*가로정렬*/
+	justify-content: end;
+	margin-right: 120px;
+	line-height:75px;
+	width:calc(100% - 500px);
+}
+.nav > li{
+	margin-left:60px;
+}
+.nav > li > a{
+	color:#F2F2F2;
+	font-weight:bold;
+	font-size: 20px;
+}
+.nav > li > a:hover{color:#ff5a20}
+
+/* ------------------------ 상단 ---------------------------*/
+.bottom_wrap{
+    width: 100%;
+    height: 2300px;
+    background-color: #f2f2f2;
+    position: relative;
+}
+.bottom_bg{
+    width: 95%;
+    height: 2070px;
+    background-color: #2e2e2e;
+    position: relative;
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 20px;
+}
+.bottom{
+    width:90%;
+    height: 1863px;
+    background-color: #f2f2f2;
+    margin: auto;
+    border-radius: 20px;  
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.post_top{
+    background-color: #f2f2f2;
+    width: 100%;
+    height: 520px;
+    margin: auto;
+    position: relative;
+}
+.clip_margin{
+    position: absolute;
+    margin: auto;
+    top:-140px;
+    left: -100px;
+    width: 200px;
+    height: 200px;
+    background-image: url(clip2.png);
+}
+.top_content{
+    margin: auto;
+    width: 90%;
+    height: 520px;
+    background-color: #f2f2f2;
+}
+.post_title_area{
+    width: 100%;
+    height: 180px;
+}
+.post_title{
+    padding-top: 15px;
+    width: 90%;
+    height: 160px;
+    background-color: #f2f2f2;
+    margin: auto;
+}
+/* .post_title > a{
+} */
+.post_title > h2{
+    text-align: center;
+    font-size: 40px;
+}
+.post_title > span{
+    font-size: 18px;
+}
+.title_span{
+    font-weight: bold;
+}
+.title_span2{
+    font-family: "Noto Sans KR", sans-serif;
+    color: #5b5656;
+}
+.bt_menu{
+    display: flex;
+    background-color: #f2f2f2;
+    width:100%;
+    height: 30px;
+}
+
+.bt_menu > button{
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    margin-right: 20px;
+    font-weight: bold;
+    font-size: 18px;
+    width: 40px;
+}
+.bt_menu button:hover{
+    color:red;
+}
+.bt_update_delete{
+    text-align: right;
+    background-color: #f2f2f2;
+    width: 96%;
+}
+.bt_mark{
+    width: 30px;
+    height: 30px;
+}
+.bt_mark img{
+    width: 30px;
+    height: 30px;
+}
+.post_info_area{
+    width: 100%;
+    height: 300px;
+    margin-top: 15px;
+}
+.post_info{
+    width: 90%;
+    height: 300px;
+    background-color: #f2f2f2;
+    margin: auto;
+    display: flex;
+}
+.post_info_left{
+    width: 50%;
+    height: 300px;
+    background-color: #f2f2f2;
+}
+.post_info_right{
+    width: 50%;
+    background-color: #f2f2f2;
+    height: 300px;
+}
+.post_info_element{
+    margin-top:40px;
+}
+.fix_element{
+    font-size: 20px;
+    font-weight: bold;
+    color: #5b5656;
+}
+.user_element{
+    font-size: 20px;
+    font-weight: bold;
+}
+.post_mid{
+    background-color: #f2f2f2;
+    width: 100%;
+    height: 802px;
+    margin: auto;
+}
+.post_introduce_area{
+    width: 90%;
+    height: 802px;
+    background-color: #f2f2f2;
+    margin: auto;
+}
+.post_introduce{
+    width: 90%;
+    max-height: 802px;
+    height: 752px;
+    margin: auto;
+    background-color: #f2f2f2;
+}
+.see_count{
+    width:90%;
+    height: 50px;
+    margin:auto;
+    text-align: right;
+}
+.see_count span{
+    font-size: 18px;
+    font-weight: bold;
+    color: #5b5656;
+}
+.see_count img{
+    margin-bottom: -3px;
+}
+.post_bot{
+    background-color: #f2f2f2;
+    width: 100%;
+    height: 450px;
+    margin: auto;
+}
+.post_comment_area{
+    width: 90%;
+    height: 450px;
+    margin: auto;
+    background-color: #f2f2f2;
+}
+.post_comment{
+    width: 90%;
+    max-height: 450px;
+    margin: auto;
+}
+.pix_comment{
+    font-size: 20px;
+    font-weight: bold;
+}
+.pix_comment_amount{
+    font-size: 20px;
+    color: #5b5656;
+}
+.comment_area{
+    display: flex;
+}
+.comment{
+    width:80%;
+	padding: 1rem 2rem;
+	font-size: 1rem;
+	height: 6.25em;
+	border-radius: 15px;
+	border-width: 5px;
+	background-color: #f2f2f2;
+	border-style: solid;
+	border-color: #2e2e2e;
+	resize: none;
+	margin: auto auto auto -5px;
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+}
+
+.bt_comment{
+    display: block;
+    position: relative;
+    width: 100px;
+    height: 50px;
+    border-radius: 15px;
+    border: none;
+    margin: 45px auto auto -30px;
+    cursor: pointer;
+    background-color: #2e2e2e;
+    color: #F2F2F2;
+    font-size: 15px;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+.btnFloat {
+    background: none;
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.5);
+}
+.btnFloat:before {
+    content: '댓글 입력';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+    background-color: #2e2e2e;
+    color: #F2F2F2;
+    transition: all 0.2s ;
+}
+.btnFloat:before {
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.4);
+}
+.btnFloat:hover:before {
+    margin-top: -2px;
+    margin-left: 0px;
+    transform: scale(0.9,0.9);
+    -ms-transform: scale(0.9,0.9);
+    -webkit-transform: scale(0.9,0.9);
+    box-shadow: 0px 5px 5px -2px rgba(0, 0, 0, 0.25);
+}
+.post_join_area{
+    width: 100%;
+    height: 50px;
+    background-color: #f2f2f2;
+}
+.post_join{
+    width: 90%;
+    height: 50px;
+    margin: auto;
+    background-color: #f2f2f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.join_mystack{
+    background-color: #2e2e2e;
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.3);
+    width: 225px;
+    height: 60px;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30px;
+    margin-top: 15px;
+    margin-left: 20px;
+}
+.join_mystack_style{
+    border: none;
+    padding: 15px;
+    border-radius: 25px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.post_join_list{
+    width: 30%;
+    height: 60px;
+    max-height: 50px;
+    background-color: #F2F2F2;
+    text-align: center;
+}
+.bt_join{
+    display: block;
+    position: relative;
+    width: 80%;
+    height: 60px;
+    border-radius: 30px;
+    border: none;
+    margin: auto;
+    cursor: pointer;
+    background-color: #2e2e2e;
+    color: #F2F2F2;
+    font-size: 20px;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+.btnFloat2 {
+    background: none;
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.5);
+}
+.btnFloat2:before {
+    content: '신청하기';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 30px;
+    background-color: #2e2e2e;
+    color: #F2F2F2;
+    transition: all 0.2s ;
+}
+.btnFloat2:before {
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.4);
+}
+.btnFloat2:hover:before {
+    margin-top: -2px;
+    margin-left: 0px;
+    transform: scale(0.9,0.9);
+    -ms-transform: scale(0.9,0.9);
+    -webkit-transform: scale(0.9,0.9);
+    box-shadow: 0px 5px 5px -2px rgba(0, 0, 0, 0.25);
+}
+.slash{
+    font-weight:lighter;
+    font-size: 16px;
+    margin-right: 5px;
+}
+.hr_design{
+    width: 100%;
+	margin: auto;
+	height: 1px;
+	background-color: lightgrey;
+	box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.3);
+}
+.hr_design_di{
+    width: 90%;
+	margin: auto;
+	height: 1px;
+	background-color: lightgrey;
+	box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.3);
+}
