@@ -7,7 +7,7 @@
 //npm install mysql2
 //npm install fs
 //npm install multer
-
+//app.js
 /*
 검색 종류
 
