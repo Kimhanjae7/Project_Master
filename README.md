@@ -26,9 +26,9 @@
 |분야|사용 기술|
 |:-----:|:--------------:|
 |FrontEnd|HTML, CSS, JavaScript|
-|BackEnd|Node.js, Flask|
+|BackEnd|Node.js, Flask(Python)|
 |DataBase|MySQL|
-|TOOL|vsCode, Python|
+|TOOL|vsCode|
 |Version Management|GitHub|
 
 <br/>
